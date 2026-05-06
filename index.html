@@ -23,115 +23,60 @@ body{font-family:'Inter',sans-serif;background:#0b0e1a;color:#e2e8f0;font-size:1
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* ── HEADER ── */
-.header{
-  background:var(--surface);border-bottom:1px solid var(--border);
-  height:54px;padding:0 20px;display:flex;align-items:center;
-  justify-content:space-between;flex-shrink:0;z-index:50;
-}
-.header-left{display:flex;align-items:center;gap:14px}
-.logo{width:32px;height:32px;background:var(--blue);border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;color:#fff;letter-spacing:-1px;flex-shrink:0}
-.header-title{font-size:15px;font-weight:700;letter-spacing:-.3px}
-.header-title span{font-size:11px;font-weight:400;color:var(--dim);margin-left:8px}
-.sp-pill{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);
-  padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2)}
+.loader-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loader-screen.hide{display:none}
+.loader-ring{width:40px;height:40px;border:3px solid rgba(0,115,230,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+.loader-text{font-size:13px;color:var(--dim)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+.header{background:var(--surface);border-bottom:1px solid var(--border);height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:50}
+.hlogo{width:32px;height:32px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+.htitle{font-size:15px;font-weight:700;letter-spacing:-.3px;margin-left:12px}
+.htitle span{font-size:11px;font-weight:400;color:var(--dim);margin-left:8px}
+.sp-pill{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:var(--surface2)}
 .sp-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:all .3s}
 .sp-pill.ok .sp-dot{background:var(--green);box-shadow:0 0 5px var(--green)}
 .sp-pill.ok{border-color:rgba(34,197,94,.3)}
 .sp-pill.err .sp-dot{background:var(--red)}
 .sp-pill.err{border-color:rgba(239,68,68,.3)}
-.sp-pill.loading .sp-dot{background:var(--yellow);animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.user-chip{display:flex;align-items:center;gap:7px;padding:3px 10px 3px 3px;
-  border-radius:20px;background:var(--surface2);border:1px solid var(--border)}
-.user-av{width:26px;height:26px;border-radius:50%;background:var(--blue);
-  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
-.user-name{font-size:12px;font-weight:500;color:var(--text)}
-
-/* ── NAV ── */
-.nav{background:var(--surface);border-bottom:1px solid var(--border);
-  padding:0 20px;display:flex;gap:2px;flex-shrink:0}
-.nav-tab{background:none;border:none;color:var(--dim);font-family:var(--font);
-  font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer;
-  border-bottom:2px solid transparent;margin-bottom:-1px;
-  transition:all .15s;display:flex;align-items:center;gap:7px}
-.nav-tab:hover{color:var(--text)}
-.nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
-
-/* ── LAYOUT ── */
-.app{display:flex;flex:1;overflow:hidden}
-.main{flex:1;overflow-y:auto;padding:20px}
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;flex-shrink:0}
+.ntab{background:none;border:none;color:var(--dim);font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:7px}
+.ntab:hover{color:var(--text)}
+.ntab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.app{flex:1;overflow-y:auto;padding:20px}
 .page{display:none}.page.active{display:block}
-
-/* ── BUTTONS ── */
-.btn{border:none;font-family:var(--font);font-size:13px;font-weight:600;
-  padding:7px 16px;border-radius:var(--radius-sm);cursor:pointer;
-  display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
+.btn{border:none;font-family:var(--font);font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--radius-sm);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover:not(:disabled){opacity:.85}
-.btn-success{background:var(--green);color:#fff}.btn-success:hover:not(:disabled){opacity:.85}
-.btn-ghost{background:var(--surface3);color:var(--text);border:1px solid var(--border)}
-.btn-ghost:hover:not(:disabled){border-color:var(--blue)}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover:not(:disabled){opacity:.88}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover:not(:disabled){opacity:.88}
+.btn-ghost{background:var(--surface3);color:var(--text);border:1px solid var(--border)}.btn-ghost:hover:not(:disabled){border-color:var(--blue)}
 .btn-danger{background:var(--red);color:#fff}.btn-danger:hover:not(:disabled){opacity:.85}
-.btn-sm{padding:5px 11px;font-size:12px}
-
-/* ── BANNER ── */
-.banner{border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;
-  display:none;align-items:flex-start;gap:12px;font-size:13px;line-height:1.6}
-.banner.show{display:flex}
-.banner.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)}
-.banner.warn strong{color:var(--yellow)}
-.banner.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3)}
-.banner.err strong{color:var(--red)}
-.banner.info{background:rgba(0,115,230,.08);border:1px solid rgba(0,115,230,.3)}
-.banner.info strong{color:#3b9eff}
-
-/* ── FILTERS ── */
-.filters{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:14px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.f-group{display:flex;align-items:center;gap:6px}
-.f-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;
-  color:var(--muted);white-space:nowrap}
-.f-input,.f-sel{background:var(--surface2);border:1px solid var(--border);color:var(--text);
-  font-family:var(--font);font-size:13px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s}
-.f-input{padding:6px 10px 6px 30px;min-width:200px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%237a8aaa' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:9px center}
-.f-sel{padding:6px 10px;min-width:130px;cursor:pointer}
-.f-input:focus,.f-sel:focus{border-color:var(--blue)}
-.f-reset{background:none;border:1px solid var(--border);color:var(--dim);
-  font-family:var(--font);font-size:11px;padding:6px 10px;border-radius:var(--radius-sm);
-  cursor:pointer;transition:all .15s}
-.f-reset:hover{border-color:var(--blue);color:var(--blue)}
-.f-spacer{flex:1}
-
-/* ── TABLE ── */
-.tbl-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.tbl-meta-l{font-size:12px;color:var(--dim)}.tbl-meta-l strong{color:var(--text)}
-.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:860px}
+.btn-sm{padding:5px 12px;font-size:12px}
+.filters{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.flabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);white-space:nowrap}
+.finput,.fselect{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s}
+.finput{padding:6px 10px 6px 30px;min-width:200px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%237a8aaa' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:9px center}
+.fselect{padding:6px 10px;min-width:120px;cursor:pointer}
+.finput:focus,.fselect:focus{border-color:var(--blue)}
+.freset{background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--font);font-size:11px;padding:6px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s}
+.freset:hover{border-color:var(--blue);color:var(--blue)}
+.tmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.tmeta-l{font-size:12px;color:var(--dim)}.tmeta-l strong{color:var(--text)}
+.twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
 thead{background:var(--surface2)}
-th{padding:9px 13px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;
-  color:var(--dim);text-align:left;cursor:pointer;user-select:none;white-space:nowrap;
-  border-bottom:1px solid var(--border)}
-th:hover{color:var(--text)}th.sorted{color:var(--blue)}
+th{padding:9px 13px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);text-align:left;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:1px solid var(--border)}
+th:hover{color:var(--text)}.th-s{color:var(--blue)!important}
 td{padding:9px 13px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.02)}
 .td-mono{font-family:var(--mono);font-size:11px;color:var(--dim)}
-.td-clip{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
-.td-act{display:flex;gap:5px}
-.btn-ico{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:4px;
-  font-size:13px;transition:background .15s}
-.btn-ico:hover{background:var(--surface3)}
-.btn-ico.edit{color:var(--blue)}.btn-ico.del{color:var(--red)}
-
-/* ── BADGES ── */
-.badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.3px;
-  text-transform:uppercase;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.td-clip{max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.td-actions{display:flex;gap:5px}
+.bico{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:4px;font-size:13px;transition:background .15s}
+.bico:hover{background:var(--surface3)}
+.bico.edit{color:var(--blue)}.bico.del{color:var(--red)}
+.badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:20px;white-space:nowrap}
 .b-Close{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25)}
 .b-Develop{background:rgba(0,115,230,.12);color:#3b9eff;border:1px solid rgba(0,115,230,.25)}
 .b-Validation{background:rgba(6,182,212,.12);color:#06b6d4;border:1px solid rgba(6,182,212,.25)}
@@ -139,964 +84,659 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .b-Evaluate{background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.25)}
 .b-Identify{background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.25)}
 .b-Idea{background:rgba(122,138,170,.12);color:#7a8aaa;border:1px solid rgba(122,138,170,.25)}
-.b-Dev-Backlog,.b-DevBacklog{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
-.b-On-Hold,.b-OnHold{background:rgba(58,74,106,.2);color:#7a8aaa;border:1px solid rgba(58,74,106,.3)}
+.b-Dev-Backlog{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
+.b-On-Hold{background:rgba(58,74,106,.2);color:#7a8aaa;border:1px solid rgba(58,74,106,.3)}
 .b-Removed{background:rgba(239,68,68,.06);color:#555;border:1px solid rgba(239,68,68,.1)}
-.b-default{background:var(--surface3);color:var(--dim);border:1px solid var(--border)}
-
-/* ── PAGINATION ── */
-.pag{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:14px}
-.pg{background:var(--surface);border:1px solid var(--border);color:var(--dim);
-  font-family:var(--font);font-size:12px;padding:5px 10px;border-radius:var(--radius-sm);
-  cursor:pointer;transition:all .15s;min-width:32px;text-align:center}
-.pg:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
-.pg.active{background:var(--blue);border-color:var(--blue);color:#fff}
-.pg:disabled{opacity:.3;cursor:default}
-.pg-dots{font-size:12px;color:var(--dim);padding:0 3px}
-
-/* ── MODAL ── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
-  z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
-.overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;
-  width:100%;max-width:720px;max-height:92vh;overflow:hidden;
-  display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,.6)}
-.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-title{font-size:15px;font-weight:700}
-.modal-x{background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer;
-  padding:2px 6px;border-radius:4px}
-.modal-x:hover{color:var(--text);background:var(--surface3)}
-.modal-body{padding:22px;overflow-y:auto;flex:1}
-.modal-foot{padding:14px 22px;border-top:1px solid var(--border);
-  display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
-
-/* ── FORM ── */
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.f{display:flex;flex-direction:column;gap:5px}
-.f.full{grid-column:1/-1}
-.f-label{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
-.f-ctrl{background:var(--surface2);border:1px solid var(--border);color:var(--text);
-  font-family:var(--font);font-size:13px;padding:8px 11px;border-radius:var(--radius-sm);
-  outline:none;transition:border-color .15s;width:100%}
-.f-ctrl:focus{border-color:var(--blue)}
-textarea.f-ctrl{resize:vertical;min-height:80px}
-select.f-ctrl{cursor:pointer}
-.f-sep{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--muted);padding:10px 0 4px;border-top:1px solid var(--border);
-  grid-column:1/-1;margin-top:4px}
-
-/* ── KPI ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:18px 16px;position:relative;overflow:hidden}
+.pagination{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:14px}
+.pgbtn{background:var(--surface);border:1px solid var(--border);color:var(--dim);font-family:var(--font);font-size:12px;padding:5px 11px;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;min-width:32px;text-align:center}
+.pgbtn:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
+.pgbtn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.pgbtn:disabled{opacity:.3;cursor:default}
+.kgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;position:relative;overflow:hidden}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--blue))}
-.kpi-lbl{font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.kpi-label{font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
 .kpi-val{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1}
 .kpi-sub{font-size:11px;color:var(--dim);margin-top:5px}
 .kpi-ico{position:absolute;right:14px;top:14px;font-size:20px;opacity:.12}
-
-/* ── CHARTS ── */
-.ch-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px}
-.ch-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.ch-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
-.ch-title{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
-.ch-wrap{position:relative;height:200px}
-.del-rows{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.del-row{display:grid;grid-template-columns:150px 1fr 55px;align-items:center;gap:10px}
-.del-bg{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
-.del-bar{height:100%;border-radius:3px;transition:width .5s}
-.del-pct{font-size:11px;font-family:var(--mono);color:var(--dim);text-align:right}
-
-/* ── CONFIG PAGE ── */
-.cfg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px}
-.cfg-card-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.cfg-dot{width:8px;height:8px;border-radius:50%;background:var(--blue)}
-.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cfg-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
-code{background:var(--surface3);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:11px;color:var(--cyan)}
-.cfg-test{padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;margin-top:14px;display:none}
-.cfg-test.show{display:block}
-.cfg-test.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green)}
-.cfg-test.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red)}
-.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:10px}
-.steps li{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--dim);
-  line-height:1.6;counter-increment:s}
-.steps li::before{content:counter(s);background:var(--blue);color:#fff;
-  width:22px;height:22px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
-
-/* ── MISC ── */
-.spinner{display:inline-block;width:13px;height:13px;
-  border:2px solid rgba(255,255,255,.25);border-top-color:#fff;
-  border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.page-load{position:fixed;inset:0;background:rgba(11,14,26,.85);
-  z-index:500;display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:14px;backdrop-filter:blur(2px)}
-.page-load.hide{display:none}
-.load-ring{width:38px;height:38px;border:3px solid rgba(0,115,230,.2);
-  border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
-.load-txt{font-size:13px;color:var(--dim)}
-.empty-st{text-align:center;padding:50px 20px;color:var(--dim)}
-.empty-ico{font-size:40px;opacity:.3;margin-bottom:14px}
-.notif{position:fixed;bottom:20px;right:20px;background:var(--surface);
-  border:1px solid var(--border);border-radius:var(--radius);
-  padding:12px 16px;font-size:13px;font-weight:500;z-index:999;
-  transform:translateY(60px);opacity:0;transition:all .3s;
-  display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:380px}
+.cgrid2{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.ctitle{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
+.cwrap{position:relative;height:200px}
+.drow{display:grid;grid-template-columns:150px 1fr 60px;align-items:center;gap:10px;margin-bottom:10px}
+.dbar-bg{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.dbar{height:100%;border-radius:3px;transition:width .5s}
+.dpct{font-size:11px;font-family:var(--mono);color:var(--dim);text-align:right}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:100%;max-width:720px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+.mhead{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mtitle{font-size:15px;font-weight:700}
+.mclose{background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:4px}
+.mclose:hover{color:var(--text);background:var(--surface3)}
+.mbody{padding:22px;overflow-y:auto;flex:1}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.flbl{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.fctrl{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 11px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s;width:100%}
+.fctrl:focus{border-color:var(--blue)}
+textarea.fctrl{resize:vertical;min-height:80px}
+select.fctrl{cursor:pointer}
+.fsec{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:10px 0 4px;border-top:1px solid var(--border);grid-column:1/-1;margin-top:4px}
+.cbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:380px;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+.cico{font-size:34px;margin-bottom:12px}
+.ctit{font-size:15px;font-weight:700;margin-bottom:8px}
+.cmsg{font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6}
+.cact{display:flex;gap:8px;justify-content:center}
+.notif{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:13px;font-weight:500;z-index:999;transform:translateY(60px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:380px}
 .notif.show{transform:translateY(0);opacity:1}
 .notif.ok{border-left:3px solid var(--green)}
 .notif.err{border-left:3px solid var(--red)}
 .notif.warn{border-left:3px solid var(--yellow)}
-.confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:28px;max-width:380px;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.6)}
-.confirm-ico{font-size:34px;margin-bottom:12px}
-.confirm-title{font-size:15px;font-weight:700;margin-bottom:8px}
-.confirm-msg{font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6}
-.confirm-actions{display:flex;gap:8px;justify-content:center}
+.empty{text-align:center;padding:50px 20px;color:var(--dim)}
+.empty-ico{font-size:40px;opacity:.3;margin-bottom:12px}
 </style>
 </head>
 <body>
 
-<!-- LOADER -->
-<div class="page-load" id="loader">
-  <div class="load-ring"></div>
-  <div class="load-txt" id="loaderTxt">Carregando...</div>
+<div class="loader-screen" id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text" id="loaderTxt">Carregando dados...</div>
 </div>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="header-left">
-    <div class="logo">EI</div>
-    <div class="header-title">EI Roadmap — Backlog Manager <span>SharePoint Connected</span></div>
+  <div style="display:flex;align-items:center">
+    <div class="hlogo">EI</div>
+    <div class="htitle">EI Roadmap — Backlog Manager <span>Supabase Connected</span></div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <div class="sp-pill loading" id="spPill">
-      <div class="sp-dot"></div>
-      <span id="spTxt">Conectando...</span>
-    </div>
-    <div class="user-chip" id="userChip" style="display:none">
-      <div class="user-av" id="userAv">?</div>
-      <span class="user-name" id="userName">Usuário</span>
-    </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="sp-pill" id="spPill"><div class="sp-dot"></div><span id="spTxt">Conectando...</span></div>
+    <button class="btn btn-success btn-sm" onclick="App.openModal(null)">+ Novo Requisito</button>
   </div>
 </div>
 
-<!-- NAV -->
 <div class="nav">
-  <button class="nav-tab active" id="tab-backlog"    onclick="G.page('backlog')">📋 Backlog</button>
-  <button class="nav-tab"        id="tab-dashboard"  onclick="G.page('dashboard')">📈 Dashboard</button>
-  <button class="nav-tab"        id="tab-config"     onclick="G.page('config')">⚙️ Configurações</button>
+  <button class="ntab active" id="tab-backlog"   onclick="App.tab('backlog')">📋 Backlog</button>
+  <button class="ntab"        id="tab-dashboard" onclick="App.tab('dashboard')">📈 Dashboard</button>
 </div>
 
-<div class="app"><div class="main">
+<div class="app">
 
-<!-- ══ BACKLOG ══ -->
-<div class="page active" id="page-backlog">
-
-  <div class="banner warn" id="bannerCfg">
-    <span>⚠️</span>
-    <div><strong>Configuração necessária!</strong> Vá até a aba <strong>Configurações</strong>, informe a URL do site SharePoint e o nome da sua lista, depois clique em Salvar e Testar Conexão.</div>
-  </div>
-
-  <div class="banner err" id="bannerErr" style="display:none">
-    <span>❌</span>
-    <div id="bannerErrTxt"><strong>Erro de conexão.</strong> Verifique se a URL e o nome da lista estão corretos nas Configurações.</div>
-  </div>
-
-  <div class="banner info" id="bannerHost" style="display:none">
-    <span>ℹ️</span>
-    <div><strong>Modo local detectado.</strong> Para funcionar corretamente, este arquivo precisa estar hospedado dentro do SharePoint (Site Assets ou Biblioteca de Documentos). Abrindo localmente a autenticação por cookie de sessão não funcionará.</div>
-  </div>
-
-  <div class="filters">
-    <input  type="text" class="f-input" id="fSearch" placeholder="Buscar requisito, solicitante..." oninput="G.filter()">
-    <div class="f-group"><span class="f-lbl">Status</span>
-      <select class="f-sel" id="fStatus" onchange="G.filter()"><option value="">Todos</option></select></div>
-    <div class="f-group"><span class="f-lbl">Área</span>
-      <select class="f-sel" id="fArea" onchange="G.filter()"><option value="">Todas</option></select></div>
-    <div class="f-group"><span class="f-lbl">Developer</span>
-      <select class="f-sel" id="fDev" onchange="G.filter()"><option value="">Todos</option></select></div>
-    <div class="f-group"><span class="f-lbl">Complexidade</span>
-      <select class="f-sel" id="fComplexity" onchange="G.filter()"><option value="">Todas</option></select></div>
-    <button class="f-reset" onclick="G.resetFilters()">✕ Limpar</button>
-    <div class="f-spacer"></div>
-    <button class="btn btn-success" onclick="G.openModal(null)">+ Novo Requisito</button>
-    <button class="btn btn-ghost btn-sm" onclick="G.load()" title="Recarregar">↻</button>
-  </div>
-
-  <div class="tbl-meta">
-    <div class="tbl-meta-l">
-      <strong id="cntShow">0</strong> de <strong id="cntAll">0</strong> requisitos
-      &nbsp;·&nbsp; Esforço: <strong id="cntEff">0</strong>h
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:11px;color:var(--dim)">Por página:</span>
-      <select class="f-sel" style="min-width:65px" onchange="G.ps=+this.value;G.cp=1;G.renderTable()">
-        <option value="20" selected>20</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="tbl-wrap">
-    <table>
-      <thead><tr>
-        <th onclick="G.sort('id')"           id="th-id">#</th>
-        <th onclick="G.sort('title')"        id="th-title">Requisito ↕</th>
-        <th onclick="G.sort('status')"       id="th-status">Status ↕</th>
-        <th onclick="G.sort('area')"         id="th-area">Área ↕</th>
-        <th onclick="G.sort('dashboard')"    id="th-dashboard">Dashboard ↕</th>
-        <th onclick="G.sort('developer')"    id="th-developer">Developer ↕</th>
-        <th onclick="G.sort('complexity')"   id="th-complexity">Complexidade ↕</th>
-        <th onclick="G.sort('effort')"       id="th-effort">Esforço ↕</th>
-        <th onclick="G.sort('expectedDate')" id="th-expectedDate">Prazo ↕</th>
-        <th>Ações</th>
-      </tr></thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-  <div class="pag" id="pag"></div>
-</div>
-
-<!-- ══ DASHBOARD ══ -->
-<div class="page" id="page-dashboard">
-  <div class="kpi-grid" id="kpiGrid"></div>
-  <div class="ch-grid">
-    <div class="ch-card"><div class="ch-title">Requisitos por Status</div><div class="ch-wrap"><canvas id="chStatus"></canvas></div></div>
-    <div class="ch-card"><div class="ch-title">Por Área</div><div class="ch-wrap"><canvas id="chArea"></canvas></div></div>
-  </div>
-  <div class="ch-grid2">
-    <div class="ch-card"><div class="ch-title">Esforço por Developer (h)</div><div class="ch-wrap"><canvas id="chDev"></canvas></div></div>
-    <div class="ch-card"><div class="ch-title">Complexidade</div><div class="ch-wrap"><canvas id="chComp"></canvas></div></div>
-  </div>
-  <div class="ch-card"><div class="ch-title">Progresso por Status</div><div class="del-rows" id="delRows"></div></div>
-</div>
-
-<!-- ══ CONFIG ══ -->
-<div class="page" id="page-config">
-
-  <div class="cfg-card">
-    <div class="cfg-card-title"><div class="cfg-dot"></div> Como funciona (sem Azure AD)</div>
-    <ol class="steps">
-      <li><strong style="color:var(--text)">Hospede este arquivo no SharePoint</strong> — faça upload do HTML para a biblioteca <code>Site Assets</code> ou qualquer biblioteca de documentos do seu site SharePoint.</li>
-      <li><strong style="color:var(--text)">Abra pelo link do SharePoint</strong> — ao abrir via URL do SharePoint (<code>https://suaempresa.sharepoint.com/...</code>), o SharePoint injeta automaticamente a sessão do usuário logado. Não funciona ao abrir localmente.</li>
-      <li><strong style="color:var(--text)">Preencha os campos abaixo</strong> — informe a URL do site e o nome da lista. As configurações ficam salvas no seu navegador (localStorage). Clique em Salvar e depois Testar Conexão.</li>
-    </ol>
-  </div>
-
-  <div class="cfg-card">
-    <div class="cfg-card-title"><div class="cfg-dot" style="background:var(--green)"></div> Conexão SharePoint</div>
-    <div class="cfg-grid">
-      <div class="f">
-        <label class="f-label">URL do Site SharePoint *</label>
-        <input type="text" class="f-ctrl" id="cfgSite" placeholder="https://suaempresa.sharepoint.com/sites/nome-do-site">
-        <div class="cfg-hint">URL completa do site onde a lista foi criada. <strong>Sem barra no final.</strong></div>
+  <!-- BACKLOG -->
+  <div class="page active" id="page-backlog">
+    <div class="filters">
+      <input type="text" class="finput" id="fSearch" placeholder="Buscar requisito, solicitante..." oninput="App.filter()">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="flabel">Status</span>
+        <select class="fselect" id="fStatus" onchange="App.filter()"><option value="">Todos</option></select>
       </div>
-      <div class="f">
-        <label class="f-label">Nome da Lista *</label>
-        <input type="text" class="f-ctrl" id="cfgList" placeholder="EI_Roadmap_Backlog">
-        <div class="cfg-hint">Nome exato da lista no SharePoint (case-sensitive). Veja em: Configurações do Site → Listas e Bibliotecas.</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="flabel">Área</span>
+        <select class="fselect" id="fArea" onchange="App.filter()"><option value="">Todas</option></select>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="flabel">Developer</span>
+        <select class="fselect" id="fDev" onchange="App.filter()"><option value="">Todos</option></select>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="flabel">Complexidade</span>
+        <select class="fselect" id="fComplexity" onchange="App.filter()"><option value="">Todas</option></select>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="flabel">Business Partner</span>
+        <select class="fselect" id="fBP" onchange="App.filter()"><option value="">Todos</option></select>
+      </div>
+      <button class="freset" onclick="App.resetFilters()">✕ Limpar</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm" onclick="App.load()" title="Recarregar">↻ Atualizar</button>
+    </div>
+
+    <div class="tmeta">
+      <div class="tmeta-l">
+        <strong id="cShown">0</strong> de <strong id="cTotal">0</strong> requisitos
+        &nbsp;·&nbsp; Esforço filtrado: <strong id="cEffort">0</strong>h
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--dim)">Por página:</span>
+        <select class="fselect" style="min-width:65px" onchange="App.pageSize=+this.value;App.page=1;App.renderTable()">
+          <option value="20" selected>20</option><option value="50">50</option><option value="100">100</option>
+        </select>
       </div>
     </div>
+
+    <div class="twrap">
+      <table>
+        <thead><tr>
+          <th onclick="App.sort('id')"             id="th-id">          # <span>↕</span></th>
+          <th onclick="App.sort('requirement')"    id="th-requirement"> Requisito <span>↕</span></th>
+          <th onclick="App.sort('status')"         id="th-status">      Status <span>↕</span></th>
+          <th onclick="App.sort('area')"           id="th-area">        Área <span>↕</span></th>
+          <th onclick="App.sort('dashboard')"      id="th-dashboard">   Dashboard <span>↕</span></th>
+          <th onclick="App.sort('developer')"      id="th-developer">   Developer <span>↕</span></th>
+          <th onclick="App.sort('complexity')"     id="th-complexity">  Complexidade <span>↕</span></th>
+          <th onclick="App.sort('effort')"         id="th-effort">      Esforço <span>↕</span></th>
+          <th onclick="App.sort('expected_date')"  id="th-expected_date">Prazo <span>↕</span></th>
+          <th onclick="App.sort('business_partner')" id="th-business_partner">BP <span>↕</span></th>
+          <th>Ações</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
   </div>
 
-  <div class="cfg-card">
-    <div class="cfg-card-title"><div class="cfg-dot" style="background:var(--yellow)"></div> Mapeamento de Colunas <span style="font-size:11px;font-weight:400;color:var(--dim);margin-left:6px">(Internal Name de cada coluna)</span></div>
-    <p style="font-size:12px;color:var(--dim);margin-bottom:14px">
-      Informe o <strong>Internal Name</strong> de cada coluna da sua lista. Para descobrir: Configurações da Lista → clique na coluna → veja o parâmetro <code>Field=</code> na URL.
-      Colunas padrão do SharePoint como <code>Title</code> e <code>Created</code> não precisam ser alteradas.
-    </p>
-    <div class="cfg-grid">
-      <div class="f"><label class="f-label">Título / Requisito</label><input type="text" class="f-ctrl" id="col-title"        placeholder="Title"></div>
-      <div class="f"><label class="f-label">Status</label>            <input type="text" class="f-ctrl" id="col-status"       placeholder="Status"></div>
-      <div class="f"><label class="f-label">Área</label>              <input type="text" class="f-ctrl" id="col-area"         placeholder="Area"></div>
-      <div class="f"><label class="f-label">Dashboard</label>         <input type="text" class="f-ctrl" id="col-dashboard"    placeholder="Dashboard"></div>
-      <div class="f"><label class="f-label">Solicitante</label>       <input type="text" class="f-ctrl" id="col-requester"    placeholder="Requester"></div>
-      <div class="f"><label class="f-label">Developer</label>         <input type="text" class="f-ctrl" id="col-developer"    placeholder="Developer"></div>
-      <div class="f"><label class="f-label">Complexidade</label>      <input type="text" class="f-ctrl" id="col-complexity"   placeholder="Complexity"></div>
-      <div class="f"><label class="f-label">Esforço (h)</label>       <input type="text" class="f-ctrl" id="col-effort"       placeholder="Effort"></div>
-      <div class="f"><label class="f-label">% Completado</label>      <input type="text" class="f-ctrl" id="col-pct"          placeholder="PercentCompleted"></div>
-      <div class="f"><label class="f-label">Business Partner</label>  <input type="text" class="f-ctrl" id="col-bp"           placeholder="BusinessPartner"></div>
-      <div class="f"><label class="f-label">Business Owner</label>    <input type="text" class="f-ctrl" id="col-bo"           placeholder="BusinessOwner"></div>
-      <div class="f"><label class="f-label">Bizops Lead</label>       <input type="text" class="f-ctrl" id="col-bizops"       placeholder="BizopsLead"></div>
-      <div class="f"><label class="f-label">Prazo Esperado</label>    <input type="text" class="f-ctrl" id="col-expDate"      placeholder="ExpectedDate"></div>
-      <div class="f"><label class="f-label">Data de Início</label>    <input type="text" class="f-ctrl" id="col-startDate"    placeholder="StartDate"></div>
-      <div class="f"><label class="f-label">Tamanho (Size)</label>    <input type="text" class="f-ctrl" id="col-size"         placeholder="Size"></div>
-      <div class="f"><label class="f-label">Comentários</label>       <input type="text" class="f-ctrl" id="col-comments"     placeholder="Comments"></div>
+  <!-- DASHBOARD -->
+  <div class="page" id="page-dashboard">
+    <div class="kgrid" id="kgrid"></div>
+    <div class="cgrid2">
+      <div class="ccard"><div class="ctitle">Requisitos por Status</div><div class="cwrap"><canvas id="cStatus"></canvas></div></div>
+      <div class="ccard"><div class="ctitle">Por Área</div><div class="cwrap"><canvas id="cArea"></canvas></div></div>
+    </div>
+    <div class="cgrid">
+      <div class="ccard"><div class="ctitle">Esforço por Developer (h)</div><div class="cwrap"><canvas id="cDev"></canvas></div></div>
+      <div class="ccard"><div class="ctitle">Complexidade</div><div class="cwrap"><canvas id="cComplexity"></canvas></div></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">Progresso de Entrega por Status</div>
+      <div id="deliveryRows" style="margin-top:8px"></div>
     </div>
   </div>
 
-  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-    <button class="btn btn-primary" onclick="G.saveCfg()">💾 Salvar Configurações</button>
-    <button class="btn btn-ghost"   onclick="G.testConn()">🔌 Testar Conexão</button>
-    <button class="btn btn-ghost"   onclick="G.resetCfg()" style="color:var(--red)">🗑️ Limpar</button>
-  </div>
-  <div class="cfg-test" id="cfgTestResult"></div>
-
 </div>
-</div></div>
 
 <!-- MODAL FORM -->
-<div class="overlay" id="modalOv">
-<div class="modal">
-  <div class="modal-head">
-    <div class="modal-title" id="modalTitle">Novo Requisito</div>
-    <button class="modal-x" onclick="G.closeModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <div class="fg">
-      <div class="f full"><label class="f-label">Requisito / Título *</label>
-        <textarea class="f-ctrl" id="f-title" rows="3" placeholder="Descreva o requisito..."></textarea></div>
-      <div class="f-sep">Classificação</div>
-      <div class="f"><label class="f-label">Status *</label>
-        <select class="f-ctrl" id="f-status">
-          <option>Idea</option><option>Identify</option><option>Evaluate</option>
-          <option>Plan</option><option>Dev Backlog</option><option>Develop</option>
-          <option>Validation</option><option>Close</option><option>On Hold</option><option>Removed</option>
-        </select></div>
-      <div class="f"><label class="f-label">Área</label>
-        <select class="f-ctrl" id="f-area">
-          <option value="">—</option>
-          <option>Commercial</option><option>Marketing</option><option>SS&D</option>
-          <option>BizOps</option><option>GBS</option><option>Pricing</option><option>Finance</option>
-        </select></div>
-      <div class="f"><label class="f-label">Dashboard</label>
-        <input type="text" class="f-ctrl" id="f-dashboard" placeholder="Nome do dashboard"></div>
-      <div class="f"><label class="f-label">Business Partner</label>
-        <input type="text" class="f-ctrl" id="f-bp" placeholder="Ex: Bruno"></div>
-      <div class="f-sep">Solicitante & Responsáveis</div>
-      <div class="f"><label class="f-label">Solicitante</label>
-        <input type="text" class="f-ctrl" id="f-requester" placeholder="Nome do solicitante"></div>
-      <div class="f"><label class="f-label">Business Owner</label>
-        <input type="text" class="f-ctrl" id="f-bo" placeholder="Dono do negócio"></div>
-      <div class="f"><label class="f-label">Bizops Lead</label>
-        <input type="text" class="f-ctrl" id="f-bizops" placeholder="Lead BizOps"></div>
-      <div class="f"><label class="f-label">Developer</label>
-        <input type="text" class="f-ctrl" id="f-developer" placeholder="Developer atribuído"></div>
-      <div class="f-sep">Estimativa</div>
-      <div class="f"><label class="f-label">Complexidade</label>
-        <select class="f-ctrl" id="f-complexity">
-          <option value="">—</option>
-          <option>Very Low</option><option>Low</option><option>Medium</option>
-          <option>High</option><option>Very High</option>
-        </select></div>
-      <div class="f"><label class="f-label">Tamanho</label>
-        <select class="f-ctrl" id="f-size">
-          <option value="">—</option>
-          <option>XS</option><option>Small</option><option>Medium</option>
-          <option>Large</option><option>XL</option>
-        </select></div>
-      <div class="f"><label class="f-label">Esforço (horas)</label>
-        <input type="number" class="f-ctrl" id="f-effort" placeholder="0" min="0"></div>
-      <div class="f"><label class="f-label">% Completado</label>
-        <input type="number" class="f-ctrl" id="f-pct" placeholder="0" min="0" max="100"></div>
-      <div class="f-sep">Datas</div>
-      <div class="f"><label class="f-label">Data da Solicitação</label>
-        <input type="date" class="f-ctrl" id="f-reqDate"></div>
-      <div class="f"><label class="f-label">Prazo Esperado</label>
-        <input type="date" class="f-ctrl" id="f-expDate"></div>
-      <div class="f"><label class="f-label">Data de Início</label>
-        <input type="date" class="f-ctrl" id="f-startDate"></div>
-      <div class="f"><label class="f-label">Previsão de Conclusão</label>
-        <input type="date" class="f-ctrl" id="f-expEndDate"></div>
-      <div class="f full"><label class="f-label">Comentários</label>
-        <textarea class="f-ctrl" id="f-comments" rows="3" placeholder="Observações..."></textarea></div>
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="mhead">
+      <div class="mtitle" id="modalTitle">Novo Requisito</div>
+      <button class="mclose" onclick="App.closeModal()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="fg full">
+          <label class="flbl">Requisito / Título *</label>
+          <textarea class="fctrl" id="f-requirement" rows="3" placeholder="Descreva o requisito..."></textarea>
+        </div>
+        <div class="fsec">Classificação</div>
+        <div class="fg">
+          <label class="flbl">Status *</label>
+          <select class="fctrl" id="f-status">
+            <option value="Idea">Idea</option><option value="Identify">Identify</option>
+            <option value="Evaluate">Evaluate</option><option value="Plan">Plan</option>
+            <option value="Dev Backlog">Dev Backlog</option><option value="Develop">Develop</option>
+            <option value="Validation">Validation</option><option value="Close">Close</option>
+            <option value="On Hold">On Hold</option><option value="Removed">Removed</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Área</label>
+          <select class="fctrl" id="f-area">
+            <option value="">—</option>
+            <option>Commercial</option><option>Marketing</option><option>SS&D</option>
+            <option>BizOps</option><option>GBS</option><option>Pricing</option><option>Finance</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Dashboard</label>
+          <input type="text" class="fctrl" id="f-dashboard" placeholder="Nome do dashboard">
+        </div>
+        <div class="fg">
+          <label class="flbl">Business Partner</label>
+          <input type="text" class="fctrl" id="f-business_partner" placeholder="Ex: Bruno">
+        </div>
+        <div class="fsec">Responsáveis</div>
+        <div class="fg">
+          <label class="flbl">Solicitante (Requester)</label>
+          <input type="text" class="fctrl" id="f-requester" placeholder="Nome do solicitante">
+        </div>
+        <div class="fg">
+          <label class="flbl">Business Owner</label>
+          <input type="text" class="fctrl" id="f-business_owner" placeholder="Dono do negócio">
+        </div>
+        <div class="fg">
+          <label class="flbl">Bizops Lead</label>
+          <input type="text" class="fctrl" id="f-bizops_lead" placeholder="Lead BizOps">
+        </div>
+        <div class="fg">
+          <label class="flbl">Developer</label>
+          <input type="text" class="fctrl" id="f-developer" placeholder="Developer atribuído">
+        </div>
+        <div class="fsec">Estimativa</div>
+        <div class="fg">
+          <label class="flbl">Complexidade</label>
+          <select class="fctrl" id="f-complexity">
+            <option value="">—</option>
+            <option>Very Low</option><option>Low</option><option>Medium</option>
+            <option>High</option><option>Very High</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Tamanho (Size)</label>
+          <select class="fctrl" id="f-size">
+            <option value="">—</option>
+            <option>XS</option><option>Small</option><option>Medium</option>
+            <option>Large</option><option>XL</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Esforço (horas)</label>
+          <input type="number" class="fctrl" id="f-effort" placeholder="0" min="0">
+        </div>
+        <div class="fg">
+          <label class="flbl">% Completado (0–100)</label>
+          <input type="number" class="fctrl" id="f-percent_completed" placeholder="0" min="0" max="100">
+        </div>
+        <div class="fg">
+          <label class="flbl">Prioridade Solicitante</label>
+          <select class="fctrl" id="f-requester_priority">
+            <option value="">—</option>
+            <option>Very Low</option><option>Low</option><option>Medium</option>
+            <option>High</option><option>Very High</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Impacts (Value)</label>
+          <input type="text" class="fctrl" id="f-impacts" placeholder="Valor do impacto">
+        </div>
+        <div class="fg">
+          <label class="flbl">Business Case</label>
+          <input type="number" class="fctrl" id="f-business_case" placeholder="0">
+        </div>
+        <div class="fg">
+          <label class="flbl">Cost Reduction</label>
+          <input type="number" class="fctrl" id="f-cost_reduction" placeholder="0">
+        </div>
+        <div class="fg">
+          <label class="flbl">Margin Increasing</label>
+          <input type="number" class="fctrl" id="f-margin_increasing" placeholder="0">
+        </div>
+        <div class="fg">
+          <label class="flbl">% Allocation</label>
+          <input type="number" class="fctrl" id="f-percent_allocation" placeholder="0" min="0" max="100">
+        </div>
+        <div class="fsec">Datas</div>
+        <div class="fg"><label class="flbl">Data da Solicitação</label><input type="date" class="fctrl" id="f-request_date"></div>
+        <div class="fg"><label class="flbl">Prazo Esperado</label><input type="date" class="fctrl" id="f-expected_date"></div>
+        <div class="fg"><label class="flbl">Data de Início</label><input type="date" class="fctrl" id="f-start_date"></div>
+        <div class="fg"><label class="flbl">Previsão de Conclusão</label><input type="date" class="fctrl" id="f-expected_end_date"></div>
+        <div class="fg"><label class="flbl">Data de Fechamento</label><input type="date" class="fctrl" id="f-closed_date"></div>
+        <div class="fg full">
+          <label class="flbl">Comentários</label>
+          <textarea class="fctrl" id="f-comments" rows="3" placeholder="Observações adicionais..."></textarea>
+        </div>
+        <div class="fg full">
+          <label class="flbl">Comentários Nay</label>
+          <textarea class="fctrl" id="f-comments_nay" rows="2" placeholder="Comentários adicionais..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="App.closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="App.saveRecord()">💾 Salvar</button>
     </div>
   </div>
-  <div class="modal-foot">
-    <button class="btn btn-ghost" onclick="G.closeModal()">Cancelar</button>
-    <button class="btn btn-primary" id="saveBtn" onclick="G.save()">💾 Salvar no SharePoint</button>
-  </div>
-</div>
 </div>
 
 <!-- CONFIRM DELETE -->
-<div class="overlay" id="confirmOv">
-<div class="confirm-box">
-  <div class="confirm-ico">🗑️</div>
-  <div class="confirm-title">Excluir Requisito</div>
-  <div class="confirm-msg" id="confirmMsg"></div>
-  <div class="confirm-actions">
-    <button class="btn btn-ghost" onclick="G.closeConfirm()">Cancelar</button>
-    <button class="btn btn-danger" id="delBtn" onclick="G.doDelete()">Excluir</button>
+<div class="overlay" id="confirmOverlay">
+  <div class="cbox">
+    <div class="cico">🗑️</div>
+    <div class="ctit">Excluir Requisito</div>
+    <div class="cmsg" id="confirmMsg"></div>
+    <div class="cact">
+      <button class="btn btn-ghost" onclick="App.closeConfirm()">Cancelar</button>
+      <button class="btn btn-danger" id="confirmBtn" onclick="App.doDelete()">Excluir</button>
+    </div>
   </div>
 </div>
-</div>
 
-<!-- NOTIF -->
 <div class="notif" id="notif"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// CONFIG — salva no localStorage
-// ═══════════════════════════════════════════════════════════
-const DEF_COLS = {
-  title:'Title', status:'Status', area:'Area', dashboard:'Dashboard',
-  requester:'Requester', developer:'Developer', complexity:'Complexity',
-  effort:'Effort', pct:'PercentCompleted', bp:'BusinessPartner',
-  bo:'BusinessOwner', bizops:'BizopsLead', expDate:'ExpectedDate',
-  startDate:'StartDate', size:'Size', comments:'Comments'
-};
+// ── SUPABASE CONFIG ──────────────────────────────────────────────────────────
+const SUPA_URL = 'https://iuzlpllhckzrddwdqpyl.supabase.co';
+const SUPA_KEY = 'sb_publishable_uKP1DQsBF_EFHklMZIC4hw_Q_0VWjnb';
+const TABLE    = 'roadmap';
 
-function loadCfg() {
-  try {
-    const s = localStorage.getItem('ei_sp_cfg');
-    if (!s) return { site:'', list:'', cols:{ ...DEF_COLS } };
-    const p = JSON.parse(s);
-    return { site: p.site||'', list: p.list||'', cols: { ...DEF_COLS, ...(p.cols||{}) } };
-  } catch { return { site:'', list:'', cols:{ ...DEF_COLS } }; }
-}
-function persistCfg(c) { localStorage.setItem('ei_sp_cfg', JSON.stringify(c)); }
-const CFG = loadCfg();
-const cfgOk = () => !!(CFG.site && CFG.list);
+const supa = {
+  headers: {
+    'apikey':        SUPA_KEY,
+    'Authorization': `Bearer ${SUPA_KEY}`,
+    'Content-Type':  'application/json',
+    'Prefer':        'return=representation',
+  },
+  url: `${SUPA_URL}/rest/v1/${TABLE}`,
 
-// ═══════════════════════════════════════════════════════════
-// SHAREPOINT REST API
-// Usa credenciais de sessão (cookie) — só funciona quando
-// o HTML está hospedado DENTRO do SharePoint
-// ═══════════════════════════════════════════════════════════
-const SP = {
-
-  baseUrl() {
-    return `${CFG.site}/_api/web/lists/getbytitle('${encodeURIComponent(CFG.list)}')/items`;
+  async getAll() {
+    const r = await fetch(`${this.url}?select=*&order=id.desc&limit=2000`, { headers: this.headers });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
   },
 
-  // Pega o Request Digest necessário para operações de escrita
-  async digest() {
-    const r = await fetch(`${CFG.site}/_api/contextinfo`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Accept': 'application/json;odata=nometadata', 'Content-Type': 'application/json;odata=nometadata' }
-    });
-    if (!r.ok) throw new Error(`Digest falhou: HTTP ${r.status}`);
-    const d = await r.json();
-    return d.FormDigestValue;
-  },
-
-  // Headers para leitura
-  hdrRead() {
-    return {
-      'Accept':       'application/json;odata=nometadata',
-      'Content-Type': 'application/json;odata=nometadata',
-    };
-  },
-
-  // Headers para escrita (POST/PATCH/DELETE)
-  async hdrWrite(method) {
-    const digest = await this.digest();
-    return {
-      'Accept':          'application/json;odata=nometadata',
-      'Content-Type':    'application/json;odata=nometadata',
-      'X-RequestDigest': digest,
-      ...(method === 'MERGE' || method === 'DELETE'
-        ? { 'X-HTTP-Method': method, 'IF-MATCH': '*' }
-        : {}),
-    };
-  },
-
-  // Campos a selecionar na query
-  selectFields() {
-    const c = CFG.cols;
-    return ['Id', c.title, c.status, c.area, c.dashboard, c.requester,
-      c.developer, c.complexity, c.effort, c.pct, c.bp, c.bo,
-      c.bizops, c.expDate, c.startDate, c.size, c.comments,
-      'Author/Title', 'Author/EMail', 'Created', 'Modified']
-      .filter((v,i,a) => v && a.indexOf(v)===i).join(',');
-  },
-
-  // GET — busca todos os itens
-  async getAll(filters = {}) {
-    const sel = this.selectFields();
-    let url = `${this.baseUrl()}?$select=${sel}&$expand=Author&$top=2000&$orderby=Id desc`;
-    const f = [];
-    const c = CFG.cols;
-    if (filters.status)     f.push(`${c.status} eq '${this.esc(filters.status)}'`);
-    if (filters.area)       f.push(`${c.area} eq '${this.esc(filters.area)}'`);
-    if (filters.developer)  f.push(`${c.developer} eq '${this.esc(filters.developer)}'`);
-    if (filters.complexity) f.push(`${c.complexity} eq '${this.esc(filters.complexity)}'`);
-    if (f.length) url += '&$filter=' + f.join(' and ');
-
-    const r = await fetch(url, { credentials: 'include', headers: this.hdrRead() });
-    if (!r.ok) throw new Error(`HTTP ${r.status} — ${r.statusText}`);
-    const d = await r.json();
-    let items = (d.value || []).map(i => this.norm(i));
-
-    // busca textual client-side
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      items = items.filter(i =>
-        i.title.toLowerCase().includes(q)      ||
-        i.requester.toLowerCase().includes(q)  ||
-        i.dashboard.toLowerCase().includes(q)  ||
-        i.comments.toLowerCase().includes(q)
-      );
-    }
-    return items;
-  },
-
-  // POST — cria item
   async create(rec) {
-    const body = this.denorm(rec);
-    const r = await fetch(this.baseUrl(), {
-      method: 'POST',
-      credentials: 'include',
-      headers: await this.hdrWrite('POST'),
-      body: JSON.stringify(body),
+    const r = await fetch(this.url, {
+      method: 'POST', headers: this.headers, body: JSON.stringify(rec)
     });
-    if (!r.ok) {
-      const e = await r.json().catch(()=>({}));
-      throw new Error(e?.error?.message?.value || `Erro ${r.status}`);
-    }
-    return this.norm(await r.json());
-  },
-
-  // MERGE — atualiza item
-  async update(id, rec) {
-    const body = this.denorm(rec);
-    const r = await fetch(`${this.baseUrl()}(${id})`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: await this.hdrWrite('MERGE'),
-      body: JSON.stringify(body),
-    });
-    if (!r.ok && r.status !== 204) {
-      const e = await r.json().catch(()=>({}));
-      throw new Error(e?.error?.message?.value || `Erro ${r.status}`);
-    }
-    return true;
-  },
-
-  // DELETE — exclui item
-  async remove(id) {
-    const r = await fetch(`${this.baseUrl()}(${id})`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: await this.hdrWrite('DELETE'),
-    });
-    if (!r.ok && r.status !== 204) throw new Error(`Erro ${r.status}`);
-    return true;
-  },
-
-  // Testa conexão com a lista
-  async check() {
-    const url = `${CFG.site}/_api/web/lists/getbytitle('${encodeURIComponent(CFG.list)}')?$select=Title,ItemCount`;
-    const r = await fetch(url, { credentials: 'include', headers: this.hdrRead() });
-    if (!r.ok) return { ok: false, error: `HTTP ${r.status} — verifique URL e nome da lista` };
+    if (!r.ok) { const e=await r.json().catch(()=>({})); throw new Error(e.message||`HTTP ${r.status}`); }
     const d = await r.json();
-    return { ok: true, count: d.ItemCount, title: d.Title };
+    return Array.isArray(d) ? d[0] : d;
   },
 
-  // Item do SharePoint → objeto da app
-  norm(i) {
-    const c = CFG.cols;
-    const dt = v => v ? v.substring(0,10) : '';
-    return {
-      id:          i.Id,
-      title:       i[c.title]    || '',
-      status:      i[c.status]   || '',
-      area:        i[c.area]     || '',
-      dashboard:   i[c.dashboard]|| '',
-      requester:   i[c.requester]|| '',
-      developer:   i[c.developer]|| '',
-      complexity:  i[c.complexity]||'',
-      effort:      i[c.effort]   ?? null,
-      pct:         i[c.pct]      ?? null,
-      bp:          i[c.bp]       || '',
-      bo:          i[c.bo]       || '',
-      bizops:      i[c.bizops]   || '',
-      expDate:     dt(i[c.expDate]),
-      startDate:   dt(i[c.startDate]),
-      size:        i[c.size]     || '',
-      comments:    i[c.comments] || '',
-      createdBy:   i.Author?.Title || '',
-      created:     dt(i.Created),
-      modified:    dt(i.Modified),
-    };
+  async update(id, rec) {
+    const r = await fetch(`${this.url}?id=eq.${id}`, {
+      method: 'PATCH', headers: this.headers, body: JSON.stringify(rec)
+    });
+    if (!r.ok) { const e=await r.json().catch(()=>({})); throw new Error(e.message||`HTTP ${r.status}`); }
+    return true;
   },
 
-  // Objeto da app → payload do SharePoint
-  denorm(rec) {
-    const c = CFG.cols;
-    const obj = {};
-    const s = (col, val) => { if(col && val!=null && val!=='') obj[col] = val; };
-    s(c.title,     rec.title);
-    s(c.status,    rec.status);
-    s(c.area,      rec.area);
-    s(c.dashboard, rec.dashboard);
-    s(c.requester, rec.requester);
-    s(c.developer, rec.developer);
-    s(c.complexity,rec.complexity);
-    s(c.bp,        rec.bp);
-    s(c.bo,        rec.bo);
-    s(c.bizops,    rec.bizops);
-    s(c.size,      rec.size);
-    s(c.comments,  rec.comments);
-    s(c.expDate,   rec.expDate   || undefined);
-    s(c.startDate, rec.startDate || undefined);
-    if (rec.effort !== '' && rec.effort != null) obj[c.effort] = parseFloat(rec.effort)||0;
-    if (rec.pct    !== '' && rec.pct    != null) obj[c.pct]    = parseFloat(rec.pct)   ||0;
-    return obj;
-  },
-
-  esc(v){ return String(v).replace(/'/g,"''"); }
+  async delete(id) {
+    const r = await fetch(`${this.url}?id=eq.${id}`, {
+      method: 'DELETE', headers: { ...this.headers, Prefer: 'return=minimal' }
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return true;
+  }
 };
 
-// ═══════════════════════════════════════════════════════════
-// APP
-// ═══════════════════════════════════════════════════════════
-const G = {
-  data:[], filtered:[],
-  cp:1, ps:20,
-  sk:'id', sd:1,
-  editId:null, delId:null,
-  charts:{},
+// ── APP ──────────────────────────────────────────────────────────────────────
+const App = {
+  data: [], filtered: [],
+  page: 1, pageSize: 20,
+  sortKey: 'id', sortDir: 1,
+  editingId: null, deletingId: null,
+  charts: {},
 
-  // ── INIT ──────────────────────────────────────────────────
   async init() {
-    this.setLoader('Verificando configuração...');
-
-    // Detecta se está rodando localmente (file://)
-    if (location.protocol === 'file:') {
-      document.getElementById('bannerHost').style.display = 'flex';
+    try {
+      await this.load();
+    } catch(e) {
+      this.setSp(false, 'Erro ao conectar');
+      this.notify('Erro: ' + e.message, 'err');
+      document.getElementById('loader').classList.add('hide');
     }
-
-    this.loadCfgUI();
-    this.setSpStatus('loading','Aguardando...');
-
-    if (!cfgOk()) {
-      document.getElementById('bannerCfg').classList.add('show');
-      this.hideLoader();
-      return;
-    }
-
-    await this.load();
-    this.hideLoader();
   },
 
-  setLoader(t) {
-    document.getElementById('loaderTxt').textContent = t;
-    document.getElementById('loader').classList.remove('hide');
-  },
-  hideLoader() { document.getElementById('loader').classList.add('hide'); },
-
-  setSpStatus(cls, txt) {
-    const el = document.getElementById('spPill');
-    el.className = 'sp-pill ' + cls;
+  setSp(ok, txt) {
+    document.getElementById('spPill').className = 'sp-pill ' + (ok?'ok':'err');
     document.getElementById('spTxt').textContent = txt;
   },
 
-  // ── LOAD DATA ─────────────────────────────────────────────
   async load() {
-    if (!cfgOk()) { this.setSpStatus('err','Não configurado'); return; }
-    this.setSpStatus('loading','Carregando...');
-    document.getElementById('bannerErr').style.display = 'none';
+    document.getElementById('loader').classList.remove('hide');
+    document.getElementById('loaderTxt').textContent = 'Carregando dados do Supabase...';
     try {
-      const filters = {
-        status:     document.getElementById('fStatus')?.value    || '',
-        area:       document.getElementById('fArea')?.value      || '',
-        developer:  document.getElementById('fDev')?.value       || '',
-        complexity: document.getElementById('fComplexity')?.value|| '',
-        search:     document.getElementById('fSearch')?.value    || '',
-      };
-      this.data = await SP.getAll(filters);
-      this.setSpStatus('ok', `${CFG.list} · ${this.data.length} itens`);
-      this.populateFilters();
+      this.data = await supa.getAll();
+      this.setSp(true, `Supabase · ${this.data.length} requisitos`);
+      this.populateSelects();
       this.filter();
-
-      // Mostra usuário logado
-      this.showUserFromData();
-    } catch(e) {
-      this.setSpStatus('err','Erro na conexão');
-      document.getElementById('bannerErr').style.display = 'flex';
-      document.getElementById('bannerErrTxt').innerHTML =
-        `<strong>Erro de conexão:</strong> ${e.message} — Verifique as Configurações ou se o arquivo está hospedado no SharePoint.`;
-      console.error(e);
+    } finally {
+      document.getElementById('loader').classList.add('hide');
     }
   },
 
-  showUserFromData() {
-    // Tenta mostrar usuário a partir dos dados carregados
-    const first = this.data.find(r => r.createdBy);
-    // Alternativamente, busca o usuário atual da sessão SP
-    fetch(`${CFG.site}/_api/web/currentuser?$select=Title,Email`, {
-      credentials: 'include',
-      headers: { 'Accept': 'application/json;odata=nometadata' }
-    }).then(r => r.ok ? r.json() : null).then(d => {
-      if (!d) return;
-      const name = d.Title || d.Email || '';
-      const initials = name.split(' ').map(n=>n[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
-      document.getElementById('userAv').textContent   = initials || '??';
-      document.getElementById('userName').textContent = name.split(' ')[0] || name;
-      document.getElementById('userChip').style.display = 'flex';
-    }).catch(()=>{});
+  tab(name) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    document.getElementById('tab-'+name).classList.add('active');
+    if (name==='dashboard') this.renderDash();
+    if (name==='backlog')   this.filter();
   },
 
-  // ── NAVIGATION ─────────────────────────────────────────────
-  page(p) {
-    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
-    document.getElementById('page-'+p).classList.add('active');
-    document.getElementById('tab-'+p).classList.add('active');
-    if (p==='dashboard') this.renderDash();
-    if (p==='backlog')   this.filter();
-    if (p==='config')    this.loadCfgUI();
-  },
-
-  // ── FILTERS ───────────────────────────────────────────────
-  populateFilters() {
-    [['fStatus','status'],['fArea','area'],['fDev','developer'],['fComplexity','complexity']].forEach(([id,k])=>{
-      const sel = document.getElementById(id);
-      const cur = sel.value;
-      const vals = [...new Set(this.data.map(r=>r[k]).filter(Boolean))].sort();
-      sel.innerHTML = '<option value="">Todos</option>' + vals.map(v=>`<option value="${v}">${v}</option>`).join('');
-      sel.value = cur;
+  populateSelects() {
+    [['fStatus','status'],['fArea','area'],['fDev','developer'],
+     ['fComplexity','complexity'],['fBP','business_partner']].forEach(([id,key])=>{
+      const el=document.getElementById(id), cur=el.value;
+      const vals=[...new Set(this.data.map(r=>r[key]).filter(Boolean))].sort();
+      el.innerHTML='<option value="">Todos</option>'+vals.map(v=>`<option value="${v}">${v}</option>`).join('');
+      el.value=cur;
     });
   },
 
   filter() {
-    const q  = (document.getElementById('fSearch')?.value     ||'').toLowerCase();
-    const fs = document.getElementById('fStatus')?.value      ||'';
-    const fa = document.getElementById('fArea')?.value        ||'';
-    const fd = document.getElementById('fDev')?.value         ||'';
-    const fc = document.getElementById('fComplexity')?.value  ||'';
-    this.filtered = this.data.filter(r => {
-      if (q  && !(r.title.toLowerCase().includes(q)||r.requester.toLowerCase().includes(q)||r.dashboard.toLowerCase().includes(q)||r.comments.toLowerCase().includes(q))) return false;
-      if (fs && r.status!==fs)     return false;
-      if (fa && r.area!==fa)       return false;
-      if (fd && r.developer!==fd)  return false;
-      if (fc && r.complexity!==fc) return false;
+    const q  =(document.getElementById('fSearch')?.value||'').toLowerCase();
+    const fs =document.getElementById('fStatus')?.value||'';
+    const fa =document.getElementById('fArea')?.value||'';
+    const fd =document.getElementById('fDev')?.value||'';
+    const fc =document.getElementById('fComplexity')?.value||'';
+    const fb =document.getElementById('fBP')?.value||'';
+    this.filtered=this.data.filter(r=>{
+      if(q&&!(
+        (r.requirement||'').toLowerCase().includes(q)||
+        (r.requester||'').toLowerCase().includes(q)||
+        (r.dashboard||'').toLowerCase().includes(q)||
+        (r.comments||'').toLowerCase().includes(q)
+      )) return false;
+      if(fs&&r.status!==fs) return false;
+      if(fa&&r.area!==fa) return false;
+      if(fd&&r.developer!==fd) return false;
+      if(fc&&r.complexity!==fc) return false;
+      if(fb&&r.business_partner!==fb) return false;
       return true;
     });
-    this.cp = 1;
-    this.renderTable();
+    this.page=1; this.renderTable();
   },
 
   resetFilters() {
-    document.getElementById('fSearch').value = '';
-    ['fStatus','fArea','fDev','fComplexity'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('fSearch').value='';
+    ['fStatus','fArea','fDev','fComplexity','fBP'].forEach(id=>document.getElementById(id).value='');
     this.filter();
   },
 
-  // ── TABLE ─────────────────────────────────────────────────
-  sort(k) {
-    if (this.sk===k) this.sd*=-1; else { this.sk=k; this.sd=1; }
-    document.querySelectorAll('th').forEach(t=>t.classList.remove('sorted'));
-    document.getElementById('th-'+k)?.classList.add('sorted');
+  sort(key) {
+    if(this.sortKey===key) this.sortDir*=-1; else{this.sortKey=key;this.sortDir=1;}
+    document.querySelectorAll('th').forEach(th=>th.classList.remove('th-s'));
+    document.getElementById('th-'+key)?.classList.add('th-s');
     this.renderTable();
   },
 
   renderTable() {
-    const sorted = [...this.filtered].sort((a,b)=>{
-      const av=a[this.sk]??'', bv=b[this.sk]??'';
-      if(typeof av==='number'&&typeof bv==='number') return (av-bv)*this.sd;
-      return String(av).localeCompare(String(bv))*this.sd;
+    const sorted=[...this.filtered].sort((a,b)=>{
+      const av=a[this.sortKey]??'', bv=b[this.sortKey]??'';
+      if(typeof av==='number'&&typeof bv==='number') return (av-bv)*this.sortDir;
+      return String(av).localeCompare(String(bv))*this.sortDir;
     });
-
-    document.getElementById('cntShow').textContent = this.filtered.length;
-    document.getElementById('cntAll').textContent  = this.data.length;
-    document.getElementById('cntEff').textContent  = this.filtered.reduce((a,r)=>a+(r.effort||0),0).toLocaleString();
-
-    const s = (this.cp-1)*this.ps;
-    const pg = sorted.slice(s, s+this.ps);
-    const tb = document.getElementById('tbody');
-
-    if (!pg.length) {
-      tb.innerHTML = `<tr><td colspan="10"><div class="empty-st"><div class="empty-ico">🔍</div><p>Nenhum requisito encontrado.</p></div></td></tr>`;
-    } else {
-      tb.innerHTML = pg.map(r=>`<tr>
+    document.getElementById('cShown').textContent=this.filtered.length;
+    document.getElementById('cTotal').textContent=this.data.length;
+    document.getElementById('cEffort').textContent=this.filtered.reduce((a,r)=>a+(r.effort||0),0).toLocaleString();
+    const start=(this.page-1)*this.pageSize;
+    const rows=sorted.slice(start,start+this.pageSize);
+    const tbody=document.getElementById('tbody');
+    if(!rows.length){
+      tbody.innerHTML=`<tr><td colspan="11"><div class="empty"><div class="empty-ico">🔍</div><p>Nenhum requisito encontrado.</p></div></td></tr>`;
+    }else{
+      tbody.innerHTML=rows.map(r=>`<tr>
         <td class="td-mono">${r.id}</td>
-        <td><span class="td-clip" title="${this.esc(r.title)}">${r.title||'—'}</span></td>
+        <td><span class="td-clip" title="${this.esc(r.requirement||'')}">${r.requirement?r.requirement.split('\n')[0]:'—'}</span></td>
         <td>${this.badge(r.status)}</td>
         <td style="font-size:12px">${r.area||'—'}</td>
-        <td><span class="td-clip" style="max-width:130px;font-size:12px">${r.dashboard||'—'}</span></td>
+        <td style="font-size:12px"><span class="td-clip" style="max-width:130px">${r.dashboard||'—'}</span></td>
         <td style="font-size:12px">${r.developer||'—'}</td>
         <td style="font-size:12px;color:var(--dim)">${r.complexity||'—'}${r.size?' / '+r.size:''}</td>
         <td class="td-mono">${r.effort!=null?r.effort+'h':'—'}</td>
-        <td style="font-size:12px;color:var(--dim)">${this.fmtDate(r.expDate)}</td>
-        <td><div class="td-act">
-          <button class="btn-ico edit" onclick="G.openModal(${r.id})" title="Editar">✏️</button>
-          <button class="btn-ico del"  onclick="G.openConfirm(${r.id})" title="Excluir">🗑️</button>
+        <td style="font-size:12px;color:var(--dim)">${this.fmtDate(r.expected_date)}</td>
+        <td style="font-size:12px">${r.business_partner||'—'}</td>
+        <td><div class="td-actions">
+          <button class="bico edit" onclick="App.openModal(${r.id})" title="Editar">✏️</button>
+          <button class="bico del"  onclick="App.openConfirm(${r.id})" title="Excluir">🗑️</button>
         </div></td>
       </tr>`).join('');
     }
-    this.renderPag(sorted.length);
+    this.renderPagination(sorted.length);
   },
 
-  renderPag(total) {
-    const pages = Math.ceil(total/this.ps);
-    const el = document.getElementById('pag');
-    if (pages<=1) { el.innerHTML=''; return; }
-    let h = `<button class="pg" onclick="G.goPg(${this.cp-1})" ${this.cp===1?'disabled':''}>‹</button>`;
-    for (let i=1;i<=pages;i++) {
-      if (pages>10&&i>3&&i<pages-2&&Math.abs(i-this.cp)>1) {
-        if (i===4||i===pages-3) h+=`<span class="pg-dots">…</span>`;
+  renderPagination(total) {
+    const pages=Math.ceil(total/this.pageSize);
+    const el=document.getElementById('pagination');
+    if(pages<=1){el.innerHTML='';return;}
+    let h=`<button class="pgbtn" onclick="App.goPage(${this.page-1})" ${this.page===1?'disabled':''}>‹</button>`;
+    for(let i=1;i<=pages;i++){
+      if(pages>10&&i>3&&i<pages-2&&Math.abs(i-this.page)>1){
+        if(i===4||i===pages-3) h+=`<span style="font-size:12px;color:var(--dim);padding:0 4px">…</span>`;
         continue;
       }
-      h+=`<button class="pg ${i===this.cp?'active':''}" onclick="G.goPg(${i})">${i}</button>`;
+      h+=`<button class="pgbtn ${i===this.page?'active':''}" onclick="App.goPage(${i})">${i}</button>`;
     }
-    h+=`<button class="pg" onclick="G.goPg(${this.cp+1})" ${this.cp===pages?'disabled':''}>›</button>`;
+    h+=`<button class="pgbtn" onclick="App.goPage(${this.page+1})" ${this.page===pages?'disabled':''}>›</button>`;
     el.innerHTML=h;
   },
 
-  goPg(p) {
-    const pages=Math.ceil(this.filtered.length/this.ps);
+  goPage(p){
+    const pages=Math.ceil(this.filtered.length/this.pageSize);
     if(p<1||p>pages) return;
-    this.cp=p; this.renderTable();
+    this.page=p; this.renderTable();
   },
 
-  // ── MODAL ─────────────────────────────────────────────────
-  FIELDS: ['title','status','area','dashboard','bp','requester','bo','bizops',
-           'developer','complexity','size','effort','pct','reqDate','expDate',
-           'startDate','expEndDate','comments'],
+  FIELDS:['requirement','status','area','dashboard','business_partner','requester',
+    'business_owner','bizops_lead','developer','complexity','size','effort',
+    'percent_completed','requester_priority','impacts','business_case','cost_reduction',
+    'margin_increasing','percent_allocation','request_date','expected_date',
+    'start_date','expected_end_date','closed_date','comments','comments_nay'],
 
   openModal(id) {
-    this.editId = id;
-    document.getElementById('modalTitle').textContent = id ? `Editar Requisito #${id}` : 'Novo Requisito';
-    const r = id ? this.data.find(x=>x.id===id) : {};
-    this.FIELDS.forEach(f => {
-      const el = document.getElementById('f-'+f);
-      if (el) el.value = (r && r[f]!=null) ? r[f] : '';
+    this.editingId=id;
+    document.getElementById('modalTitle').textContent=id?`Editar Requisito #${id}`:'Novo Requisito';
+    const r=id?this.data.find(x=>x.id===id):{};
+    this.FIELDS.forEach(f=>{
+      const el=document.getElementById('f-'+f);
+      if(el) el.value=(r&&r[f]!=null)?r[f]:'';
     });
-    document.getElementById('modalOv').classList.add('open');
+    document.getElementById('modalOverlay').classList.add('open');
   },
 
-  closeModal() {
-    document.getElementById('modalOv').classList.remove('open');
-    this.editId=null;
+  closeModal(){
+    document.getElementById('modalOverlay').classList.remove('open');
+    this.editingId=null;
   },
 
-  async save() {
-    const title = document.getElementById('f-title').value.trim();
-    if (!title) { this.notify('O campo Requisito é obrigatório.','err'); return; }
-    if (!cfgOk()) { this.notify('Configure o SharePoint primeiro!','err'); return; }
-
-    const rec = {};
-    this.FIELDS.forEach(f => {
-      const el = document.getElementById('f-'+f);
-      if (el) rec[f] = el.value || null;
+  async saveRecord() {
+    const req=document.getElementById('f-requirement').value.trim();
+    if(!req){this.notify('O campo Requisito é obrigatório.','err');return;}
+    const rec={};
+    this.FIELDS.forEach(f=>{
+      const el=document.getElementById('f-'+f);
+      if(!el) return;
+      const v=el.value;
+      if(['effort','percent_completed','business_case','cost_reduction',
+          'margin_increasing','percent_allocation'].includes(f)){
+        rec[f]=v?parseFloat(v):null;
+      } else {
+        rec[f]=v||null;
+      }
     });
-
-    const btn = document.getElementById('saveBtn');
+    const btn=document.getElementById('saveBtn');
     btn.innerHTML='<span class="spinner"></span> Salvando...';
     btn.disabled=true;
-
-    try {
-      if (this.editId) {
-        await SP.update(this.editId, rec);
-        this.notify(`✅ Requisito #${this.editId} atualizado no SharePoint!`,'ok');
-      } else {
-        const created = await SP.create(rec);
-        this.notify(`✅ Requisito #${created.id} criado no SharePoint!`,'ok');
+    try{
+      if(this.editingId){
+        await supa.update(this.editingId,rec);
+        this.notify(`Requisito #${this.editingId} atualizado! ✓`,'ok');
+      }else{
+        const created=await supa.create(rec);
+        this.notify(`Requisito #${created.id} criado com sucesso! ✓`,'ok');
       }
       this.closeModal();
       await this.load();
-    } catch(e) {
+    }catch(e){
       this.notify('Erro ao salvar: '+e.message,'err');
-    } finally {
-      btn.innerHTML='💾 Salvar no SharePoint';
-      btn.disabled=false;
+    }finally{
+      btn.innerHTML='💾 Salvar'; btn.disabled=false;
     }
   },
 
-  // ── DELETE ─────────────────────────────────────────────────
-  openConfirm(id) {
-    this.delId=id;
+  openConfirm(id){
+    this.deletingId=id;
     const r=this.data.find(x=>x.id===id);
-    document.getElementById('confirmMsg').textContent =
-      `Excluir o requisito #${id}: "${(r?.title||'').substring(0,80)}"?\nEsta ação não pode ser desfeita.`;
-    document.getElementById('confirmOv').classList.add('open');
+    document.getElementById('confirmMsg').textContent=
+      `Excluir requisito #${id}: "${(r?.requirement||'').split('\n')[0].substring(0,80)}"? Esta ação não pode ser desfeita.`;
+    document.getElementById('confirmOverlay').classList.add('open');
   },
+  closeConfirm(){document.getElementById('confirmOverlay').classList.remove('open');this.deletingId=null;},
 
-  closeConfirm() {
-    document.getElementById('confirmOv').classList.remove('open');
-    this.delId=null;
-  },
-
-  async doDelete() {
-    if (!this.delId) return;
-    const btn=document.getElementById('delBtn');
-    btn.innerHTML='<span class="spinner"></span>';
-    btn.disabled=true;
-    try {
-      await SP.remove(this.delId);
-      this.notify(`✅ Requisito #${this.delId} excluído do SharePoint.`,'ok');
+  async doDelete(){
+    if(!this.deletingId) return;
+    const btn=document.getElementById('confirmBtn');
+    btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
+    try{
+      await supa.delete(this.deletingId);
+      this.notify(`Requisito #${this.deletingId} excluído.`,'ok');
       this.closeConfirm();
       await this.load();
-    } catch(e) {
+    }catch(e){
       this.notify('Erro ao excluir: '+e.message,'err');
-    } finally {
-      btn.innerHTML='Excluir'; btn.disabled=false;
-    }
+    }finally{btn.innerHTML='Excluir';btn.disabled=false;}
   },
 
-  // ── DASHBOARD ─────────────────────────────────────────────
-  renderDash() {
-    const d = this.data.filter(r=>r.status!=='Removed');
-    const tot   = d.length||1;
-    const closed = d.filter(r=>r.status==='Close').length;
-    const inDev  = d.filter(r=>['Develop','Validation'].includes(r.status)).length;
-    const effort = d.reduce((a,r)=>a+(r.effort||0),0);
-    const pctArr = d.filter(r=>r.pct!=null);
-    const avgPct = pctArr.length ? pctArr.reduce((a,r)=>a+r.pct,0)/pctArr.length : 0;
-
-    document.getElementById('kpiGrid').innerHTML = [
-      {l:'Total',          v:d.length,                        s:'Ativos',          ico:'📋',c:'var(--blue)'},
-      {l:'Entregues',      v:closed,                          s:((closed/tot)*100).toFixed(1)+'% do total', ico:'✅',c:'var(--green)'},
-      {l:'Em Dev',         v:inDev,                           s:'Develop+Validation',ico:'⚡',c:'var(--yellow)'},
-      {l:'Total Esforço',  v:effort.toLocaleString()+'h',     s:'Estimado',         ico:'⏱️',c:'var(--purple)'},
-      {l:'% Médio',        v:avgPct.toFixed(0)+'%',           s:'Completado',       ico:'📈',c:'var(--cyan)'},
+  renderDash(){
+    const d=this.data.filter(r=>r.status!=='Removed');
+    const total=d.length||1;
+    const closed=d.filter(r=>r.status==='Close').length;
+    const inDev=d.filter(r=>['Develop','Validation'].includes(r.status)).length;
+    const effort=d.reduce((a,r)=>a+(r.effort||0),0);
+    const pctArr=d.filter(r=>r.percent_completed!=null);
+    const avgPct=pctArr.length?pctArr.reduce((a,r)=>a+r.percent_completed,0)/pctArr.length:0;
+    document.getElementById('kgrid').innerHTML=[
+      {l:'Total Requisitos',  v:d.length,                    s:'Ativos',                   i:'📋',c:'var(--blue)'},
+      {l:'Entregues',         v:closed,                      s:((closed/total)*100).toFixed(1)+'% do total',i:'✅',c:'var(--green)'},
+      {l:'Em Desenvolvimento',v:inDev,                       s:'Develop + Validation',     i:'⚡',c:'var(--yellow)'},
+      {l:'Total Esforço',     v:effort.toLocaleString()+'h', s:'Estimado',                 i:'⏱️',c:'var(--purple)'},
+      {l:'% Médio Completo',  v:avgPct.toFixed(0)+'%',       s:'Itens com progresso',      i:'📈',c:'var(--cyan)'},
     ].map(k=>`<div class="kpi" style="--kc:${k.c}">
-      <div class="kpi-ico">${k.ico}</div>
-      <div class="kpi-lbl">${k.l}</div>
+      <div class="kpi-ico">${k.i}</div>
+      <div class="kpi-label">${k.l}</div>
       <div class="kpi-val">${k.v}</div>
       <div class="kpi-sub">${k.s}</div>
     </div>`).join('');
-
     const sc={};
-    d.forEach(r=>{ sc[r.status||'?']=(sc[r.status||'?']||0)+1; });
-
+    d.forEach(r=>{sc[r.status||'?']=(sc[r.status||'?']||0)+1;});
     setTimeout(()=>{
-      const ac={}; d.forEach(r=>{ if(r.area) ac[r.area]=(ac[r.area]||0)+1; });
-      const de={}; d.forEach(r=>{ if(r.developer&&r.effort) de[r.developer]=(de[r.developer]||0)+r.effort; });
+      const ac={};
+      d.forEach(r=>{if(r.area) ac[r.area]=(ac[r.area]||0)+1;});
+      const de={};
+      d.forEach(r=>{if(r.developer&&r.effort) de[r.developer]=(de[r.developer]||0)+r.effort;});
       const ds=Object.entries(de).sort((a,b)=>b[1]-a[1]).slice(0,8);
-      const cc={}; d.forEach(r=>{ if(r.complexity) cc[r.complexity]=(cc[r.complexity]||0)+1; });
+      const cc={};
+      d.forEach(r=>{if(r.complexity) cc[r.complexity]=(cc[r.complexity]||0)+1;});
       const ck=['Very Low','Low','Medium','High','Very High'].filter(k=>cc[k]);
-      const clr={'Very Low':'#22c55e','Low':'#06b6d4','Medium':'#f59e0b','High':'#f97316','Very High':'#ef4444'};
-
-      this.mkCh('chStatus','bar',Object.keys(sc),Object.values(sc),
+      const cclr={'Very Low':'#22c55e','Low':'#06b6d4','Medium':'#f59e0b','High':'#f97316','Very High':'#ef4444'};
+      this.mkChart('cStatus','bar',Object.keys(sc),Object.values(sc),
         ['#22c55e','#ef4444','#0073e6','#f59e0b','#f97316','#a855f7','#06b6d4','#7a8aaa','#3a4a6a']);
-      this.mkCh('chArea','doughnut',Object.keys(ac),Object.values(ac),
+      this.mkChart('cArea','doughnut',Object.keys(ac),Object.values(ac),
         ['#0073e6','#22c55e','#f59e0b','#f97316','#a855f7','#06b6d4','#ef4444']);
-      this.mkCh('chDev','bar',ds.map(x=>x[0]),ds.map(x=>x[1]),['#0073e6'],true);
-      this.mkCh('chComp','doughnut',ck,ck.map(k=>cc[k]),ck.map(k=>clr[k]));
+      this.mkChart('cDev','bar',ds.map(x=>x[0]),ds.map(x=>x[1]),['#0073e6'],true);
+      this.mkChart('cComplexity','doughnut',ck,ck.map(k=>cc[k]),ck.map(k=>cclr[k]));
     },50);
-
     const order=['Close','Validation','Develop','Dev Backlog','Plan','Evaluate','Identify','Idea','On Hold'];
-    const bc={'Close':'#22c55e','Validation':'#06b6d4','Develop':'#0073e6','Dev Backlog':'#ef4444',
-              'Plan':'#f59e0b','Evaluate':'#f97316','Identify':'#a855f7','Idea':'#7a8aaa','On Hold':'#3a4a6a'};
-    document.getElementById('delRows').innerHTML = order.filter(s=>sc[s]).map(s=>{
-      const cnt=sc[s], pct=((cnt/tot)*100).toFixed(1);
-      return `<div class="del-row">
+    const sclr={'Close':'#22c55e','Validation':'#06b6d4','Develop':'#0073e6','Dev Backlog':'#ef4444','Plan':'#f59e0b','Evaluate':'#f97316','Identify':'#a855f7','Idea':'#7a8aaa','On Hold':'#3a4a6a'};
+    document.getElementById('deliveryRows').innerHTML=order.filter(s=>sc[s]).map(s=>{
+      const cnt=sc[s],pct=((cnt/total)*100).toFixed(1);
+      return `<div class="drow">
         <div>${this.badge(s)}</div>
-        <div class="del-bg"><div class="del-bar" style="width:${pct}%;background:${bc[s]||'#0073e6'}"></div></div>
-        <div class="del-pct">${cnt} (${pct}%)</div>
+        <div class="dbar-bg"><div class="dbar" style="width:${pct}%;background:${sclr[s]||'#0073e6'}"></div></div>
+        <div class="dpct">${cnt} (${pct}%)</div>
       </div>`;
     }).join('');
   },
 
-  mkCh(id,type,labels,data,colors,horiz) {
+  mkChart(id,type,labels,data,colors,horiz){
     const el=document.getElementById(id); if(!el) return;
     if(this.charts[id]) this.charts[id].destroy();
     const isBar=type==='bar';
     this.charts[id]=new Chart(el.getContext('2d'),{
-      type, data:{labels,datasets:[{data,
+      type,
+      data:{labels,datasets:[{
+        data,
         backgroundColor:colors.length===1?data.map(()=>colors[0]+'99'):colors.map(c=>c+'cc'),
-        borderColor:colors.length===1?data.map(()=>colors[0]):colors,
-        borderWidth:isBar?0:2,borderRadius:isBar?4:0}]},
-      options:{responsive:true,maintainAspectRatio:false,indexAxis:horiz?'y':'x',
+        borderColor:    colors.length===1?data.map(()=>colors[0])     :colors,
+        borderWidth:isBar?0:2,borderRadius:isBar?4:0,
+      }]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        indexAxis:horiz?'y':'x',
         plugins:{
           legend:{display:type!=='bar',labels:{color:'#7a8aaa',font:{size:11},padding:12,boxWidth:10}},
           tooltip:{backgroundColor:'#111827',borderColor:'#1e2d4a',borderWidth:1,titleColor:'#e2e8f0',bodyColor:'#7a8aaa'}
@@ -1104,106 +744,31 @@ const G = {
         scales:isBar?{
           x:{ticks:{color:'#7a8aaa',font:{size:11}},grid:{color:'#1a2035'},border:{display:false}},
           y:{ticks:{color:'#7a8aaa',font:{size:11}},grid:{color:'#1e2d4a'},border:{display:false}}
-        }:{}}
-    });
-  },
-
-  // ── CONFIG ─────────────────────────────────────────────────
-  loadCfgUI() {
-    document.getElementById('cfgSite').value    = CFG.site  || '';
-    document.getElementById('cfgList').value    = CFG.list  || '';
-    const c = CFG.cols;
-    Object.entries({
-      title:'title',status:'status',area:'area',dashboard:'dashboard',
-      requester:'requester',developer:'developer',complexity:'complexity',
-      effort:'effort',pct:'pct',bp:'bp',bo:'bo',bizops:'bizops',
-      expDate:'expDate',startDate:'startDate',size:'size',comments:'comments'
-    }).forEach(([ui, key]) => {
-      const el = document.getElementById('col-'+ui);
-      if (el) el.value = c[key] || DEF_COLS[key] || '';
-    });
-  },
-
-  saveCfg() {
-    CFG.site = document.getElementById('cfgSite').value.trim().replace(/\/$/,'');
-    CFG.list = document.getElementById('cfgList').value.trim();
-    CFG.cols = {
-      title:    document.getElementById('col-title').value.trim()     || 'Title',
-      status:   document.getElementById('col-status').value.trim()    || 'Status',
-      area:     document.getElementById('col-area').value.trim()      || 'Area',
-      dashboard:document.getElementById('col-dashboard').value.trim() || 'Dashboard',
-      requester:document.getElementById('col-requester').value.trim() || 'Requester',
-      developer:document.getElementById('col-developer').value.trim() || 'Developer',
-      complexity:document.getElementById('col-complexity').value.trim()||'Complexity',
-      effort:   document.getElementById('col-effort').value.trim()    || 'Effort',
-      pct:      document.getElementById('col-pct').value.trim()       || 'PercentCompleted',
-      bp:       document.getElementById('col-bp').value.trim()        || 'BusinessPartner',
-      bo:       document.getElementById('col-bo').value.trim()        || 'BusinessOwner',
-      bizops:   document.getElementById('col-bizops').value.trim()    || 'BizopsLead',
-      expDate:  document.getElementById('col-expDate').value.trim()   || 'ExpectedDate',
-      startDate:document.getElementById('col-startDate').value.trim() || 'StartDate',
-      size:     document.getElementById('col-size').value.trim()      || 'Size',
-      comments: document.getElementById('col-comments').value.trim()  || 'Comments',
-    };
-    persistCfg(CFG);
-    document.getElementById('bannerCfg').classList.toggle('show', !cfgOk());
-    this.notify('✅ Configurações salvas! Clique em Testar Conexão.','ok');
-  },
-
-  async testConn() {
-    const res = document.getElementById('cfgTestResult');
-    res.className='cfg-test show'; res.textContent='🔌 Testando...';
-    if (!cfgOk()) {
-      res.className='cfg-test err show';
-      res.textContent='❌ Preencha e salve os campos obrigatórios antes de testar.'; return;
-    }
-    try {
-      const r = await SP.check();
-      if (r.ok) {
-        res.className='cfg-test ok show';
-        res.textContent=`✅ Conexão OK! Lista "${r.title}" encontrada com ${r.count} itens.`;
-        this.setSpStatus('ok',`${CFG.list} · ${r.count} itens`);
-        await this.load();
-      } else {
-        res.className='cfg-test err show';
-        res.textContent=`❌ Falha: ${r.error}`;
-        this.setSpStatus('err','Erro na conexão');
+        }:{}
       }
-    } catch(e) {
-      res.className='cfg-test err show';
-      res.textContent=`❌ Erro: ${e.message}`;
-    }
+    });
   },
 
-  resetCfg() {
-    if (!confirm('Limpar todas as configurações salvas?')) return;
-    localStorage.removeItem('ei_sp_cfg');
-    CFG.site=''; CFG.list=''; CFG.cols={...DEF_COLS};
-    this.loadCfgUI();
-    this.notify('Configurações limpas.','warn');
-  },
-
-  // ── UTILS ──────────────────────────────────────────────────
-  badge(s) {
+  badge(s){
     if(!s) return '';
     const k=s.replace(/\s/g,'-');
     return `<span class="badge b-${k}">${s}</span>`;
   },
-  fmtDate(d) {
+  fmtDate(d){
     if(!d) return '—';
     const p=d.split('-');
     return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d;
   },
-  esc(s){ return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); },
-  notify(msg,type='ok') {
+  esc(s){return(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');},
+  notify(msg,type='ok'){
     const el=document.getElementById('notif');
-    el.textContent=msg; el.className='notif '+type+' show';
+    el.textContent=(type==='ok'?'✓ ':type==='err'?'✕ ':'⚠ ')+msg;
+    el.className='notif '+type+' show';
     setTimeout(()=>el.classList.remove('show'),4000);
   }
 };
 
-// ── START ──────────────────────────────────────────────────
-G.init();
+App.init();
 </script>
 </body>
 </html>
