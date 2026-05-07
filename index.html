@@ -299,6 +299,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
           <th onclick="App.sort('requester_priority')" id="th-requester_priority">Req. Priority ↕</th>
           <th onclick="App.sort('expected_date')" id="th-expected_date">Expected Date ↕</th>
           <th onclick="App.sort('status')" id="th-status">Status ↕</th>
+          <th id="th-dev_effort" style="white-space:nowrap">Dev Effort ↕</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -502,7 +503,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         </div>
         <div class="fg">
           <label class="flbl">Closed Date</label>
-          <input type="date" class="fctrl" id="dt-closed_date" readonly style="opacity:.6">
+          <input type="date" class="fctrl" id="dt-closed_date">
         </div>
         <div class="fsec">Estimation</div>
         <div class="fg">
@@ -703,7 +704,7 @@ function today(){ return toISO(new Date()); }
 
 // ── APP ───────────────────────────────────────────────────────────────────────
 var App = {
-  data:[], filtered:[], page:1, pageSize:20, sortKey:'id', sortDir:1,
+  data:[], filtered:[], page:1, pageSize:20, sortKey:'id', sortDir:1, devEffortMap:{},
   editingId:null, deletingId:null, deletingType:'req', charts:{}, ms:{},
   developers:[], devTasks:[], currentReqId:null, editingDevTaskId:null, editingDevId:null,
 
@@ -752,6 +753,7 @@ var App = {
       this.data = await supaFetch('roadmap','?select=*&order=id.asc&limit=2000');
       this.setSp(true,'Supabase · '+this.data.length+' requirements');
       this.populateMS();
+      await this.loadDevEffortMap();
       this.filter();
       this.populateDevReqSelect();
     }finally{ document.getElementById('loader').classList.add('hide'); }
@@ -761,6 +763,19 @@ var App = {
     var rows = await supaFetch('effort_matrix','?select=complexity,size,hours');
     EFFORT_MATRIX = {};
     rows.forEach(function(r){ EFFORT_MATRIX[r.complexity+'|'+r.size]=r.hours; });
+  },
+
+  async loadDevEffortMap(){
+    try{
+      var rows = await supaFetch('dev_tasks','?select=roadmap_id,effort&effort=not.is.null');
+      this.devEffortMap={};
+      var self=this;
+      rows.forEach(function(r){
+        if(r.roadmap_id&&r.effort!=null){
+          self.devEffortMap[r.roadmap_id]=(self.devEffortMap[r.roadmap_id]||0)+parseFloat(r.effort);
+        }
+      });
+    }catch(e){ this.devEffortMap={}; }
   },
 
   async loadDevelopers(){
@@ -868,7 +883,7 @@ var App = {
     var rows=sorted.slice(start,start+this.pageSize);
     var tbody=document.getElementById('tbody');
     if(!rows.length){
-      tbody.innerHTML='<tr><td colspan="13"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';
+      tbody.innerHTML='<tr><td colspan="14"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';
     }else{
       tbody.innerHTML=rows.map(function(r){
         return '<tr>'+
@@ -889,6 +904,7 @@ var App = {
           '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
           '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
           '<td>'+self.badge(r.status)+'</td>'+
+          '<td class="td-mono">'+(App.devEffortMap[r.id]?'<span style="color:var(--cyan);font-weight:600">'+App.devEffortMap[r.id]+'h</span>':'—')+'</td>'+
         '</tr>';
       }).join('');
     }
@@ -1192,9 +1208,11 @@ var App = {
     var st=document.getElementById('dt-status').value;
     var cd=document.getElementById('dt-closed_date');
     if(st==='Close'){
-      cd.value=today(); cd.style.opacity='1';
+      // Auto-fill today only if empty — user can still change it
+      if(!cd.value) cd.value=today();
     } else {
-      cd.value=''; cd.style.opacity='.6';
+      // Clear closed date when moving away from Close
+      cd.value='';
     }
   },
 
@@ -1234,6 +1252,8 @@ var App = {
       }
       this.closeDevTaskModal();
       await this.loadDevTasks();
+      await this.loadDevEffortMap();
+      this.renderTable();
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='💾 Save';btn.disabled=false;}
   },
@@ -1532,7 +1552,7 @@ var App = {
         this.notify('Requirement deleted.','ok'); this.closeConfirm(); await this.load();
       } else if(type==='devtask'){
         await supaFetch('dev_tasks','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-        this.notify('Task deleted.','ok'); this.closeConfirm(); await this.loadDevTasks();
+        this.notify('Task deleted.','ok'); this.closeConfirm(); await this.loadDevTasks(); await this.loadDevEffortMap(); this.renderTable();
       } else if(type==='developer'){
         await supaFetch('developers','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
         this.notify('Developer deleted.','ok'); this.closeConfirm(); await this.loadDevelopers();
