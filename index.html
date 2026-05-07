@@ -1451,34 +1451,69 @@ var App = {
     var total=d.length||1;
     var closed=d.filter(function(r){return r.status==='Close';}).length;
     var inDev=d.filter(function(r){return r.status==='Develop'||r.status==='Validation';}).length;
-    var effort=d.reduce(function(a,r){return a+(r.effort||0);},0);
-    var pArr=d.filter(function(r){return r.percent_completed!=null;});
-    var avgP=pArr.length?pArr.reduce(function(a,r){return a+r.percent_completed;},0)/pArr.length:0;
+    var isDark=document.body.classList.contains('dark');
+    var gc=isDark?'#1a2035':'#e8eef5', tc=isDark?'#7a8aaa':'#4a6080';
+    var self=this;
+
+    // Load dev_tasks to get REAL effort + avg % done from developers
+    var devTasksAll=[];
+    try{ devTasksAll=await supaFetch('dev_tasks','?select=roadmap_id,developer_id,effort,percent_completed,status,developers(name)&order=id.asc'); }
+    catch(e){ devTasksAll=[]; }
+
+    // Total effort = sum of effort from dev_tasks (real hours logged)
+    var devEffortTotal=devTasksAll.reduce(function(a,t){return a+(t.effort||0);},0);
+
+    // Avg % completed from dev_tasks (only tasks with value)
+    var dtPct=devTasksAll.filter(function(t){return t.percent_completed!=null;});
+    var avgP=dtPct.length?dtPct.reduce(function(a,t){return a+t.percent_completed;},0)/dtPct.length:0;
+
     var kpis=[
-      {l:'Total',v:d.length,s:'Active',i:'📋',c:'var(--accent)'},
-      {l:'Delivered',v:closed,s:((closed/total)*100).toFixed(1)+'%',i:'✅',c:'var(--green)'},
+      {l:'Total',v:d.length,s:'Active requirements',i:'📋',c:'var(--accent)'},
+      {l:'Delivered',v:closed,s:((closed/total)*100).toFixed(1)+'% of total',i:'✅',c:'var(--green)'},
       {l:'In Dev',v:inDev,s:'Develop + Validation',i:'⚡',c:'var(--yellow)'},
-      {l:'Total Effort',v:effort+'h',s:'Estimated',i:'⏱️',c:'var(--purple)'},
-      {l:'Avg % Done',v:avgP.toFixed(0)+'%',s:'Progress',i:'📈',c:'var(--cyan)'},
+      {l:'Dev Effort',v:Math.round(devEffortTotal*10)/10+'h',s:'Real hours logged',i:'⏱️',c:'var(--purple)'},
+      {l:'Avg % Done',v:avgP.toFixed(0)+'%',s:'Across dev tasks',i:'📈',c:'var(--cyan)'},
     ];
     document.getElementById('kgrid').innerHTML=kpis.map(function(k){
       return '<div class="kpi" style="--kc:'+k.c+'"><div class="kpi-ico">'+k.i+'</div><div class="kpi-label">'+k.l+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>';
     }).join('');
+
     var sc={};d.forEach(function(r){var s=r.status||'?';sc[s]=(sc[s]||0)+1;});
-    var isDark=document.body.classList.contains('dark');
-    var gc=isDark?'#1a2035':'#e8eef5', tc=isDark?'#7a8aaa':'#4a6080';
-    var self=this;
+
     setTimeout(function(){
+      // By Area (requirements count)
       var ac={};d.forEach(function(r){if(r.area)ac[r.area]=(ac[r.area]||0)+1;});
-      var de={};d.forEach(function(r){if(r.developer&&r.effort)de[r.developer]=(de[r.developer]||0)+r.effort;});
-      var ds=Object.entries(de).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+
+      // Effort by Developer — from dev_tasks (real logged hours)
+      var de={};
+      devTasksAll.forEach(function(t){
+        var name=(t.developers&&t.developers.name)||'Unknown';
+        if(t.effort) de[name]=(de[name]||0)+parseFloat(t.effort);
+      });
+      var ds=Object.entries(de).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
+
+      // Complexity from requirements
       var cc={};d.forEach(function(r){if(r.complexity)cc[r.complexity]=(cc[r.complexity]||0)+1;});
       var ck=['Very Low','Low','Medium','High','Very High'].filter(function(k){return cc[k];});
       var ccl={'Very Low':'#22c55e','Low':'#06b6d4','Medium':'#f59e0b','High':'#f97316','Very High':'#ef4444'};
-      self.mkChart('cStatus','bar',Object.keys(sc),Object.values(sc),['#22c55e','#ef4444','#0073e6','#f59e0b','#f97316','#a855f7','#06b6d4','#7a8aaa'],false,gc,tc);
-      self.mkChart('cArea','doughnut',Object.keys(ac),Object.values(ac),['#0073e6','#22c55e','#f59e0b','#f97316','#a855f7','#06b6d4','#ef4444'],false,gc,tc);
-      self.mkChart('cDev','bar',ds.map(function(x){return x[0];}),ds.map(function(x){return x[1];}),['#0073e6'],true,gc,tc);
-      self.mkChart('cComplexity','doughnut',ck,ck.map(function(k){return cc[k];}),ck.map(function(k){return ccl[k];}),false,gc,tc);
+
+      // Chart 1: Requirements by Status — bar with data labels
+      self.mkChart('cStatus','bar',Object.keys(sc),Object.values(sc),
+        ['#22c55e','#ef4444','#0073e6','#f59e0b','#f97316','#a855f7','#06b6d4','#7a8aaa'],
+        false,gc,tc,{showDataLabels:true});
+
+      // Chart 2: By Area — doughnut with % labels
+      self.mkChart('cArea','doughnut',Object.keys(ac),Object.values(ac),
+        ['#0073e6','#22c55e','#f59e0b','#f97316','#a855f7','#06b6d4','#ef4444'],
+        false,gc,tc,{showPctLabels:true,totalForPct:d.length});
+
+      // Chart 3: Effort by Developer (real hours from dev_tasks)
+      self.mkChart('cDev','bar',ds.map(function(x){return x[0];}),ds.map(function(x){return Math.round(x[1]*10)/10;}),
+        ['#0073e6'],true,gc,tc,{showDataLabels:true});
+
+      // Chart 4: Complexity distribution
+      self.mkChart('cComplexity','doughnut',ck,ck.map(function(k){return cc[k];}),
+        ck.map(function(k){return ccl[k];}),false,gc,tc,{showPctLabels:true,totalForPct:d.length});
     },50);
     var order=['Close','Validation','Develop','Dev Backlog','Plan','Evaluate','Identify','Idea','Defect','On Hold'];
     var scl={'Close':'#22c55e','Validation':'#06b6d4','Develop':'#0073e6','Dev Backlog':'#ef4444','Plan':'#f59e0b','Evaluate':'#f97316','Identify':'#a855f7','Idea':'#7a8aaa','Defect':'#ef4444','On Hold':'#3a4a6a'};
@@ -1628,23 +1663,101 @@ var App = {
     }
   },
 
-  mkChart(id,type,labels,data,colors,horiz,gc,tc){
+  mkChart(id,type,labels,data,colors,horiz,gc,tc,opts){
     var el=document.getElementById(id); if(!el) return;
     if(this.charts[id]) this.charts[id].destroy();
     var isBar=type==='bar';
     var surf=document.body.classList.contains('dark')?'#111827':'#fff';
+    opts=opts||{};
+
+    // Data labels plugin (inline)
+    var dataLabelsPlugin={
+      id:'dataLabels',
+      afterDatasetsDraw:function(chart){
+        var ctx=chart.ctx;
+        chart.data.datasets.forEach(function(dataset,i){
+          var meta=chart.getDatasetMeta(i);
+          meta.data.forEach(function(bar,j){
+            var val=dataset.data[j];
+            if(val==null||val===0) return;
+            ctx.save();
+            ctx.font='bold 11px Inter,sans-serif';
+            ctx.fillStyle=tc;
+            ctx.textAlign='center';
+            ctx.textBaseline='bottom';
+            if(horiz){
+              ctx.textAlign='left';
+              ctx.textBaseline='middle';
+              ctx.fillText(val+'h', bar.x+6, bar.y);
+            } else {
+              ctx.fillText(val, bar.x, bar.y-4);
+            }
+            ctx.restore();
+          });
+        });
+      }
+    };
+
+    // Percent labels for doughnut
+    var pctLabelsPlugin={
+      id:'pctLabels',
+      afterDatasetsDraw:function(chart){
+        var ctx=chart.ctx;
+        var total=opts.totalForPct||chart.data.datasets[0].data.reduce(function(a,b){return a+b;},0)||1;
+        chart.data.datasets.forEach(function(dataset,i){
+          var meta=chart.getDatasetMeta(i);
+          meta.data.forEach(function(arc,j){
+            var val=dataset.data[j]; if(!val) return;
+            var pct=((val/total)*100).toFixed(1);
+            var midAngle=(arc.startAngle+arc.endAngle)/2;
+            var r=(arc.outerRadius+arc.innerRadius)/2;
+            var x=arc.x+Math.cos(midAngle)*r;
+            var y=arc.y+Math.sin(midAngle)*r;
+            ctx.save();
+            ctx.font='bold 10px Inter,sans-serif';
+            ctx.fillStyle='#fff';
+            ctx.textAlign='center';
+            ctx.textBaseline='middle';
+            if(parseFloat(pct)>=4) ctx.fillText(pct+'%',x,y);
+            ctx.restore();
+          });
+        });
+      }
+    };
+
+    var plugins=[];
+    if(opts.showDataLabels && isBar) plugins.push(dataLabelsPlugin);
+    if(opts.showPctLabels && !isBar) plugins.push(pctLabelsPlugin);
+
     this.charts[id]=new Chart(el.getContext('2d'),{
-      type:type,data:{labels:labels,datasets:[{data:data,
+      type:type,
+      data:{labels:labels,datasets:[{data:data,
         backgroundColor:colors.length===1?data.map(function(){return colors[0]+'99';}):colors.map(function(c){return c+'cc';}),
         borderColor:colors.length===1?data.map(function(){return colors[0];}):colors,
         borderWidth:isBar?0:2,borderRadius:isBar?4:0}]},
       options:{responsive:true,maintainAspectRatio:false,indexAxis:horiz?'y':'x',
-        plugins:{legend:{display:!isBar,labels:{color:tc,font:{size:11},padding:12,boxWidth:10}},
-          tooltip:{backgroundColor:surf,borderColor:gc,borderWidth:1,titleColor:tc,bodyColor:tc}},
+        plugins:{
+          legend:{display:!isBar,labels:{color:tc,font:{size:11},padding:12,boxWidth:10}},
+          tooltip:{
+            backgroundColor:surf,borderColor:gc,borderWidth:1,titleColor:tc,bodyColor:tc,
+            callbacks:{
+              label:function(ctx){
+                if(!isBar){
+                  var total=opts.totalForPct||ctx.dataset.data.reduce(function(a,b){return a+b;},0)||1;
+                  var pct=((ctx.raw/total)*100).toFixed(1);
+                  return ' '+ctx.label+': '+ctx.raw+' ('+pct+'%)';
+                }
+                return ' '+ctx.raw+(horiz?'h':'');
+              }
+            }
+          }
+        },
         scales:isBar?{
           x:{ticks:{color:tc,font:{size:11}},grid:{color:gc},border:{display:false}},
           y:{ticks:{color:tc,font:{size:11}},grid:{color:gc},border:{display:false}}
-        }:{}}
+        }:{}
+      },
+      plugins:plugins
     });
   },
 
