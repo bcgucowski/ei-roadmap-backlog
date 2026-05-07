@@ -688,18 +688,73 @@ MS.prototype._updateLbl = function(){
 };
 MS.prototype.get = function(){ return[...this.sel]; };
 
-// ── WORKDAYS CALCULATOR ───────────────────────────────────────────────────────
-// Add N full extra workdays to a date (used when effort > 1 day)
+// ── WORKDAYS CALCULATOR (excludes weekends + BR holidays) ────────────────────
+
+// Easter Sunday (Computus algorithm)
+function easterDate(year){
+  var a=year%19, b=Math.floor(year/100), c=year%100;
+  var d=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25);
+  var g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30;
+  var i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7;
+  var m=Math.floor((a+11*h+22*l)/451);
+  var month=Math.floor((h+l-7*m+114)/31);
+  var day=((h+l-7*m+114)%31)+1;
+  return new Date(year, month-1, day);
+}
+
+// Brazilian public holidays for a given year
+function brHolidays(year){
+  var holidays = new Set();
+  function add(d){ holidays.add(toISO(d)); }
+  function addFixed(m,d){ add(new Date(year,m-1,d)); }
+
+  // Fixed national holidays
+  addFixed(1,1);   // Ano Novo
+  addFixed(4,21);  // Tiradentes
+  addFixed(5,1);   // Dia do Trabalho
+  addFixed(9,7);   // Independência
+  addFixed(10,12); // Nossa Sra Aparecida
+  addFixed(11,2);  // Finados
+  addFixed(11,15); // Proclamação da República
+  addFixed(12,25); // Natal
+
+  // Mobile holidays based on Easter
+  var easter = easterDate(year);
+  function addOffset(base, days){
+    var d = new Date(base); d.setDate(d.getDate()+days); add(d);
+  }
+  addOffset(easter, -48); // Carnaval — Segunda-feira
+  addOffset(easter, -47); // Carnaval — Terça-feira
+  addOffset(easter, -2);  // Sexta-feira Santa
+  addOffset(easter, 60);  // Corpus Christi
+
+  return holidays;
+}
+
+// Cache holidays by year
+var _holidayCache = {};
+function isHoliday(date){
+  var year = date.getFullYear();
+  if(!_holidayCache[year]) _holidayCache[year] = brHolidays(year);
+  return _holidayCache[year].has(toISO(date));
+}
+
+function isWorkday(date){
+  var day = date.getDay();
+  return day !== 0 && day !== 6 && !isHoliday(date);
+}
+
+// Add N extra workdays to startDate (skipping weekends & BR holidays)
 function addWorkdays(startDate, extraDays){
   var d = new Date(startDate);
   var added = 0;
   while(added < extraDays){
     d.setDate(d.getDate()+1);
-    var day = d.getDay();
-    if(day!==0 && day!==6) added++;
+    if(isWorkday(d)) added++;
   }
   return d;
 }
+
 function toISO(d){ return d.toISOString().split('T')[0]; }
 function today(){ return toISO(new Date()); }
 
@@ -1214,9 +1269,15 @@ var App = {
     // e.g. daysNeeded=2.5 → needs 2 extra workdays → end = start + 2 workdays
     var extraDays = Math.max(0, Math.ceil(daysNeeded) - 1);
 
+    // If start date is a weekend/holiday, move forward to next workday
+    var startD = new Date(start);
+    while(!isWorkday(startD)){
+      startD.setDate(startD.getDate()+1);
+    }
+
     var endDate = extraDays === 0
-      ? new Date(start)          // fits in start day
-      : addWorkdays(start, extraDays);
+      ? startD                        // fits in start day
+      : addWorkdays(toISO(startD), extraDays);
 
     document.getElementById('dt-end_date').value=toISO(endDate);
   },
@@ -1268,11 +1329,50 @@ var App = {
         this.notify('Task created! ✓','ok');
       }
       this.closeDevTaskModal();
+      await this.syncReqStatus(this.currentReqId);
       await this.loadDevTasks();
       await this.loadDevEffortMap();
-      this.renderTable();
+      await this.load();  // reload all so backlog table reflects new status
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='💾 Save';btn.disabled=false;}
+  },
+
+  // ── SYNC REQUIREMENT STATUS FROM DEV TASKS ─────────────────────────────────
+  async syncReqStatus(reqId){
+    try{
+      // Load all dev_tasks for this requirement, ordered by id (last added = highest id)
+      var tasks = await supaFetch('dev_tasks','?roadmap_id=eq.'+reqId+'&select=id,status&order=id.asc');
+
+      var newStatus = null;
+
+      if(!tasks || tasks.length === 0){
+        // No developers assigned — keep original requirement status, do nothing
+        return;
+      }
+
+      // Check if ALL tasks are Close
+      var allClosed = tasks.every(function(t){ return t.status === 'Close'; });
+
+      if(allClosed){
+        newStatus = 'Close';
+      } else {
+        // Get the status of the LAST added developer that is NOT Close
+        var nonClosed = tasks.filter(function(t){ return t.status !== 'Close'; });
+        // Last one = highest id (tasks ordered by id asc, so last in array)
+        newStatus = nonClosed[nonClosed.length - 1].status;
+      }
+
+      // Update requirement status if it changed
+      var req = this.data.find(function(r){ return r.id === reqId; });
+      if(req && req.status !== newStatus){
+        await supaFetch('roadmap','?id=eq.'+reqId,{method:'PATCH',body:{status:newStatus},prefer:'return=minimal'});
+        // Update local data
+        req.status = newStatus;
+        this.notify('Requirement status updated to "'+newStatus+'" ✓','ok');
+      }
+    }catch(e){
+      console.warn('syncReqStatus error:', e.message);
+    }
   },
 
   // ── DEVELOPERS PAGE ─────────────────────────────────────────────────────────
@@ -1569,7 +1669,12 @@ var App = {
         this.notify('Requirement deleted.','ok'); this.closeConfirm(); await this.load();
       } else if(type==='devtask'){
         await supaFetch('dev_tasks','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-        this.notify('Task deleted.','ok'); this.closeConfirm(); await this.loadDevTasks(); await this.loadDevEffortMap(); this.renderTable();
+        this.notify('Task deleted.','ok');
+        this.closeConfirm();
+        await this.syncReqStatus(this.currentReqId);
+        await this.loadDevTasks();
+        await this.loadDevEffortMap();
+        await this.load();
       } else if(type==='developer'){
         await supaFetch('developers','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
         this.notify('Developer deleted.','ok'); this.closeConfirm(); await this.loadDevelopers();
