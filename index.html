@@ -14,7 +14,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;display:flex;flex-direction:c
 body.dark{--bg:#0b0e1a;--surface:#111827;--surface2:#1a2035;--surface3:#212d45;--border:#1e2d4a;--text:#e2e8f0;--dim:#7a8aaa;--muted:#3a4a6a;--accent:#0073e6;--accentlight:rgba(0,115,230,.1);--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;--cyan:#06b6d4}
 body.philips{--bg:#f0f4f9;--surface:#ffffff;--surface2:#e8f0f9;--surface3:#dde8f5;--border:#c5d5e8;--text:#0a1f3d;--dim:#4a6080;--muted:#8aa0b8;--accent:#0073e6;--accentlight:rgba(0,115,230,.08);--green:#007a4d;--yellow:#c87800;--red:#c0392b;--orange:#c05800;--purple:#5a3a9a;--cyan:#006fa0}
 body{background:var(--bg);color:var(--text)}
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--surface2);border-radius:3px}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:var(--surface3);border-radius:4px}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px;border:1px solid var(--surface3)}::-webkit-scrollbar-thumb:hover{opacity:.8}.twrap{scrollbar-width:thin;scrollbar-color:var(--accent) var(--surface3)}
 .loader-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .loader-screen.hide{display:none}
 .loader-ring{width:40px;height:40px;border:3px solid rgba(0,115,230,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
@@ -90,13 +90,17 @@ body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
 /* TABLE */
 .tmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .tmeta-l{font-size:12px;color:var(--dim)}.tmeta-l strong{color:var(--text)}
-.twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto;overflow-y:visible}
+.twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch}
+.twrap::-webkit-scrollbar{height:8px;display:block}
+.twrap::-webkit-scrollbar-track{background:var(--surface3);border-radius:0 0 var(--radius) var(--radius)}
+.twrap::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+.twrap::-webkit-scrollbar-thumb:hover{background:var(--blue2,#005bb5)}
 table{width:100%;border-collapse:collapse;min-width:900px}
 thead{background:var(--surface2)}
 th{padding:8px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);text-align:left;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:1px solid var(--border)}
 th:hover{color:var(--text)}.th-s{color:var(--accent)!important}
 td{padding:8px 10px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
-tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
+tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr:hover td[style*="sticky"]{background:var(--surface2)!important}
 .td-mono{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .td-clip{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .td-actions{display:flex;gap:4px}
@@ -282,7 +286,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
     <div class="twrap">
       <table>
         <thead><tr>
-          <th style="width:90px">Actions</th>
+          <th style="width:88px;position:sticky;left:0;z-index:2;background:var(--surface2)">Actions</th>
           <th onclick="App.sort('id')" id="th-id"># ↕</th>
           <th onclick="App.sort('priority')" id="th-priority">Priority ↕</th>
           <th onclick="App.sort('business_partner')" id="th-business_partner">Business Partner ↕</th>
@@ -310,10 +314,11 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
         <div style="font-size:12px;color:var(--dim)">Select a requirement from Backlog and manage developer tasks</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <select class="fctrl" id="devReqSelect" style="min-width:320px;font-size:12px" onchange="App.loadDevTasks()">
+        <select class="fctrl" id="devReqSelect" style="min-width:400px;font-size:13px" onchange="App.loadDevTasks()">
           <option value="">— Select a requirement —</option>
         </select>
         <button class="btn btn-primary btn-sm" id="addDevTaskBtn" onclick="App.openDevTaskModal(null)" style="display:none">+ Add Developer</button>
+        <button class="btn btn-ghost btn-sm" onclick="App.loadDevTasks()">↻</button>
       </div>
     </div>
 
@@ -812,6 +817,7 @@ var App = {
     document.getElementById('tab-'+name).classList.add('active');
     if(name==='dashboard') this.renderDash();
     if(name==='developers') this.renderDeveloperGrid();
+    if(name==='development') this.loadDevTasks();
   },
 
   filter(){
@@ -866,6 +872,11 @@ var App = {
     }else{
       tbody.innerHTML=rows.map(function(r){
         return '<tr>'+
+          '<td style="position:sticky;left:0;z-index:1;background:var(--surface)"><div class="td-actions">'+
+            '<button class="bico edit" onclick="App.openModal('+r.id+')" title="Edit">✏️</button>'+
+            '<button class="bico dev" onclick="App.goToDev('+r.id+')" title="Dev">⚡</button>'+
+            '<button class="bico del" onclick="App.openConfirm('+r.id+',\'req\')" title="Delete">🗑️</button>'+
+          '</div></td>'+
           '<td class="td-mono">'+r.id+'</td>'+
           '<td class="td-mono">'+(r.priority!=null?r.priority:'—')+'</td>'+
           '<td style="font-size:11px;white-space:nowrap">'+(r.business_partner||'—')+'</td>'+
@@ -878,11 +889,6 @@ var App = {
           '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
           '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
           '<td>'+self.badge(r.status)+'</td>'+
-          '<td><div class="td-actions">'+
-            '<button class="bico edit" onclick="App.openModal('+r.id+')" title="Edit">✏️</button>'+
-            '<button class="bico dev" onclick="App.goToDev('+r.id+')" title="Development">⚡</button>'+
-            '<button class="bico del" onclick="App.openConfirm('+r.id+',\'req\')" title="Delete">🗑️</button>'+
-          '</div></td>'+
         '</tr>';
       }).join('');
     }
@@ -1048,7 +1054,7 @@ var App = {
 
   async loadDevTasks(){
     var sel=document.getElementById('devReqSelect');
-    var reqId=sel?parseInt(sel.value):null;
+    var reqId=sel&&sel.value?parseInt(sel.value):null;
     this.currentReqId=reqId||null;
     var addBtn=document.getElementById('addDevTaskBtn');
     var infoDiv=document.getElementById('devReqInfo');
@@ -1066,7 +1072,7 @@ var App = {
     if(req){
       document.getElementById('devReqTitle').textContent=(req.requirement||'').split('\n')[0];
       document.getElementById('devReqMeta').innerHTML=
-        '<span>Status: <strong>'+self.badge(req.status)+'</strong></span>'+
+        '<span>Status: <strong>'+App.badge(req.status)+'</strong></span>'+
         '<span>Area: <strong>'+(req.area||'—')+'</strong></span>'+
         '<span>Dashboard: <strong>'+(req.dashboard||'—')+'</strong></span>'+
         '<span>Expected: <strong>'+this.fd(req.expected_date)+'</strong></span>';
