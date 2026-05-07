@@ -14,7 +14,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;display:flex;flex-direction:c
 body.dark{--bg:#0b0e1a;--surface:#111827;--surface2:#1a2035;--surface3:#212d45;--border:#1e2d4a;--text:#e2e8f0;--dim:#7a8aaa;--muted:#3a4a6a;--accent:#0073e6;--accentlight:rgba(0,115,230,.1);--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;--cyan:#06b6d4}
 body.philips{--bg:#f0f4f9;--surface:#ffffff;--surface2:#e8f0f9;--surface3:#dde8f5;--border:#c5d5e8;--text:#0a1f3d;--dim:#4a6080;--muted:#8aa0b8;--accent:#0073e6;--accentlight:rgba(0,115,230,.08);--green:#007a4d;--yellow:#c87800;--red:#c0392b;--orange:#c05800;--purple:#5a3a9a;--cyan:#006fa0}
 body{background:var(--bg);color:var(--text)}
-::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:var(--surface3);border-radius:4px}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px;border:1px solid var(--surface3)}::-webkit-scrollbar-thumb:hover{opacity:.8}.twrap{scrollbar-width:thin;scrollbar-color:var(--accent) var(--surface3)}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:var(--surface3);border-radius:4px}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px;border:1px solid var(--surface3)}::-webkit-scrollbar-thumb:hover{opacity:.8}
 .loader-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .loader-screen.hide{display:none}
 .loader-ring{width:40px;height:40px;border:3px solid rgba(0,115,230,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
@@ -50,7 +50,7 @@ body.dark .nav{background:#111827;border-bottom:1px solid #1e2d4a}
 body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
 .ntab{background:none;border:none;color:var(--dim);font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
 .ntab:hover{color:var(--text)}.ntab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.app{flex:1;overflow-y:auto;padding:20px}
+.app{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px}
 .page{display:none}.page.active{display:block}
 .btn{border:none;font-family:var(--font);font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--radius-sm);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn:disabled{opacity:.4;cursor:not-allowed}
@@ -90,12 +90,12 @@ body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
 /* TABLE */
 .tmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .tmeta-l{font-size:12px;color:var(--dim)}.tmeta-l strong{color:var(--text)}
-.twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch}
+.twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--accent) var(--surface3)}
 .twrap::-webkit-scrollbar{height:8px;display:block}
 .twrap::-webkit-scrollbar-track{background:var(--surface3);border-radius:0 0 var(--radius) var(--radius)}
 .twrap::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
 .twrap::-webkit-scrollbar-thumb:hover{background:var(--blue2,#005bb5)}
-table{width:100%;border-collapse:collapse;min-width:900px}
+table{width:100%;border-collapse:collapse;min-width:1600px}
 thead{background:var(--surface2)}
 th{padding:8px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);text-align:left;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:1px solid var(--border)}
 th:hover{color:var(--text)}.th-s{color:var(--accent)!important}
@@ -689,10 +689,11 @@ MS.prototype._updateLbl = function(){
 MS.prototype.get = function(){ return[...this.sel]; };
 
 // ── WORKDAYS CALCULATOR ───────────────────────────────────────────────────────
-function addWorkdays(startDate, workdays){
+// Add N full extra workdays to a date (used when effort > 1 day)
+function addWorkdays(startDate, extraDays){
   var d = new Date(startDate);
   var added = 0;
-  while(added < workdays){
+  while(added < extraDays){
     d.setDate(d.getDate()+1);
     var day = d.getDay();
     if(day!==0 && day!==6) added++;
@@ -904,7 +905,7 @@ var App = {
           '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
           '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
           '<td>'+self.badge(r.status)+'</td>'+
-          '<td class="td-mono">'+(App.devEffortMap[r.id]?'<span style="color:var(--cyan);font-weight:600">'+App.devEffortMap[r.id]+'h</span>':'—')+'</td>'+
+          '<td class="td-mono">'+(App.devEffortMap[r.id]?'<span style="color:var(--cyan);font-weight:600">'+Math.round(App.devEffortMap[r.id]*10)/10+'h</span>':'—')+'</td>'+
         '</tr>';
       }).join('');
     }
@@ -1194,13 +1195,29 @@ var App = {
     var alloc=parseFloat(document.getElementById('dt-percent_allocation').value)||100;
     var start=document.getElementById('dt-start_date').value;
     if(!effort||!start){ return; }
-    // Get developer hours/day
+
+    // Get developer hours/day from their profile
     var devId=parseInt(document.getElementById('dt-developer_id').value);
     var dev=this.developers.find(function(d){return d.id===devId;});
-    var hpd=(dev&&dev.hours_per_day)?dev.hours_per_day:8;
-    var effectiveHpd=hpd*(alloc/100);
-    var workdays=Math.ceil(effort/effectiveHpd);
-    var endDate=addWorkdays(start,workdays);
+    var hpd=(dev&&dev.hours_per_day)?parseFloat(dev.hours_per_day):8;
+
+    // Effective hours available per workday given the allocation %
+    var effectiveHpd = hpd * (alloc / 100);
+    if(effectiveHpd <= 0) effectiveHpd = 1;
+
+    // How many workdays needed (fractional)
+    var daysNeeded = effort / effectiveHpd;
+
+    // Extra days BEYOND the start day
+    // e.g. daysNeeded=1.0 → fits exactly in start day → 0 extra days → end = start
+    // e.g. daysNeeded=1.1 → needs 1 extra workday → end = start + 1 workday
+    // e.g. daysNeeded=2.5 → needs 2 extra workdays → end = start + 2 workdays
+    var extraDays = Math.max(0, Math.ceil(daysNeeded) - 1);
+
+    var endDate = extraDays === 0
+      ? new Date(start)          // fits in start day
+      : addWorkdays(start, extraDays);
+
     document.getElementById('dt-end_date').value=toISO(endDate);
   },
 
