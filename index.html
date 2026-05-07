@@ -26,8 +26,7 @@ body{background:var(--bg);color:var(--text)}
 body.dark .header{background:#111827;border-bottom:1px solid #1e2d4a}
 body.philips .header{background:#0073e6}
 .hlogo{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
-body.dark .hlogo{background:#0073e6}
-body.philips .hlogo{background:rgba(255,255,255,.25)}
+body.dark .hlogo{background:#0073e6}body.philips .hlogo{background:rgba(255,255,255,.25)}
 .htitle{font-size:15px;font-weight:700;margin-left:12px}
 body.dark .htitle{color:#e2e8f0}body.philips .htitle{color:#fff}
 .htitle span{font-size:11px;font-weight:400;margin-left:8px}
@@ -37,8 +36,7 @@ body.dark .sp-pill{background:#1a2035;border:1px solid #1e2d4a}
 body.philips .sp-pill{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff}
 .sp-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
 .sp-pill.ok .sp-dot{background:var(--green);box-shadow:0 0 5px var(--green)}
-body.dark .sp-pill.ok{border-color:rgba(34,197,94,.3)}
-body.philips .sp-pill.ok{border-color:rgba(200,255,200,.5)}
+body.dark .sp-pill.ok{border-color:rgba(34,197,94,.3)}body.philips .sp-pill.ok{border-color:rgba(200,255,200,.5)}
 .sp-pill.err .sp-dot{background:var(--red)}
 .theme-toggle{display:flex;align-items:center;border-radius:20px;padding:3px;overflow:hidden}
 body.dark .theme-toggle{background:#1a2035;border:1px solid #1e2d4a}
@@ -62,7 +60,9 @@ body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
 .btn-success{background:var(--green);color:#fff}.btn-success:hover:not(:disabled){opacity:.88}
 .btn-ghost{background:var(--surface3);color:var(--text);border:1px solid var(--border)}.btn-ghost:hover:not(:disabled){border-color:var(--accent)}
 .btn-danger{background:var(--red);color:#fff}.btn-danger:hover:not(:disabled){opacity:.85}
+.btn-warning{background:var(--yellow);color:#000}.btn-warning:hover:not(:disabled){opacity:.85}
 .btn-sm{padding:5px 12px;font-size:12px}
+.btn-xs{padding:3px 9px;font-size:11px}
 /* MULTISELECT */
 .ms-wrap{position:relative;display:inline-block}
 .ms-trigger{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:12px;border-radius:var(--radius-sm);padding:5px 26px 5px 9px;cursor:pointer;min-width:100px;display:flex;align-items:center;gap:4px;position:relative;user-select:none;white-space:nowrap;transition:border-color .15s}
@@ -93,7 +93,7 @@ body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
 .tmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .tmeta-l{font-size:12px;color:var(--dim)}.tmeta-l strong{color:var(--text)}
 .twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:1500px}
+table{width:100%;border-collapse:collapse;min-width:900px}
 thead{background:var(--surface2)}
 th{padding:8px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);text-align:left;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:1px solid var(--border)}
 th:hover{color:var(--text)}.th-s{color:var(--accent)!important}
@@ -103,7 +103,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
 .td-clip{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .td-actions{display:flex;gap:4px}
 .bico{background:none;border:none;cursor:pointer;padding:3px 5px;border-radius:4px;font-size:12px;transition:background .15s}
-.bico:hover{background:var(--surface3)}.bico.edit{color:var(--accent)}.bico.del{color:var(--red)}
+.bico:hover{background:var(--surface3)}.bico.edit{color:var(--accent)}.bico.del{color:var(--red)}.bico.dev{color:var(--green)}
 /* BADGES */
 .badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:20px;white-space:nowrap}
 .b-Close{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.3)}
@@ -114,7 +114,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
 .b-Identify{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.3)}
 .b-Idea{background:rgba(122,138,170,.1);color:var(--dim);border:1px solid rgba(122,138,170,.25)}
 .b-Defect{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3)}
-.b-Dev-Backlog{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.b-Dev-Backlog,.b-Dev\.Backlog{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3)}
 .b-On-Hold{background:rgba(122,138,170,.08);color:var(--muted);border:1px solid rgba(122,138,170,.2)}
 .b-Removed{background:rgba(239,68,68,.05);color:#888;border:1px solid rgba(239,68,68,.1)}
 /* PAGINATION */
@@ -133,7 +133,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
 .kpi-ico{position:absolute;right:12px;top:12px;font-size:20px;opacity:.1}
 .cgrid2{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px}
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
 .ctitle{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
 .cwrap{position:relative;height:200px}
 .drow{display:grid;grid-template-columns:150px 1fr 60px;align-items:center;gap:10px;margin-bottom:10px}
@@ -143,7 +143,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
 /* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
 .overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:100%;max-width:680px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,.4)}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:100%;max-width:700px;max-height:94vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,.4)}
+.modal-lg{max-width:900px}
 .mhead{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .mtitle{font-size:15px;font-weight:700}
 .mclose{background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:4px}
@@ -154,23 +155,59 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
 .fg{display:flex;flex-direction:column;gap:5px}.fg.full{grid-column:1/-1}
 .flbl{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
 .fctrl{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 11px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s;width:100%}
-.fctrl:focus{border-color:var(--accent)}textarea.fctrl{resize:vertical;min-height:80px}select.fctrl{cursor:pointer}
+.fctrl:focus{border-color:var(--accent)}
+textarea.fctrl{resize:vertical;min-height:80px}select.fctrl{cursor:pointer}
 .fsec{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:10px 0 4px;border-top:1px solid var(--border);grid-column:1/-1;margin-top:4px}
 /* CHECKBOX GROUP */
 .chk-group{display:flex;flex-wrap:wrap;gap:10px;padding:8px 0}
 .chk-item{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--text)}
 .chk-item input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;flex-shrink:0}
-.chk-item span{cursor:pointer}
+/* AI ASSIST */
+.ai-btn{background:none;border:1px dashed var(--muted);color:var(--dim);font-family:var(--font);font-size:11px;padding:4px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;margin-top:4px}
+.ai-btn:hover{border-color:var(--purple);color:var(--purple)}
+.ai-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-thinking{display:none;font-size:11px;color:var(--purple);margin-top:4px;align-items:center;gap:5px}
+.ai-thinking.show{display:flex}
+/* DEV PANEL */
+.dev-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;position:relative}
+.dev-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dev-card-name{font-size:13px;font-weight:600}
+.dev-card-skill{font-size:11px;color:var(--dim)}
+.dev-card-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.dev-card-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:2px}
+/* GANTT */
+.gantt-wrap{overflow-x:auto;margin-top:8px}
+.gantt-row{display:flex;align-items:center;gap:0;min-height:36px;border-bottom:1px solid var(--border)}
+.gantt-label{width:140px;flex-shrink:0;font-size:12px;padding:4px 8px;font-weight:500;border-right:1px solid var(--border)}
+.gantt-track{flex:1;position:relative;height:36px;background:var(--surface2)}
+.gantt-bar{position:absolute;height:22px;top:7px;border-radius:4px;display:flex;align-items:center;padding:0 6px;font-size:10px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:opacity .15s}
+.gantt-bar:hover{opacity:.85}
+.gantt-header{display:flex;align-items:center;gap:0;margin-bottom:4px}
+.gantt-header-label{width:140px;flex-shrink:0;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-right:1px solid var(--border)}
+.gantt-header-dates{flex:1;display:flex;position:relative;height:24px;overflow:hidden}
+.gantt-date-tick{position:absolute;font-size:10px;color:var(--dim);transform:translateX(-50%)}
+.gantt-today{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:.6;z-index:2}
+/* AI Analysis card */
+.ai-card{background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(0,115,230,.08));border:1px solid rgba(168,85,247,.25);border-radius:var(--radius);padding:18px;margin-top:16px}
+.ai-card-title{font-size:12px;font-weight:600;color:var(--purple);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ai-card-body{font-size:13px;line-height:1.7;color:var(--text)}
+.ai-card-body ul{padding-left:18px;margin-top:6px}
+.ai-card-body li{margin-bottom:4px}
 /* CONFIRM */
 .cbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:380px;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.4)}
 .cico{font-size:34px;margin-bottom:12px}.ctit{font-size:15px;font-weight:700;margin-bottom:8px}
 .cmsg{font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6}
 .cact{display:flex;gap:8px;justify-content:center}
+/* NOTIF */
 .notif{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:13px;font-weight:500;z-index:999;transform:translateY(60px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:380px}
 .notif.show{transform:translateY(0);opacity:1}
 .notif.ok{border-left:3px solid var(--green)}.notif.err{border-left:3px solid var(--red)}.notif.warn{border-left:3px solid var(--yellow)}
 .empty{text-align:center;padding:50px 20px;color:var(--dim)}.empty-ico{font-size:40px;opacity:.3;margin-bottom:12px}
 .fsel{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:12px;border-radius:var(--radius-sm);padding:4px 8px;outline:none;cursor:pointer}
+.section-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.info-pill{font-size:11px;background:var(--accentlight);border:1px solid rgba(0,115,230,.2);color:var(--accent);padding:3px 10px;border-radius:12px;font-weight:500}
+.selected-req-banner{background:var(--accentlight);border:1px solid rgba(0,115,230,.25);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.selected-req-title{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body class="dark">
@@ -196,109 +233,209 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
 </div>
 
 <div class="nav">
-  <button class="ntab active" id="tab-backlog" onclick="App.tab('backlog')">📋 Backlog</button>
-  <button class="ntab" id="tab-dashboard" onclick="App.tab('dashboard')">📈 Dashboard</button>
+  <button class="ntab active" id="tab-backlog"     onclick="App.tab('backlog')">📋 Backlog</button>
+  <button class="ntab"        id="tab-development" onclick="App.tab('development')">⚙️ Development</button>
+  <button class="ntab"        id="tab-dashboard"   onclick="App.tab('dashboard')">📈 Dashboard</button>
+  <button class="ntab"        id="tab-developers"  onclick="App.tab('developers')">👥 Developers</button>
 </div>
 
 <div class="app">
-  <div class="page active" id="page-backlog">
 
-    <div class="filters">
-      <input type="text" class="finput" id="fSearch" placeholder="Search requirement, requester..." oninput="App.filter()">
-      <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Status</span><div class="ms-wrap" id="ms-status"></div></div>
-      <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Area</span><div class="ms-wrap" id="ms-area"></div></div>
-      <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Dashboard</span><div class="ms-wrap" id="ms-dashboard"></div></div>
-      <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Developer</span><div class="ms-wrap" id="ms-developer"></div></div>
-      <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Complexity</span><div class="ms-wrap" id="ms-complexity"></div></div>
-      <div style="display:flex;align-items:center;gap:5px"><span class="flabel">BP</span><div class="ms-wrap" id="ms-business_partner"></div></div>
-      <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Requester</span><div class="ms-wrap" id="ms-requester"></div></div>
-      <button class="freset" onclick="App.resetFilters()">✕ Clear</button>
-      <div style="flex:1"></div>
-      <button class="btn btn-ghost btn-sm" onclick="App.load()">↻ Refresh</button>
+<!-- ═══════════════════ BACKLOG ═══════════════════ -->
+<div class="page active" id="page-backlog">
+  <div class="filters">
+    <input type="text" class="finput" id="fSearch" placeholder="Search requirement, requester..." oninput="App.filter()">
+    <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Status</span><div class="ms-wrap" id="ms-status"></div></div>
+    <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Area</span><div class="ms-wrap" id="ms-area"></div></div>
+    <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Dashboard</span><div class="ms-wrap" id="ms-dashboard"></div></div>
+    <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Developer</span><div class="ms-wrap" id="ms-developer"></div></div>
+    <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Complexity</span><div class="ms-wrap" id="ms-complexity"></div></div>
+    <div style="display:flex;align-items:center;gap:5px"><span class="flabel">BP</span><div class="ms-wrap" id="ms-business_partner"></div></div>
+    <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Requester</span><div class="ms-wrap" id="ms-requester"></div></div>
+    <button class="freset" onclick="App.resetFilters()">✕ Clear</button>
+    <div style="flex:1"></div>
+    <button class="btn btn-ghost btn-sm" onclick="App.load()">↻ Refresh</button>
+  </div>
+  <div class="tmeta">
+    <div class="tmeta-l"><strong id="cShown">0</strong> of <strong id="cTotal">0</strong> requirements &nbsp;·&nbsp; Effort: <strong id="cEffort">0</strong>h</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--dim)">Per page:</span>
+      <select class="fsel" onchange="App.pageSize=+this.value;App.page=1;App.renderTable()">
+        <option value="20" selected>20</option><option value="50">50</option><option value="100">100</option>
+      </select>
+    </div>
+  </div>
+  <div class="twrap">
+    <table style="min-width:1400px">
+      <thead><tr>
+        <th onclick="App.sort('id')" id="th-id"># ↕</th>
+        <th onclick="App.sort('priority')" id="th-priority">Priority ↕</th>
+        <th onclick="App.sort('business_partner')" id="th-business_partner">Business Partner ↕</th>
+        <th onclick="App.sort('request_date')" id="th-request_date">Request Date ↕</th>
+        <th onclick="App.sort('requirement')" id="th-requirement">Requirement ↕</th>
+        <th onclick="App.sort('impacts')" id="th-impacts">Impacts ↕</th>
+        <th onclick="App.sort('requester')" id="th-requester">Requester ↕</th>
+        <th onclick="App.sort('area')" id="th-area">Area ↕</th>
+        <th onclick="App.sort('dashboard')" id="th-dashboard">Dashboard ↕</th>
+        <th onclick="App.sort('bizops_lead')" id="th-bizops_lead">Bizops Lead ↕</th>
+        <th onclick="App.sort('requester_priority')" id="th-requester_priority">Req. Priority ↕</th>
+        <th onclick="App.sort('expected_date')" id="th-expected_date">Expected Date ↕</th>
+        <th onclick="App.sort('business_owner')" id="th-business_owner">Business Owner ↕</th>
+        <th onclick="App.sort('status')" id="th-status">Status ↕</th>
+        <th onclick="App.sort('percent_completed')" id="th-percent_completed">% Done ↕</th>
+        <th onclick="App.sort('complexity')" id="th-complexity">Complexity ↕</th>
+        <th onclick="App.sort('size')" id="th-size">Size ↕</th>
+        <th onclick="App.sort('effort')" id="th-effort">Effort ↕</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- ═══════════════════ DEVELOPMENT ═══════════════════ -->
+<div class="page" id="page-development">
+  <div id="dev-no-selection" style="text-align:center;padding:60px 20px;color:var(--dim)">
+    <div style="font-size:40px;opacity:.3;margin-bottom:12px">⚙️</div>
+    <p style="font-size:15px;font-weight:600;margin-bottom:6px">No requirement selected</p>
+    <p style="font-size:13px">Go to <strong>Backlog</strong> tab and click the ⚙️ button on any requirement row.</p>
+  </div>
+  <div id="dev-panel" style="display:none">
+    <div class="selected-req-banner">
+      <div>
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--dim);margin-bottom:3px">Selected Requirement</div>
+        <div class="selected-req-title" id="dev-req-title">—</div>
+      </div>
+      <div id="dev-req-status-badge"></div>
     </div>
 
-    <div class="tmeta">
-      <div class="tmeta-l"><strong id="cShown">0</strong> of <strong id="cTotal">0</strong> requirements &nbsp;·&nbsp; Effort: <strong id="cEffort">0</strong>h</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:var(--dim)">Per page:</span>
-        <select class="fsel" onchange="App.pageSize=+this.value;App.page=1;App.renderTable()">
-          <option value="20" selected>20</option><option value="50">50</option><option value="100">100</option>
-        </select>
+    <!-- Dev fields on roadmap record -->
+    <div class="ccard">
+      <div class="ctitle">Development Details</div>
+      <div class="fgrid">
+        <div class="fg">
+          <label class="flbl">Status *</label>
+          <select class="fctrl" id="dev-status" onchange="App.devStatusChange()">
+            <option value="Idea">Idea</option><option value="Identify">Identify</option>
+            <option value="Evaluate">Evaluate</option><option value="Plan">Plan</option>
+            <option value="Dev Backlog">Dev Backlog</option><option value="Develop">Develop</option>
+            <option value="Validation">Validation</option><option value="Close">Close</option>
+            <option value="On Hold">On Hold</option><option value="Removed">Removed</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">% Completed</label>
+          <input type="number" class="fctrl" id="dev-pct" min="0" max="100" placeholder="0">
+        </div>
+        <div class="fg">
+          <label class="flbl">Complexity</label>
+          <select class="fctrl" id="dev-complexity" onchange="App.devCalcEffort()">
+            <option value="">—</option>
+            <option>Very Low</option><option>Low</option><option>Medium</option>
+            <option>High</option><option>Very High</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Size</label>
+          <select class="fctrl" id="dev-size" onchange="App.devCalcEffort()">
+            <option value="">—</option>
+            <option>XS</option><option>Small</option><option>Medium</option>
+            <option>Large</option><option>XL</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Effort (h) <span style="font-size:10px;color:var(--cyan)">(auto-calculated)</span></label>
+          <input type="number" class="fctrl" id="dev-effort" min="0" placeholder="0">
+        </div>
+        <div class="fg">
+          <label class="flbl">Closed Date</label>
+          <input type="date" class="fctrl" id="dev-closed-date" readonly style="opacity:.7">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <button class="btn btn-primary btn-sm" onclick="App.devSaveMain()">💾 Save Details</button>
       </div>
     </div>
 
-    <div class="twrap">
-      <table>
-        <thead><tr>
-          <th onclick="App.sort('id')" id="th-id"># ↕</th>
-          <th onclick="App.sort('priority')" id="th-priority">Priority ↕</th>
-          <th onclick="App.sort('business_partner')" id="th-business_partner">Business Partner ↕</th>
-          <th onclick="App.sort('request_date')" id="th-request_date">Request Date ↕</th>
-          <th onclick="App.sort('requirement')" id="th-requirement">Requirement ↕</th>
-          <th onclick="App.sort('impacts')" id="th-impacts">Impacts ↕</th>
-          <th onclick="App.sort('requester')" id="th-requester">Requester ↕</th>
-          <th onclick="App.sort('area')" id="th-area">Area ↕</th>
-          <th onclick="App.sort('dashboard')" id="th-dashboard">Dashboard ↕</th>
-          <th onclick="App.sort('bizops_lead')" id="th-bizops_lead">Bizops Lead ↕</th>
-          <th onclick="App.sort('requester_priority')" id="th-requester_priority">Req. Priority ↕</th>
-          <th onclick="App.sort('expected_date')" id="th-expected_date">Expected Date ↕</th>
-          <th onclick="App.sort('business_owner')" id="th-business_owner">Business Owner ↕</th>
-          <th onclick="App.sort('status')" id="th-status">Status ↕</th>
-          <th onclick="App.sort('percent_completed')" id="th-percent_completed">% Done ↕</th>
-          <th onclick="App.sort('closed_date')" id="th-closed_date">Closed Date ↕</th>
-          <th onclick="App.sort('developer')" id="th-developer">Developer ↕</th>
-          <th onclick="App.sort('complexity')" id="th-complexity">Complexity ↕</th>
-          <th onclick="App.sort('size')" id="th-size">Size ↕</th>
-          <th onclick="App.sort('effort')" id="th-effort">Effort ↕</th>
-          <th onclick="App.sort('start_date')" id="th-start_date">Start Date ↕</th>
-          <th onclick="App.sort('expected_end_date')" id="th-expected_end_date">Exp. End Date ↕</th>
-          <th>Actions</th>
-        </tr></thead>
-        <tbody id="tbody"></tbody>
-      </table>
+    <!-- Developer assignments -->
+    <div class="ccard">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="ctitle" style="margin-bottom:0">Assigned Developers</div>
+        <button class="btn btn-ghost btn-sm" onclick="App.devAddSlot()">+ Add Developer</button>
+      </div>
+      <div id="dev-assignments"></div>
     </div>
-    <div class="pagination" id="pagination"></div>
-  </div>
-
-  <div class="page" id="page-dashboard">
-    <div class="kgrid" id="kgrid"></div>
-    <div class="cgrid2">
-      <div class="ccard"><div class="ctitle">Requirements by Status</div><div class="cwrap"><canvas id="cStatus"></canvas></div></div>
-      <div class="ccard"><div class="ctitle">By Area</div><div class="cwrap"><canvas id="cArea"></canvas></div></div>
-    </div>
-    <div class="cgrid">
-      <div class="ccard"><div class="ctitle">Effort by Developer (h)</div><div class="cwrap"><canvas id="cDev"></canvas></div></div>
-      <div class="ccard"><div class="ctitle">Complexity</div><div class="cwrap"><canvas id="cComplexity"></canvas></div></div>
-    </div>
-    <div class="ccard"><div class="ctitle">Delivery Progress by Status</div><div id="deliveryRows" style="margin-top:8px"></div></div>
   </div>
 </div>
 
-<!-- NEW/EDIT MODAL -->
+<!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="kgrid" id="kgrid"></div>
+  <div class="cgrid2">
+    <div class="ccard"><div class="ctitle">Requirements by Status</div><div class="cwrap"><canvas id="cStatus"></canvas></div></div>
+    <div class="ccard"><div class="ctitle">By Area</div><div class="cwrap"><canvas id="cArea"></canvas></div></div>
+  </div>
+  <div class="cgrid">
+    <div class="ccard"><div class="ctitle">Effort by Developer (h)</div><div class="cwrap"><canvas id="cDev"></canvas></div></div>
+    <div class="ccard"><div class="ctitle">Complexity</div><div class="cwrap"><canvas id="cComplexity"></canvas></div></div>
+  </div>
+  <div class="ccard">
+    <div class="ctitle">Delivery Progress by Status</div>
+    <div id="deliveryRows" style="margin-top:8px"></div>
+  </div>
+  <!-- GANTT -->
+  <div class="ccard">
+    <div class="ctitle">📅 Developer Timeline (In Development &amp; Validation)</div>
+    <div class="gantt-wrap" id="ganttWrap"></div>
+    <div class="ai-card" id="aiAnalysisCard" style="display:none">
+      <div class="ai-card-title">🤖 AI Analysis &amp; Recommendations</div>
+      <div class="ai-card-body" id="aiAnalysisBody">Analyzing...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ DEVELOPERS ═══════════════════ -->
+<div class="page" id="page-developers">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="section-title">👥 Developers Registry</div>
+    <button class="btn btn-success btn-sm" onclick="App.openDevModal(null)">+ New Developer</button>
+  </div>
+  <div class="twrap">
+    <table style="min-width:600px">
+      <thead><tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Skill</th><th>Hours/Day</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="devTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- end .app -->
+
+<!-- ═══════════ MODAL: NEW/EDIT REQUIREMENT ═══════════ -->
 <div class="overlay" id="modalOverlay">
   <div class="modal">
-    <div class="mhead">
-      <div class="mtitle" id="modalTitle">New Requirement</div>
-      <button class="mclose" onclick="App.closeModal()">✕</button>
-    </div>
+    <div class="mhead"><div class="mtitle" id="modalTitle">New Requirement</div><button class="mclose" onclick="App.closeModal()">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
-
-        <!-- REQUIREMENT -->
         <div class="fg full">
-          <label class="flbl">Requirement *</label>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <label class="flbl">Requirement *</label>
+            <button class="ai-btn" id="aiReqBtn" onclick="App.aiImprove('requirement')">✨ AI Improve</button>
+          </div>
           <textarea class="fctrl" id="f-requirement" rows="3" placeholder="Describe the requirement..."></textarea>
+          <div class="ai-thinking" id="aiReqThink"><span class="spinner" style="border-top-color:var(--purple)"></span> AI is improving the text...</div>
         </div>
-
-        <!-- IMPACTS -->
         <div class="fg full">
-          <label class="flbl">Impacts / Value</label>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <label class="flbl">Impacts / Value</label>
+            <button class="ai-btn" id="aiImpBtn" onclick="App.aiImprove('impacts')">✨ AI Write Impacts</button>
+          </div>
           <textarea class="fctrl" id="f-impacts" rows="2" placeholder="Describe the impact and value..."></textarea>
+          <div class="ai-thinking" id="aiImpThink"><span class="spinner" style="border-top-color:var(--purple)"></span> AI is writing the impacts...</div>
         </div>
-
         <div class="fsec">Classification</div>
-
-        <!-- STATUS — only Idea or Defect -->
         <div class="fg">
           <label class="flbl">Status *</label>
           <select class="fctrl" id="f-status">
@@ -306,8 +443,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
             <option value="Defect">Defect</option>
           </select>
         </div>
-
-        <!-- AREA -->
         <div class="fg">
           <label class="flbl">Area</label>
           <select class="fctrl" id="f-area">
@@ -316,8 +451,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
             <option>BizOps</option><option>GBS</option><option>Pricing</option><option>Finance</option>
           </select>
         </div>
-
-        <!-- DASHBOARD — lookup from Excel + Other -->
         <div class="fg full">
           <label class="flbl">Dashboard</label>
           <select class="fctrl" id="f-dashboard" onchange="App.onDashboardChange()">
@@ -341,22 +474,15 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
           </select>
           <input type="text" class="fctrl" id="f-dashboard-other" placeholder="Enter dashboard name..." style="display:none;margin-top:6px">
         </div>
-
         <div class="fsec">People</div>
-
-        <!-- REQUESTER -->
         <div class="fg">
           <label class="flbl">Requester</label>
           <input type="text" class="fctrl" id="f-requester" placeholder="Name of requester">
         </div>
-
-        <!-- BUSINESS OWNER -->
         <div class="fg">
           <label class="flbl">Business Owner</label>
-          <input type="text" class="fctrl" id="f-business_owner" placeholder="Business owner">
+          <input type="text" class="fctrl" id="f-business_owner">
         </div>
-
-        <!-- REQUESTER PRIORITY -->
         <div class="fg">
           <label class="flbl">Requester Priority</label>
           <select class="fctrl" id="f-requester_priority">
@@ -365,46 +491,27 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
             <option>High</option><option>Very High</option>
           </select>
         </div>
-
-        <!-- EXPECTED DATE -->
         <div class="fg">
           <label class="flbl">Expected Date</label>
           <input type="date" class="fctrl" id="f-expected_date">
         </div>
-
-        <!-- REQUEST DATE (auto today) -->
         <div class="fg">
           <label class="flbl">Request Date</label>
           <input type="date" class="fctrl" id="f-request_date">
         </div>
-
         <div class="fsec">Business Value</div>
-
-        <!-- CHECKBOXES: Business Case / Cost Reduction / Margin Increasing -->
         <div class="fg full">
           <div class="chk-group">
-            <label class="chk-item">
-              <input type="checkbox" id="f-business_case_chk" onchange="App.onChkChange('business_case',this.checked)">
-              <span>Business Case</span>
-            </label>
-            <label class="chk-item">
-              <input type="checkbox" id="f-cost_reduction_chk" onchange="App.onChkChange('cost_reduction',this.checked)">
-              <span>Cost Reduction</span>
-            </label>
-            <label class="chk-item">
-              <input type="checkbox" id="f-margin_increasing_chk" onchange="App.onChkChange('margin_increasing',this.checked)">
-              <span>Margin Increasing</span>
-            </label>
+            <label class="chk-item"><input type="checkbox" id="f-business_case_chk"><span>Business Case</span></label>
+            <label class="chk-item"><input type="checkbox" id="f-cost_reduction_chk"><span>Cost Reduction</span></label>
+            <label class="chk-item"><input type="checkbox" id="f-margin_increasing_chk"><span>Margin Increasing</span></label>
           </div>
         </div>
-
         <div class="fsec">Comments</div>
-
         <div class="fg full">
           <label class="flbl">Comments</label>
           <textarea class="fctrl" id="f-comments" rows="3" placeholder="Additional notes..."></textarea>
         </div>
-
       </div>
     </div>
     <div class="mfoot">
@@ -414,11 +521,35 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
   </div>
 </div>
 
+<!-- ═══════════ MODAL: DEVELOPER CRUD ═══════════ -->
+<div class="overlay" id="devModalOverlay">
+  <div class="modal" style="max-width:480px">
+    <div class="mhead"><div class="mtitle" id="devModalTitle">New Developer</div><button class="mclose" onclick="App.closeDevModal()">✕</button></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="fg full"><label class="flbl">Name *</label><input type="text" class="fctrl" id="dm-name" placeholder="Developer name"></div>
+        <div class="fg full"><label class="flbl">Email *</label><input type="email" class="fctrl" id="dm-email" placeholder="developer@philips.com"></div>
+        <div class="fg">
+          <label class="flbl">Skill</label>
+          <select class="fctrl" id="dm-skill">
+            <option value="">—</option>
+            <option>Front-end</option><option>Back-end</option><option>Full-stack</option>
+          </select>
+        </div>
+        <div class="fg"><label class="flbl">Hours per Day</label><input type="number" class="fctrl" id="dm-hours" min="1" max="24" value="8"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="App.closeDevModal()">Cancel</button>
+      <button class="btn btn-primary" id="devSaveBtn" onclick="App.saveDevRecord()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRM DELETE -->
 <div class="overlay" id="confirmOverlay">
   <div class="cbox">
-    <div class="cico">🗑️</div>
-    <div class="ctit">Delete Requirement</div>
+    <div class="cico">🗑️</div><div class="ctit">Delete</div>
     <div class="cmsg" id="confirmMsg"></div>
     <div class="cact">
       <button class="btn btn-ghost" onclick="App.closeConfirm()">Cancel</button>
@@ -432,101 +563,73 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}
 <script>
 const SUPA_URL = 'https://iuzlpllhckzrddwdqpyl.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1emxwbGxoY2t6cmRkd2RxcHlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNzYzNTcsImV4cCI6MjA5MzY1MjM1N30.gU8fyfogHBQKfy5_pVW1oaIGehJ2yDNxkUdPHdvCBH0';
-const TABLE = 'roadmap';
+const ANTH_URL = 'https://api.anthropic.com/v1/messages';
 
-const supa = {
-  hdrs: {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
-  url: SUPA_URL+'/rest/v1/'+TABLE,
-  async getAll(){
-    const r=await fetch(this.url+'?select=*&order=id.asc&limit=2000',{headers:this.hdrs});
-    if(!r.ok) throw new Error('HTTP '+r.status+': '+await r.text());
-    return r.json();
-  },
-  async create(rec){
-    const r=await fetch(this.url,{method:'POST',headers:this.hdrs,body:JSON.stringify(rec)});
-    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||'HTTP '+r.status);}
-    const d=await r.json(); return Array.isArray(d)?d[0]:d;
-  },
-  async update(id,rec){
-    const r=await fetch(this.url+'?id=eq.'+id,{method:'PATCH',headers:this.hdrs,body:JSON.stringify(rec)});
-    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||'HTTP '+r.status);}
-    return true;
-  },
-  async delete(id){
-    const h=Object.assign({},this.hdrs,{'Prefer':'return=minimal'});
-    const r=await fetch(this.url+'?id=eq.'+id,{method:'DELETE',headers:h});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return true;
-  }
+// Effort matrix: COMPLEXITY x SIZE
+const EFFORT_MATRIX = {
+  'Very Low': {XS:2, Small:4,  Medium:9,  Large:18, XL:36},
+  'Low':      {XS:2, Small:6,  Medium:12, Large:24, XL:48},
+  'Medium':   {XS:3, Small:8,  Medium:17, Large:34, XL:67},
+  'High':     {XS:4, Small:11, Medium:23, Large:46, XL:91},
+  'Very High':{XS:5, Small:15, Medium:30, Large:60, XL:120}
 };
 
-// ── MULTISELECT ──────────────────────────────────────────────────────────────
+const supa = {
+  h(extra){ return Object.assign({'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},extra||{}); },
+  u(t){ return SUPA_URL+'/rest/v1/'+t; },
+  async get(t,q){ const r=await fetch(this.u(t)+'?'+q,{headers:this.h()}); if(!r.ok)throw new Error(await r.text()); return r.json(); },
+  async post(t,b){ const r=await fetch(this.u(t),{method:'POST',headers:this.h(),body:JSON.stringify(b)}); if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||r.status);} const d=await r.json(); return Array.isArray(d)?d[0]:d; },
+  async patch(t,q,b){ const r=await fetch(this.u(t)+'?'+q,{method:'PATCH',headers:this.h(),body:JSON.stringify(b)}); if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||r.status);} return true; },
+  async del(t,q){ const r=await fetch(this.u(t)+'?'+q,{method:'DELETE',headers:this.h({'Prefer':'return=minimal'})}); if(!r.ok)throw new Error(r.status); return true; }
+};
+
 class MS {
-  constructor(wrapperId,placeholder,onChange){
-    this.id=wrapperId; this.ph=placeholder; this.cb=onChange;
-    this.sel=new Set(); this.opts=[];
-    this.build();
-  }
+  constructor(wid,ph,cb){ this.id=wid;this.ph=ph;this.cb=cb;this.sel=new Set();this.opts=[];this.build(); }
   build(){
     const w=document.getElementById(this.id);
-    w.innerHTML=
-      '<div class="ms-trigger" id="'+this.id+'-t" onclick="event.stopPropagation();App.msOpen(\''+this.id+'\')">'+
-        '<span id="'+this.id+'-lbl">'+this.ph+'</span>'+
-      '</div>'+
+    w.innerHTML='<div class="ms-trigger" id="'+this.id+'-t" onclick="event.stopPropagation();App.msOpen(\''+this.id+'\')"><span id="'+this.id+'-lbl">'+this.ph+'</span></div>'+
       '<div class="ms-dropdown" id="'+this.id+'-d">'+
-        '<div class="ms-search-box"><span style="font-size:12px;color:var(--dim)">🔍</span>'+
-          '<input type="text" placeholder="Search..." oninput="App.msSearch(\''+this.id+'\',this.value)" onclick="event.stopPropagation()">'+
-        '</div>'+
-        '<div class="ms-actions">'+
-          '<button class="ms-action" onclick="App.msAll(\''+this.id+'\')">All</button>'+
-          '<button class="ms-action" onclick="App.msClear(\''+this.id+'\')">Clear</button>'+
-        '</div>'+
-        '<div id="'+this.id+'-opts"></div>'+
-      '</div>';
+        '<div class="ms-search-box"><span>🔍</span><input type="text" placeholder="Search..." oninput="App.msSearch(\''+this.id+'\',this.value)" onclick="event.stopPropagation()"></div>'+
+        '<div class="ms-actions"><button class="ms-action" onclick="App.msAll(\''+this.id+'\')">All</button><button class="ms-action" onclick="App.msClear(\''+this.id+'\')">Clear</button></div>'+
+        '<div id="'+this.id+'-opts"></div></div>';
   }
-  setOpts(opts){ this.opts=[...opts].sort(); this.renderOpts(this.opts); }
-  renderOpts(opts,q){
-    q=q||'';
-    const el=document.getElementById(this.id+'-opts');
-    const f=q?opts.filter(o=>o.toLowerCase().includes(q.toLowerCase())):opts;
+  setOpts(o){this.opts=[...o].sort();this.renderOpts(this.opts);}
+  renderOpts(o,q){
+    q=q||'';const el=document.getElementById(this.id+'-opts');
+    const f=q?o.filter(x=>x.toLowerCase().includes(q.toLowerCase())):o;
     if(!f.length){el.innerHTML='<div class="ms-empty">No options</div>';return;}
-    const self=this;
-    el.innerHTML=f.map(function(o){
-      const sid=o.replace(/[^a-z0-9]/gi,'_');
-      const sv=o.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-      const chk=self.sel.has(o)?'checked':'';
+    const s=this;
+    el.innerHTML=f.map(function(x){
+      const sid=x.replace(/[^a-z0-9]/gi,'_'),sv=x.replace(/\\/g,'\\\\').replace(/'/g,"\\'"),chk=s.sel.has(x)?'checked':'';
       return '<div class="ms-opt" onclick="event.stopPropagation()">'+
-        '<input type="checkbox" id="cb-'+self.id+'-'+sid+'" '+chk+
-          ' onchange="App.msCheck(\''+self.id+'\',\''+sv+'\',this.checked)" onclick="event.stopPropagation()">'+
-        '<label for="cb-'+self.id+'-'+sid+'" onclick="event.stopPropagation()">'+o+'</label>'+
-      '</div>';
+        '<input type="checkbox" id="cb-'+s.id+'-'+sid+'" '+chk+' onchange="App.msCheck(\''+s.id+'\',\''+sv+'\',this.checked)" onclick="event.stopPropagation()">'+
+        '<label for="cb-'+s.id+'-'+sid+'" onclick="event.stopPropagation()">'+x+'</label></div>';
     }).join('');
   }
-  check(val,on){ if(on)this.sel.add(val);else this.sel.delete(val); this.updateLbl(); this.cb(); }
-  all(){ this.opts.forEach(o=>this.sel.add(o)); this.renderOpts(this.opts); this.updateLbl(); this.cb(); }
-  clear(){ this.sel.clear(); this.renderOpts(this.opts); this.updateLbl(); this.cb(); }
+  check(v,on){if(on)this.sel.add(v);else this.sel.delete(v);this.updateLbl();this.cb();}
+  all(){this.opts.forEach(o=>this.sel.add(o));this.renderOpts(this.opts);this.updateLbl();this.cb();}
+  clear(){this.sel.clear();this.renderOpts(this.opts);this.updateLbl();this.cb();}
   open(){
-    const d=document.getElementById(this.id+'-d');
-    const t=document.getElementById(this.id+'-t');
-    const wasOpen=d.classList.contains('open');
+    const d=document.getElementById(this.id+'-d'),t=document.getElementById(this.id+'-t'),was=d.classList.contains('open');
     document.querySelectorAll('.ms-dropdown.open').forEach(x=>x.classList.remove('open'));
     document.querySelectorAll('.ms-trigger.open').forEach(x=>x.classList.remove('open'));
-    if(!wasOpen){d.classList.add('open');t.classList.add('open');}
+    if(!was){d.classList.add('open');t.classList.add('open');}
   }
   updateLbl(){
-    const l=document.getElementById(this.id+'-lbl');
-    const n=this.sel.size;
-    if(n===0) l.innerHTML=this.ph;
-    else if(n===1) l.innerHTML=[...this.sel][0]+' <span class="ms-count">1</span>';
+    const l=document.getElementById(this.id+'-lbl'),n=this.sel.size;
+    if(!n)l.innerHTML=this.ph;
+    else if(n===1)l.innerHTML=[...this.sel][0]+' <span class="ms-count">1</span>';
     else l.innerHTML=this.ph+' <span class="ms-count">'+n+'</span>';
   }
-  get(){ return[...this.sel]; }
+  get(){return[...this.sel];}
 }
 
-// ── APP ──────────────────────────────────────────────────────────────────────
 const App = {
-  data:[], filtered:[], page:1, pageSize:20, sortKey:'id', sortDir:1,
-  editingId:null, deletingId:null, charts:{}, ms:{},
+  data:[], filtered:[], devs:[], reqDevs:[],
+  page:1, pageSize:20, sortKey:'id', sortDir:1,
+  editingId:null, deletingId:null, deleteType:'req',
+  charts:{}, ms:{},
+  selectedReqId:null, devEditingDevId:null,
 
   async init(){
     const t=localStorage.getItem('ei_theme')||'dark';
@@ -541,57 +644,48 @@ const App = {
   },
 
   initMS(){
-    const self=this;
+    const s=this;
     [['ms-status','Status'],['ms-area','Area'],['ms-dashboard','Dashboard'],
      ['ms-developer','Developer'],['ms-complexity','Complexity'],
      ['ms-business_partner','BP'],['ms-requester','Requester']
-    ].forEach(function(pair){ self.ms[pair[0]]=new MS(pair[0],pair[1],function(){self.filter();}); });
+    ].forEach(function(p){s.ms[p[0]]=new MS(p[0],p[1],function(){s.filter();});});
   },
 
-  msOpen(id){ if(this.ms[id]) this.ms[id].open(); },
-  msSearch(id,q){ if(this.ms[id]) this.ms[id].renderOpts(this.ms[id].opts,q); },
-  msCheck(id,val,on){ if(this.ms[id]) this.ms[id].check(val,on); },
-  msAll(id){ if(this.ms[id]) this.ms[id].all(); },
-  msClear(id){ if(this.ms[id]) this.ms[id].clear(); },
+  msOpen(id){if(this.ms[id])this.ms[id].open();},
+  msSearch(id,q){if(this.ms[id])this.ms[id].renderOpts(this.ms[id].opts,q);},
+  msCheck(id,v,on){if(this.ms[id])this.ms[id].check(v,on);},
+  msAll(id){if(this.ms[id])this.ms[id].all();},
+  msClear(id){if(this.ms[id])this.ms[id].clear();},
 
-  setTheme(t){
-    localStorage.setItem('ei_theme',t);
-    this.applyTheme(t);
-    if(document.getElementById('page-dashboard').classList.contains('active'))
-      setTimeout(()=>this.renderDash(),100);
-  },
-  applyTheme(t){
-    document.body.className=t;
-    document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
-    const btn=document.querySelector('.'+t+'-btn');
-    if(btn) btn.classList.add('active');
-  },
-
-  setSp(ok,txt){
-    document.getElementById('spPill').className='sp-pill '+(ok?'ok':'err');
-    document.getElementById('spTxt').textContent=txt;
-  },
+  setTheme(t){localStorage.setItem('ei_theme',t);this.applyTheme(t);if(document.getElementById('page-dashboard').classList.contains('active'))setTimeout(()=>this.renderDash(),100);},
+  applyTheme(t){document.body.className=t;document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));const b=document.querySelector('.'+t+'-btn');if(b)b.classList.add('active');},
+  setSp(ok,txt){document.getElementById('spPill').className='sp-pill '+(ok?'ok':'err');document.getElementById('spTxt').textContent=txt;},
 
   async load(){
     document.getElementById('loader').classList.remove('hide');
-    document.getElementById('loaderTxt').textContent='Loading data from Supabase...';
+    document.getElementById('loaderTxt').textContent='Loading data...';
     try{
-      this.data=await supa.getAll();
-      this.setSp(true,'Supabase · '+this.data.length+' requirements');
+      const [rows,devs,rds]=await Promise.all([
+        supa.get('roadmap','select=*&order=id.asc&limit=2000'),
+        supa.get('developers','select=*&order=name.asc').catch(()=>[]),
+        supa.get('requirement_developers','select=*').catch(()=>[])
+      ]);
+      this.data=rows; this.devs=devs; this.reqDevs=rds;
+      this.setSp(true,'Supabase · '+rows.length+' requirements');
       this.populateMS();
       this.filter();
-    }finally{ document.getElementById('loader').classList.add('hide'); }
+      this.renderDevTable();
+    }finally{document.getElementById('loader').classList.add('hide');}
   },
 
   populateMS(){
-    const self=this;
+    const s=this;
     const MAP={'ms-status':'status','ms-area':'area','ms-dashboard':'dashboard',
       'ms-developer':'developer','ms-complexity':'complexity',
       'ms-business_partner':'business_partner','ms-requester':'requester'};
     Object.entries(MAP).forEach(function(e){
-      const id=e[0],key=e[1];
-      const vals=[...new Set(self.data.map(r=>r[key]).filter(Boolean))];
-      if(self.ms[id]) self.ms[id].setOpts(vals);
+      const vals=[...new Set(s.data.map(r=>r[e[1]]).filter(Boolean))];
+      if(s.ms[e[0]])s.ms[e[0]].setOpts(vals);
     });
   },
 
@@ -600,7 +694,9 @@ const App = {
     document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
     document.getElementById('page-'+name).classList.add('active');
     document.getElementById('tab-'+name).classList.add('active');
-    if(name==='dashboard') this.renderDash();
+    if(name==='dashboard')this.renderDash();
+    if(name==='development')this.renderDevPanel();
+    if(name==='developers')this.renderDevTable();
   },
 
   filter(){
@@ -608,45 +704,34 @@ const App = {
     const MAP={'ms-status':'status','ms-area':'area','ms-dashboard':'dashboard',
       'ms-developer':'developer','ms-complexity':'complexity',
       'ms-business_partner':'business_partner','ms-requester':'requester'};
-    const active={};
-    const self=this;
+    const active={};const s=this;
     Object.entries(MAP).forEach(function(e){
-      const id=e[0],key=e[1];
-      const sel=self.ms[id]?self.ms[id].get():[];
-      if(sel.length) active[key]=new Set(sel);
+      const sel=s.ms[e[0]]?s.ms[e[0]].get():[];
+      if(sel.length)active[e[1]]=new Set(sel);
     });
     this.filtered=this.data.filter(function(r){
-      if(q){
-        const txt=[r.requirement,r.requester,r.dashboard,r.comments,r.business_partner,r.impacts]
-          .map(v=>(v||'').toLowerCase()).join(' ');
-        if(!txt.includes(q)) return false;
-      }
-      for(const key in active) if(!active[key].has(r[key]||'')) return false;
+      if(q&&!([r.requirement,r.requester,r.dashboard,r.comments,r.business_partner,r.impacts].map(v=>(v||'').toLowerCase()).join(' ').includes(q)))return false;
+      for(const k in active)if(!active[k].has(r[k]||''))return false;
       return true;
     });
-    this.page=1; this.renderTable();
+    this.page=1;this.renderTable();
   },
 
-  resetFilters(){
-    document.getElementById('fSearch').value='';
-    Object.values(this.ms).forEach(m=>m.clear());
-    this.filter();
-  },
+  resetFilters(){document.getElementById('fSearch').value='';Object.values(this.ms).forEach(m=>m.clear());this.filter();},
 
   sort(key){
-    if(this.sortKey===key) this.sortDir*=-1; else{this.sortKey=key;this.sortDir=1;}
+    if(this.sortKey===key)this.sortDir*=-1;else{this.sortKey=key;this.sortDir=1;}
     document.querySelectorAll('th').forEach(th=>th.classList.remove('th-s'));
-    const el=document.getElementById('th-'+key); if(el) el.classList.add('th-s');
+    const el=document.getElementById('th-'+key);if(el)el.classList.add('th-s');
     this.renderTable();
   },
 
   renderTable(){
-    const self=this;
+    const s=this;
     const sorted=[...this.filtered].sort(function(a,b){
-      const av=a[self.sortKey]!=null?a[self.sortKey]:'';
-      const bv=b[self.sortKey]!=null?b[self.sortKey]:'';
-      if(typeof av==='number'&&typeof bv==='number') return(av-bv)*self.sortDir;
-      return String(av).localeCompare(String(bv))*self.sortDir;
+      const av=a[s.sortKey]!=null?a[s.sortKey]:'',bv=b[s.sortKey]!=null?b[s.sortKey]:'';
+      if(typeof av==='number'&&typeof bv==='number')return(av-bv)*s.sortDir;
+      return String(av).localeCompare(String(bv))*s.sortDir;
     });
     document.getElementById('cShown').textContent=this.filtered.length;
     document.getElementById('cTotal').textContent=this.data.length;
@@ -654,40 +739,34 @@ const App = {
     const start=(this.page-1)*this.pageSize;
     const rows=sorted.slice(start,start+this.pageSize);
     const tbody=document.getElementById('tbody');
-    if(!rows.length){
-      tbody.innerHTML='<tr><td colspan="23"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';
-    }else{
-      tbody.innerHTML=rows.map(function(r){
-        return '<tr>'+
-          '<td class="td-mono">'+r.id+'</td>'+
-          '<td class="td-mono">'+(r.priority!=null?r.priority:'—')+'</td>'+
-          '<td style="font-size:11px;white-space:nowrap">'+(r.business_partner||'—')+'</td>'+
-          '<td class="td-mono">'+self.fd(r.request_date)+'</td>'+
-          '<td><span class="td-clip" title="'+self.esc(r.requirement||'')+'">'+(r.requirement?r.requirement.split('\n')[0]:'—')+'</span></td>'+
-          '<td><span class="td-clip" title="'+self.esc(r.impacts||'')+'">'+(r.impacts||'—')+'</span></td>'+
-          '<td style="font-size:11px">'+(r.requester||'—')+'</td>'+
-          '<td style="font-size:11px">'+(r.area||'—')+'</td>'+
-          '<td><span class="td-clip" style="max-width:110px;font-size:11px">'+(r.dashboard||'—')+'</span></td>'+
-          '<td style="font-size:11px">'+(r.bizops_lead||'—')+'</td>'+
-          '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
-          '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
-          '<td style="font-size:11px">'+(r.business_owner||'—')+'</td>'+
-          '<td>'+self.badge(r.status)+'</td>'+
-          '<td class="td-mono">'+(r.percent_completed!=null?r.percent_completed+'%':'—')+'</td>'+
-          '<td class="td-mono">'+self.fd(r.closed_date)+'</td>'+
-          '<td style="font-size:11px">'+(r.developer||'—')+'</td>'+
-          '<td style="font-size:11px">'+(r.complexity||'—')+'</td>'+
-          '<td style="font-size:11px">'+(r.size||'—')+'</td>'+
-          '<td class="td-mono">'+(r.effort!=null?r.effort+'h':'—')+'</td>'+
-          '<td class="td-mono">'+self.fd(r.start_date)+'</td>'+
-          '<td class="td-mono">'+self.fd(r.expected_end_date)+'</td>'+
-          '<td><div class="td-actions">'+
-            '<button class="bico edit" onclick="App.openModal('+r.id+')" title="Edit">✏️</button>'+
-            '<button class="bico del" onclick="App.openConfirm('+r.id+')" title="Delete">🗑️</button>'+
-          '</div></td>'+
-        '</tr>';
-      }).join('');
-    }
+    if(!rows.length){tbody.innerHTML='<tr><td colspan="19"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';return;}
+    tbody.innerHTML=rows.map(function(r){
+      return '<tr>'+
+        '<td class="td-mono">'+r.id+'</td>'+
+        '<td class="td-mono">'+(r.priority!=null?r.priority:'—')+'</td>'+
+        '<td style="font-size:11px">'+(r.business_partner||'—')+'</td>'+
+        '<td class="td-mono">'+s.fd(r.request_date)+'</td>'+
+        '<td><span class="td-clip" title="'+s.esc(r.requirement||'')+'">'+(r.requirement?r.requirement.split('\n')[0]:'—')+'</span></td>'+
+        '<td><span class="td-clip" title="'+s.esc(r.impacts||'')+'">'+(r.impacts||'—')+'</span></td>'+
+        '<td style="font-size:11px">'+(r.requester||'—')+'</td>'+
+        '<td style="font-size:11px">'+(r.area||'—')+'</td>'+
+        '<td><span class="td-clip" style="max-width:110px;font-size:11px">'+(r.dashboard||'—')+'</span></td>'+
+        '<td style="font-size:11px">'+(r.bizops_lead||'—')+'</td>'+
+        '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
+        '<td class="td-mono">'+s.fd(r.expected_date)+'</td>'+
+        '<td style="font-size:11px">'+(r.business_owner||'—')+'</td>'+
+        '<td>'+s.badge(r.status)+'</td>'+
+        '<td class="td-mono">'+(r.percent_completed!=null?r.percent_completed+'%':'—')+'</td>'+
+        '<td style="font-size:11px">'+(r.complexity||'—')+'</td>'+
+        '<td style="font-size:11px">'+(r.size||'—')+'</td>'+
+        '<td class="td-mono">'+(r.effort!=null?r.effort+'h':'—')+'</td>'+
+        '<td><div class="td-actions">'+
+          '<button class="bico edit" onclick="App.openModal('+r.id+')" title="Edit">✏️</button>'+
+          '<button class="bico dev"  onclick="App.openDevTab('+r.id+')" title="Development">⚙️</button>'+
+          '<button class="bico del"  onclick="App.openConfirm('+r.id+',\'req\')" title="Delete">🗑️</button>'+
+        '</div></td>'+
+      '</tr>';
+    }).join('');
     this.renderPg(sorted.length);
   },
 
@@ -695,13 +774,9 @@ const App = {
     const pages=Math.ceil(total/this.pageSize);
     const el=document.getElementById('pagination');
     if(pages<=1){el.innerHTML='';return;}
-    const self=this;
     let h='<button class="pgbtn" onclick="App.goPage('+(this.page-1)+')" '+(this.page===1?'disabled':'')+'>‹</button>';
     for(let i=1;i<=pages;i++){
-      if(pages>10&&i>3&&i<pages-2&&Math.abs(i-this.page)>1){
-        if(i===4||i===pages-3) h+='<span style="color:var(--dim);padding:0 4px;font-size:12px">…</span>';
-        continue;
-      }
+      if(pages>10&&i>3&&i<pages-2&&Math.abs(i-this.page)>1){if(i===4||i===pages-3)h+='<span style="color:var(--dim);padding:0 4px">…</span>';continue;}
       h+='<button class="pgbtn '+(i===this.page?'active':'')+'" onclick="App.goPage('+i+')">'+i+'</button>';
     }
     h+='<button class="pgbtn" onclick="App.goPage('+(this.page+1)+')" '+(this.page===pages?'disabled':'')+'>›</button>';
@@ -709,52 +784,47 @@ const App = {
   },
   goPage(p){const pg=Math.ceil(this.filtered.length/this.pageSize);if(p<1||p>pg)return;this.page=p;this.renderTable();},
 
-  // Today's date as YYYY-MM-DD
-  today(){
-    const d=new Date();
-    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  // ── AI Improve ────────────────────────────────────────────────────────────
+  async aiImprove(field){
+    const isReq=(field==='requirement');
+    const textEl=document.getElementById('f-'+field);
+    const btnEl=document.getElementById(isReq?'aiReqBtn':'aiImpBtn');
+    const thinkEl=document.getElementById(isReq?'aiReqThink':'aiImpThink');
+    const txt=textEl.value.trim();
+    if(!txt){this.notify('Please write something first.','warn');return;}
+    btnEl.disabled=true;thinkEl.classList.add('show');
+    try{
+      const prompt=isReq
+        ?'You are a business analyst. Improve the following requirement text to be clearer, more structured, and professional. Keep it concise. Return only the improved text, nothing else.\n\nRequirement: '+txt
+        :'You are a business analyst. Based on this requirement, write clear and compelling business impacts and value. Use bullet points. Return only the impacts text, nothing else.\n\nRequirement: '+document.getElementById('f-requirement').value+'\n\nCurrent impact text: '+txt;
+      const resp=await fetch(ANTH_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      });
+      const data=await resp.json();
+      const improved=data.content&&data.content[0]?data.content[0].text:'';
+      if(improved)textEl.value=improved;
+      else this.notify('AI did not return a response.','warn');
+    }catch(e){this.notify('AI error: '+e.message,'err');}
+    finally{btnEl.disabled=false;thinkEl.classList.remove('show');}
   },
 
-  // Dashboard "Other" handler
+  // ── REQUIREMENT MODAL ─────────────────────────────────────────────────────
+  today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');},
   onDashboardChange(){
-    const sel=document.getElementById('f-dashboard');
-    const other=document.getElementById('f-dashboard-other');
-    other.style.display=sel.value==='Other'?'block':'none';
-    if(sel.value!=='Other') other.value='';
+    const s=document.getElementById('f-dashboard'),o=document.getElementById('f-dashboard-other');
+    o.style.display=s.value==='Other'?'block':'none';if(s.value!=='Other')o.value='';
   },
-
-  // Checkbox → hidden numeric field (1 = checked, null = unchecked)
-  onChkChange(field, checked){
-    // Store as hidden data attribute; collected in saveRecord
-    const chk=document.getElementById('f-'+field+'_chk');
-    chk.dataset.val=checked?'1':'';
-  },
-
-  // Resolve dashboard value (handles "Other" case)
-  getDashboardValue(){
-    const sel=document.getElementById('f-dashboard');
-    if(sel.value==='Other'){
-      const v=document.getElementById('f-dashboard-other').value.trim();
-      return v||null;
-    }
-    return sel.value||null;
-  },
-
-  // Resolve checkbox value
-  getChkValue(field){
-    const chk=document.getElementById('f-'+field+'_chk');
-    return chk&&chk.checked?1:null;
-  },
+  getDashVal(){const s=document.getElementById('f-dashboard');if(s.value==='Other'){const v=document.getElementById('f-dashboard-other').value.trim();return v||null;}return s.value||null;},
+  getChk(f){const c=document.getElementById('f-'+f+'_chk');return c&&c.checked?1:null;},
 
   openModal(id){
     this.editingId=id;
     const isNew=!id;
     document.getElementById('modalTitle').textContent=id?'Edit Requirement #'+id:'New Requirement';
-
     if(isNew){
-      // New record defaults
-      document.getElementById('f-requirement').value='';
-      document.getElementById('f-impacts').value='';
+      ['requirement','impacts','comments'].forEach(f=>document.getElementById('f-'+f).value='');
       document.getElementById('f-status').value='Idea';
       document.getElementById('f-area').value='';
       document.getElementById('f-dashboard').value='';
@@ -765,137 +835,315 @@ const App = {
       document.getElementById('f-requester_priority').value='';
       document.getElementById('f-expected_date').value='';
       document.getElementById('f-request_date').value=this.today();
-      document.getElementById('f-comments').value='';
-      ['business_case','cost_reduction','margin_increasing'].forEach(function(f){
-        const chk=document.getElementById('f-'+f+'_chk');
-        if(chk){ chk.checked=false; chk.dataset.val=''; }
-      });
+      ['business_case','cost_reduction','margin_increasing'].forEach(f=>{const c=document.getElementById('f-'+f+'_chk');if(c)c.checked=false;});
     } else {
       const r=this.data.find(x=>x.id===id)||{};
       document.getElementById('f-requirement').value=r.requirement||'';
       document.getElementById('f-impacts').value=r.impacts||'';
-
-      // Status: if existing record has a status not in the new-record list, keep it as-is via a temp option
+      // Status - allow any existing status
       const sSel=document.getElementById('f-status');
-      let statusVal=r.status||'Idea';
-      // Check if value exists in options
-      const exists=[...sSel.options].some(o=>o.value===statusVal);
-      if(!exists){
-        // Add temp option
-        const opt=document.createElement('option');
-        opt.value=statusVal; opt.text=statusVal; opt.id='tmp-status-opt';
-        sSel.appendChild(opt);
-      } else {
-        // Remove any previous temp option
-        const tmp=document.getElementById('tmp-status-opt');
-        if(tmp) tmp.remove();
-      }
-      sSel.value=statusVal;
-
+      const sv=r.status||'Idea';
+      const exists=[...sSel.options].some(o=>o.value===sv);
+      const tmp=document.getElementById('tmp-st');if(tmp)tmp.remove();
+      if(!exists){const o=document.createElement('option');o.value=sv;o.text=sv;o.id='tmp-st';sSel.appendChild(o);}
+      sSel.value=sv;
       document.getElementById('f-area').value=r.area||'';
-
-      // Dashboard
-      const dSel=document.getElementById('f-dashboard');
-      const dOther=document.getElementById('f-dashboard-other');
-      const dashExists=[...dSel.options].some(o=>o.value===r.dashboard);
-      if(r.dashboard&&!dashExists){
-        dSel.value='Other';
-        dOther.value=r.dashboard;
-        dOther.style.display='block';
-      } else {
-        dSel.value=r.dashboard||'';
-        dOther.value='';
-        dOther.style.display='none';
-      }
-
+      const dSel=document.getElementById('f-dashboard'),dOth=document.getElementById('f-dashboard-other');
+      const dEx=[...dSel.options].some(o=>o.value===r.dashboard);
+      if(r.dashboard&&!dEx){dSel.value='Other';dOth.value=r.dashboard;dOth.style.display='block';}
+      else{dSel.value=r.dashboard||'';dOth.value='';dOth.style.display='none';}
       document.getElementById('f-requester').value=r.requester||'';
       document.getElementById('f-business_owner').value=r.business_owner||'';
       document.getElementById('f-requester_priority').value=r.requester_priority||'';
       document.getElementById('f-expected_date').value=r.expected_date||'';
       document.getElementById('f-request_date').value=r.request_date||this.today();
       document.getElementById('f-comments').value=r.comments||'';
-
-      // Checkboxes
       ['business_case','cost_reduction','margin_increasing'].forEach(function(f){
-        const chk=document.getElementById('f-'+f+'_chk');
-        if(chk){
-          const v=r[f];
-          chk.checked=(v!=null&&v!==0&&v!=='');
-          chk.dataset.val=chk.checked?'1':'';
-        }
+        const c=document.getElementById('f-'+f+'_chk');if(c)c.checked=(r[f]!=null&&r[f]!==0&&r[f]!=='');
       });
     }
-
     document.getElementById('modalOverlay').classList.add('open');
   },
-  closeModal(){
-    document.getElementById('modalOverlay').classList.remove('open');
-    this.editingId=null;
-    // Clean up any temp status option
-    const tmp=document.getElementById('tmp-status-opt');
-    if(tmp) tmp.remove();
-  },
+  closeModal(){document.getElementById('modalOverlay').classList.remove('open');this.editingId=null;const t=document.getElementById('tmp-st');if(t)t.remove();},
 
   async saveRecord(){
     const req=document.getElementById('f-requirement').value.trim();
     if(!req){this.notify('Requirement field is required.','err');return;}
-
     const rec={
-      requirement: req,
-      impacts:     document.getElementById('f-impacts').value.trim()||null,
-      status:      document.getElementById('f-status').value||'Idea',
-      area:        document.getElementById('f-area').value||null,
-      dashboard:   this.getDashboardValue(),
-      requester:   document.getElementById('f-requester').value.trim()||null,
-      business_owner: document.getElementById('f-business_owner').value.trim()||null,
-      requester_priority: document.getElementById('f-requester_priority').value||null,
-      expected_date: document.getElementById('f-expected_date').value||null,
-      request_date:  document.getElementById('f-request_date').value||null,
-      comments:    document.getElementById('f-comments').value.trim()||null,
-      business_case:     this.getChkValue('business_case'),
-      cost_reduction:    this.getChkValue('cost_reduction'),
-      margin_increasing: this.getChkValue('margin_increasing'),
+      requirement:req,
+      impacts:document.getElementById('f-impacts').value.trim()||null,
+      status:document.getElementById('f-status').value||'Idea',
+      area:document.getElementById('f-area').value||null,
+      dashboard:this.getDashVal(),
+      requester:document.getElementById('f-requester').value.trim()||null,
+      business_owner:document.getElementById('f-business_owner').value.trim()||null,
+      requester_priority:document.getElementById('f-requester_priority').value||null,
+      expected_date:document.getElementById('f-expected_date').value||null,
+      request_date:document.getElementById('f-request_date').value||null,
+      comments:document.getElementById('f-comments').value.trim()||null,
+      business_case:this.getChk('business_case'),
+      cost_reduction:this.getChk('cost_reduction'),
+      margin_increasing:this.getChk('margin_increasing'),
     };
-
     const btn=document.getElementById('saveBtn');
-    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
+    btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
     try{
-      if(this.editingId){
-        await supa.update(this.editingId,rec);
-        this.notify('Requirement #'+this.editingId+' updated! ✓','ok');
-      } else {
-        const c=await supa.create(rec);
-        this.notify('Requirement #'+c.id+' created! ✓','ok');
-      }
-      this.closeModal(); await this.load();
-    }catch(e){ this.notify('Error: '+e.message,'err'); }
-    finally{ btn.innerHTML='💾 Save'; btn.disabled=false; }
+      if(this.editingId){await supa.patch('roadmap','id=eq.'+this.editingId,rec);this.notify('Requirement #'+this.editingId+' updated! ✓','ok');}
+      else{const c=await supa.post('roadmap',rec);this.notify('Requirement #'+c.id+' created! ✓','ok');}
+      this.closeModal();await this.load();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
   },
 
-  openConfirm(id){
-    this.deletingId=id;
-    const r=this.data.find(x=>x.id===id);
-    document.getElementById('confirmMsg').textContent=
-      'Delete #'+id+': "'+(r&&r.requirement?r.requirement.split('\n')[0].substring(0,80):'')+'"? This action cannot be undone.';
+  // ── DEVELOPMENT TAB ───────────────────────────────────────────────────────
+  openDevTab(id){
+    this.selectedReqId=id;
+    this.tab('development');
+  },
+
+  renderDevPanel(){
+    const noSel=document.getElementById('dev-no-selection');
+    const panel=document.getElementById('dev-panel');
+    if(!this.selectedReqId){noSel.style.display='block';panel.style.display='none';return;}
+    noSel.style.display='none';panel.style.display='block';
+    const r=this.data.find(x=>x.id===this.selectedReqId);
+    if(!r){noSel.style.display='block';panel.style.display='none';return;}
+    document.getElementById('dev-req-title').textContent='#'+r.id+' — '+(r.requirement||'').split('\n')[0].substring(0,100);
+    document.getElementById('dev-req-status-badge').innerHTML=this.badge(r.status);
+    document.getElementById('dev-status').value=r.status||'Idea';
+    document.getElementById('dev-pct').value=r.percent_completed!=null?r.percent_completed:'';
+    document.getElementById('dev-complexity').value=r.complexity||'';
+    document.getElementById('dev-size').value=r.size||'';
+    document.getElementById('dev-effort').value=r.effort!=null?r.effort:'';
+    document.getElementById('dev-closed-date').value=r.closed_date||'';
+    this.renderDevAssignments();
+  },
+
+  devStatusChange(){
+    const status=document.getElementById('dev-status').value;
+    const closedEl=document.getElementById('dev-closed-date');
+    if(status==='Close') closedEl.value=this.today();
+    else closedEl.value='';
+  },
+
+  devCalcEffort(){
+    const c=document.getElementById('dev-complexity').value;
+    const si=document.getElementById('dev-size').value;
+    if(c&&si&&EFFORT_MATRIX[c]&&EFFORT_MATRIX[c][si]){
+      document.getElementById('dev-effort').value=EFFORT_MATRIX[c][si];
+    }
+  },
+
+  async devSaveMain(){
+    if(!this.selectedReqId)return;
+    const status=document.getElementById('dev-status').value;
+    const rec={
+      status:status,
+      percent_completed:parseFloat(document.getElementById('dev-pct').value)||null,
+      complexity:document.getElementById('dev-complexity').value||null,
+      size:document.getElementById('dev-size').value||null,
+      effort:parseFloat(document.getElementById('dev-effort').value)||null,
+      closed_date:document.getElementById('dev-closed-date').value||null,
+    };
+    try{
+      await supa.patch('roadmap','id=eq.'+this.selectedReqId,rec);
+      this.notify('Development details saved! ✓','ok');
+      await this.load();
+      this.renderDevPanel();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+  },
+
+  renderDevAssignments(){
+    const rds=this.reqDevs.filter(x=>x.requirement_id===this.selectedReqId);
+    const el=document.getElementById('dev-assignments');
+    if(!rds.length){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No developers assigned yet. Click "+ Add Developer".</div>';return;}
+    const s=this;
+    el.innerHTML=rds.map(function(rd){
+      const dev=s.devs.find(d=>d.id===rd.developer_id);
+      const devName=dev?dev.name:'Unknown';
+      const skill=dev?dev.skill:'';
+      // Calculate end date display
+      const endDate=rd.end_date?s.fd(rd.end_date):'—';
+      const today=new Date();
+      const isLate=rd.end_date&&new Date(rd.end_date)<today&&rd.status!=='Close';
+      return '<div class="dev-card">'+
+        '<div class="dev-card-head">'+
+          '<div><div class="dev-card-name">'+devName+'</div><div class="dev-card-skill">'+skill+'</div></div>'+
+          '<button class="dev-card-remove" onclick="App.devRemoveAssignment('+rd.id+')" title="Remove">✕</button>'+
+        '</div>'+
+        '<div class="dev-card-body">'+
+          '<div class="fg"><label class="flbl">% Allocation</label>'+
+            '<input type="number" class="fctrl" value="'+(rd.percent_allocation||100)+'" min="1" max="100" id="rd-alloc-'+rd.id+'" oninput="App.devCalcEndDate('+rd.id+')">'+
+          '</div>'+
+          '<div class="fg"><label class="flbl">Start Date</label>'+
+            '<input type="date" class="fctrl" value="'+(rd.start_date||'')+'" id="rd-start-'+rd.id+'" oninput="App.devCalcEndDate('+rd.id+')">'+
+          '</div>'+
+          '<div class="fg"><label class="flbl">Effort (h)</label>'+
+            '<input type="number" class="fctrl" value="'+(rd.effort||'')+'" min="0" id="rd-effort-'+rd.id+'" oninput="App.devCalcEndDate('+rd.id+')">'+
+          '</div>'+
+          '<div class="fg"><label class="flbl">End Date <span style="font-size:10px;color:var(--cyan)">(calculated)</span></label>'+
+            '<input type="date" class="fctrl" value="'+(rd.end_date||'')+'" id="rd-end-'+rd.id+'" style="'+(isLate?'border-color:var(--red)':'')+'">'+
+          '</div>'+
+          '<div style="grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;margin-top:4px">'+
+            '<button class="btn btn-primary btn-xs" onclick="App.devSaveAssignment('+rd.id+')">💾 Save</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  },
+
+  devAddSlot(){
+    if(!this.selectedReqId){this.notify('No requirement selected.','warn');return;}
+    if(!this.devs.length){this.notify('No developers registered. Go to the Developers tab first.','warn');return;}
+    // Simple select popup via native dialog
+    const existIds=this.reqDevs.filter(x=>x.requirement_id===this.selectedReqId).map(x=>x.developer_id);
+    const available=this.devs.filter(d=>!existIds.includes(d.id));
+    if(!available.length){this.notify('All registered developers are already assigned.','warn');return;}
+    const opts=available.map(d=>'['+d.id+'] '+d.name+' ('+d.skill+')').join('\n');
+    const ans=prompt('Select developer by ID:\n\n'+opts+'\n\nEnter developer ID:');
+    if(!ans)return;
+    const did=parseInt(ans);
+    if(!did||!this.devs.find(d=>d.id===did)){this.notify('Invalid developer ID.','err');return;}
+    this.devCreateAssignment(did);
+  },
+
+  async devCreateAssignment(devId){
+    const r=this.data.find(x=>x.id===this.selectedReqId);
+    const effort=r?r.effort:null;
+    try{
+      await supa.post('requirement_developers',{
+        requirement_id:this.selectedReqId,
+        developer_id:devId,
+        percent_allocation:100,
+        effort:effort,
+        start_date:null,end_date:null
+      });
+      this.notify('Developer assigned! ✓','ok');
+      await this.load();
+      this.renderDevAssignments();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+  },
+
+  devCalcEndDate(rdId){
+    const startEl=document.getElementById('rd-start-'+rdId);
+    const effortEl=document.getElementById('rd-effort-'+rdId);
+    const allocEl=document.getElementById('rd-alloc-'+rdId);
+    const endEl=document.getElementById('rd-end-'+rdId);
+    if(!startEl||!effortEl||!allocEl||!endEl)return;
+    const start=startEl.value,effort=parseFloat(effortEl.value),alloc=parseFloat(allocEl.value)||100;
+    if(!start||!effort)return;
+    const hoursPerDay=8*(alloc/100);
+    const workDays=Math.ceil(effort/hoursPerDay);
+    const endDate=this.addWorkDays(new Date(start),workDays);
+    endEl.value=this.dateToISO(endDate);
+  },
+
+  addWorkDays(date,days){
+    let d=new Date(date),added=0;
+    while(added<days){d.setDate(d.getDate()+1);const dow=d.getDay();if(dow!==0&&dow!==6)added++;}
+    return d;
+  },
+  dateToISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');},
+
+  async devSaveAssignment(rdId){
+    const alloc=parseFloat(document.getElementById('rd-alloc-'+rdId).value)||100;
+    const start=document.getElementById('rd-start-'+rdId).value||null;
+    const effort=parseFloat(document.getElementById('rd-effort-'+rdId).value)||null;
+    const end=document.getElementById('rd-end-'+rdId).value||null;
+    try{
+      await supa.patch('requirement_developers','id=eq.'+rdId,{percent_allocation:alloc,start_date:start,effort:effort,end_date:end});
+      this.notify('Assignment saved! ✓','ok');
+      await this.load();
+      this.renderDevAssignments();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+  },
+
+  async devRemoveAssignment(rdId){
+    if(!confirm('Remove this developer from the requirement?'))return;
+    try{
+      await supa.del('requirement_developers','id=eq.'+rdId);
+      this.notify('Developer removed.','ok');
+      await this.load();
+      this.renderDevAssignments();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+  },
+
+  // ── DEVELOPERS CRUD ───────────────────────────────────────────────────────
+  renderDevTable(){
+    const tbody=document.getElementById('devTableBody');
+    if(!tbody)return;
+    if(!this.devs.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="empty-ico">👥</div><p>No developers registered yet.</p></div></td></tr>';return;}
+    const s=this;
+    tbody.innerHTML=this.devs.map(function(d){
+      return '<tr>'+
+        '<td class="td-mono">'+d.id+'</td>'+
+        '<td style="font-weight:500">'+d.name+'</td>'+
+        '<td style="font-size:12px;color:var(--dim)">'+d.email+'</td>'+
+        '<td><span class="badge" style="background:rgba(0,115,230,.1);color:var(--accent);border:1px solid rgba(0,115,230,.2)">'+d.skill+'</span></td>'+
+        '<td class="td-mono">'+d.hours_per_day+'h/day</td>'+
+        '<td><div class="td-actions">'+
+          '<button class="bico edit" onclick="App.openDevModal('+d.id+')" title="Edit">✏️</button>'+
+          '<button class="bico del"  onclick="App.openConfirm('+d.id+',\'dev\')" title="Delete">🗑️</button>'+
+        '</div></td>'+
+      '</tr>';
+    }).join('');
+  },
+
+  openDevModal(id){
+    this.devEditingDevId=id;
+    document.getElementById('devModalTitle').textContent=id?'Edit Developer':'New Developer';
+    const d=id?this.devs.find(x=>x.id===id):{};
+    document.getElementById('dm-name').value=d.name||'';
+    document.getElementById('dm-email').value=d.email||'';
+    document.getElementById('dm-skill').value=d.skill||'';
+    document.getElementById('dm-hours').value=d.hours_per_day||8;
+    document.getElementById('devModalOverlay').classList.add('open');
+  },
+  closeDevModal(){document.getElementById('devModalOverlay').classList.remove('open');this.devEditingDevId=null;},
+
+  async saveDevRecord(){
+    const name=document.getElementById('dm-name').value.trim();
+    const email=document.getElementById('dm-email').value.trim();
+    if(!name||!email){this.notify('Name and email are required.','err');return;}
+    const rec={name,email,skill:document.getElementById('dm-skill').value||null,hours_per_day:parseFloat(document.getElementById('dm-hours').value)||8};
+    const btn=document.getElementById('devSaveBtn');
+    btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
+    try{
+      if(this.devEditingDevId){await supa.patch('developers','id=eq.'+this.devEditingDevId,rec);this.notify('Developer updated! ✓','ok');}
+      else{await supa.post('developers',rec);this.notify('Developer created! ✓','ok');}
+      this.closeDevModal();await this.load();this.renderDevTable();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
+  },
+
+  // ── CONFIRM / DELETE ─────────────────────────────────────────────────────
+  openConfirm(id,type){
+    this.deletingId=id;this.deleteType=type||'req';
+    const msg=type==='dev'
+      ?'Delete developer ID '+id+'? This will also remove their assignments.'
+      :(()=>{const r=this.data.find(x=>x.id===id);return'Delete requirement #'+id+': "'+(r&&r.requirement?r.requirement.split('\n')[0].substring(0,60):'')+'"? This cannot be undone.';})();
+    document.getElementById('confirmMsg').textContent=msg;
     document.getElementById('confirmOverlay').classList.add('open');
   },
-  closeConfirm(){ document.getElementById('confirmOverlay').classList.remove('open'); this.deletingId=null; },
+  closeConfirm(){document.getElementById('confirmOverlay').classList.remove('open');this.deletingId=null;},
   async doDelete(){
-    if(!this.deletingId) return;
+    if(!this.deletingId)return;
     const btn=document.getElementById('confirmBtn');
-    btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
+    btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
     try{
-      await supa.delete(this.deletingId);
-      this.notify('Requirement #'+this.deletingId+' deleted.','ok');
-      this.closeConfirm(); await this.load();
-    }catch(e){ this.notify('Error: '+e.message,'err'); }
-    finally{ btn.innerHTML='Delete'; btn.disabled=false; }
+      if(this.deleteType==='dev'){await supa.del('developers','id=eq.'+this.deletingId);}
+      else{await supa.del('roadmap','id=eq.'+this.deletingId);}
+      this.notify('Deleted successfully.','ok');
+      this.closeConfirm();await this.load();
+      if(this.deleteType==='dev')this.renderDevTable();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+    finally{btn.innerHTML='Delete';btn.disabled=false;}
   },
 
+  // ── DASHBOARD ─────────────────────────────────────────────────────────────
   renderDash(){
     const d=this.data.filter(r=>r.status!=='Removed');
-    const total=d.length||1;
-    const closed=d.filter(r=>r.status==='Close').length;
+    const total=d.length||1,closed=d.filter(r=>r.status==='Close').length;
     const inDev=d.filter(r=>r.status==='Develop'||r.status==='Validation').length;
     const effort=d.reduce((a,r)=>a+(r.effort||0),0);
     const pArr=d.filter(r=>r.percent_completed!=null);
@@ -907,14 +1155,11 @@ const App = {
       {l:'Total Effort',v:effort+'h',s:'Estimated',i:'⏱️',c:'var(--purple)'},
       {l:'Avg % Done',v:avgP.toFixed(0)+'%',s:'Progress',i:'📈',c:'var(--cyan)'},
     ];
-    document.getElementById('kgrid').innerHTML=kpis.map(function(k){
-      return '<div class="kpi" style="--kc:'+k.c+'"><div class="kpi-ico">'+k.i+'</div><div class="kpi-label">'+k.l+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>';
-    }).join('');
-    const sc={};
-    d.forEach(r=>{const s=r.status||'?';sc[s]=(sc[s]||0)+1;});
+    document.getElementById('kgrid').innerHTML=kpis.map(k=>'<div class="kpi" style="--kc:'+k.c+'"><div class="kpi-ico">'+k.i+'</div><div class="kpi-label">'+k.l+'</div><div class="kpi-val">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>').join('');
+    const sc={};d.forEach(r=>{const s=r.status||'?';sc[s]=(sc[s]||0)+1;});
     const isDark=document.body.classList.contains('dark');
-    const gc=isDark?'#1a2035':'#e8eef5', tc=isDark?'#7a8aaa':'#4a6080';
-    const self=this;
+    const gc=isDark?'#1a2035':'#e8eef5',tc=isDark?'#7a8aaa':'#4a6080';
+    const s=this;
     setTimeout(function(){
       const ac={};d.forEach(r=>{if(r.area)ac[r.area]=(ac[r.area]||0)+1;});
       const de={};d.forEach(r=>{if(r.developer&&r.effort)de[r.developer]=(de[r.developer]||0)+r.effort;});
@@ -922,56 +1167,139 @@ const App = {
       const cc={};d.forEach(r=>{if(r.complexity)cc[r.complexity]=(cc[r.complexity]||0)+1;});
       const ck=['Very Low','Low','Medium','High','Very High'].filter(k=>cc[k]);
       const ccl={'Very Low':'#22c55e','Low':'#06b6d4','Medium':'#f59e0b','High':'#f97316','Very High':'#ef4444'};
-      self.mkChart('cStatus','bar',Object.keys(sc),Object.values(sc),['#22c55e','#ef4444','#0073e6','#f59e0b','#f97316','#a855f7','#06b6d4','#7a8aaa'],false,gc,tc);
-      self.mkChart('cArea','doughnut',Object.keys(ac),Object.values(ac),['#0073e6','#22c55e','#f59e0b','#f97316','#a855f7','#06b6d4','#ef4444'],false,gc,tc);
-      self.mkChart('cDev','bar',ds.map(x=>x[0]),ds.map(x=>x[1]),['#0073e6'],true,gc,tc);
-      self.mkChart('cComplexity','doughnut',ck,ck.map(k=>cc[k]),ck.map(k=>ccl[k]),false,gc,tc);
+      s.mkChart('cStatus','bar',Object.keys(sc),Object.values(sc),['#22c55e','#ef4444','#0073e6','#f59e0b','#f97316','#a855f7','#06b6d4','#7a8aaa'],false,gc,tc);
+      s.mkChart('cArea','doughnut',Object.keys(ac),Object.values(ac),['#0073e6','#22c55e','#f59e0b','#f97316','#a855f7','#06b6d4','#ef4444'],false,gc,tc);
+      s.mkChart('cDev','bar',ds.map(x=>x[0]),ds.map(x=>x[1]),['#0073e6'],true,gc,tc);
+      s.mkChart('cComplexity','doughnut',ck,ck.map(k=>cc[k]),ck.map(k=>ccl[k]),false,gc,tc);
+      s.renderGantt(gc,tc);
     },50);
     const order=['Close','Validation','Develop','Dev Backlog','Plan','Evaluate','Identify','Idea','Defect','On Hold'];
     const scl={'Close':'#22c55e','Validation':'#06b6d4','Develop':'#0073e6','Dev Backlog':'#ef4444','Plan':'#f59e0b','Evaluate':'#f97316','Identify':'#a855f7','Idea':'#7a8aaa','Defect':'#ef4444','On Hold':'#3a4a6a'};
-    document.getElementById('deliveryRows').innerHTML=order.filter(s=>sc[s]).map(function(s){
-      const cnt=sc[s], pct=((cnt/total)*100).toFixed(1);
-      return '<div class="drow"><div>'+self.badge(s)+'</div>'+
-        '<div class="dbar-bg"><div class="dbar" style="width:'+pct+'%;background:'+(scl[s]||'#0073e6')+'"></div></div>'+
-        '<div class="dpct">'+cnt+' ('+pct+'%)</div></div>';
+    document.getElementById('deliveryRows').innerHTML=order.filter(s=>sc[s]).map(s=>{
+      const cnt=sc[s],pct=((cnt/total)*100).toFixed(1);
+      return '<div class="drow"><div>'+this.badge(s)+'</div><div class="dbar-bg"><div class="dbar" style="width:'+pct+'%;background:'+(scl[s]||'#0073e6')+'"></div></div><div class="dpct">'+cnt+' ('+pct+'%)</div></div>';
     }).join('');
   },
 
+  // ── GANTT ─────────────────────────────────────────────────────────────────
+  renderGantt(gc,tc){
+    const ganttEl=document.getElementById('ganttWrap');
+    const aiCard=document.getElementById('aiAnalysisCard');
+    // Get active assignments
+    const activeStatuses=['Develop','Validation'];
+    const activeRds=this.reqDevs.filter(rd=>{
+      const req=this.data.find(r=>r.id===rd.requirement_id);
+      return req&&activeStatuses.includes(req.status)&&rd.start_date&&rd.end_date;
+    });
+    if(!activeRds.length){
+      ganttEl.innerHTML='<div class="empty"><div class="empty-ico">📅</div><p>No active development with dates assigned.<br>Go to Development tab to set start/end dates.</p></div>';
+      aiCard.style.display='none';return;
+    }
+    // Date range
+    const allDates=activeRds.flatMap(rd=>[new Date(rd.start_date),new Date(rd.end_date)]);
+    const minDate=new Date(Math.min(...allDates));
+    const maxDate=new Date(Math.max(...allDates));
+    minDate.setDate(minDate.getDate()-2);maxDate.setDate(maxDate.getDate()+5);
+    const totalDays=(maxDate-minDate)/(1000*60*60*24);
+    const today=new Date();today.setHours(0,0,0,0);
+    const pct=(d)=>((new Date(d)-minDate)/(1000*60*60*24)/totalDays*100).toFixed(2)+'%';
+    const wid=(s,e)=>(((new Date(e)-new Date(s))/(1000*60*60*24))/totalDays*100).toFixed(2)+'%';
+    // Group by developer
+    const byDev={};
+    activeRds.forEach(rd=>{
+      const dev=this.devs.find(d=>d.id===rd.developer_id);
+      const req=this.data.find(r=>r.id===rd.requirement_id);
+      const key=dev?dev.id:0;
+      if(!byDev[key])byDev[key]={name:dev?dev.name:'Unassigned',items:[]};
+      byDev[key].items.push({rd,req});
+    });
+    // Month ticks
+    let ticks='',cur=new Date(minDate);
+    while(cur<=maxDate){const p=pct(cur);ticks+='<div class="gantt-date-tick" style="left:'+p+'">'+cur.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div>';cur.setDate(cur.getDate()+7);}
+    const todayPct=pct(today);
+    let html='<div class="gantt-header"><div class="gantt-header-label">Developer</div><div class="gantt-header-dates" style="position:relative">'+ticks+'</div></div>';
+    // Check overloads: same developer, overlapping periods
+    const overloads={};
+    Object.entries(byDev).forEach(([devId,info])=>{
+      const items=info.items;
+      for(let i=0;i<items.length;i++){
+        for(let j=i+1;j<items.length;j++){
+          const a=items[i].rd,b=items[j].rd;
+          if(new Date(a.start_date)<=new Date(b.end_date)&&new Date(b.start_date)<=new Date(a.end_date)){
+            overloads[devId]=true;
+          }
+        }
+      }
+    });
+    const s=this;
+    Object.entries(byDev).forEach(function([devId,info]){
+      const isOverloaded=overloads[devId];
+      html+='<div class="gantt-row">'+
+        '<div class="gantt-label" style="'+(isOverloaded?'color:var(--red)':'')+'">'+
+          info.name+(isOverloaded?' ⚠️':'')+'</div>'+
+        '<div class="gantt-track" style="position:relative">';
+      // Today line
+      html+='<div class="gantt-today" style="left:'+todayPct+'"></div>';
+      info.items.forEach(function(item){
+        const rd=item.rd,req=item.req;
+        const isLate=new Date(rd.end_date)<today&&req.status!=='Close';
+        const color=isLate?'#ef4444':'#22c55e';
+        const left=pct(rd.start_date);
+        const width=wid(rd.start_date,rd.end_date);
+        const title=(req?'#'+req.id+' '+(req.requirement||'').split('\n')[0].substring(0,40):'?');
+        html+='<div class="gantt-bar" style="left:'+left+';width:'+width+';background:'+color+'" title="'+s.esc(title)+'">'+title+'</div>';
+      });
+      html+='</div></div>';
+    });
+    ganttEl.innerHTML=html;
+    // AI Analysis
+    s.runGanttAI(byDev,overloads,today,aiCard);
+  },
+
+  async runGanttAI(byDev,overloads,today,aiCard){
+    aiCard.style.display='block';
+    const body=document.getElementById('aiAnalysisBody');
+    body.innerHTML='<span class="spinner" style="border-top-color:var(--purple)"></span> AI is analyzing the timeline...';
+    // Build context
+    const lines=[];
+    Object.entries(byDev).forEach(([devId,info])=>{
+      info.items.forEach(item=>{
+        const rd=item.rd,req=item.req;
+        const isLate=new Date(rd.end_date)<today&&req&&req.status!=='Close';
+        lines.push('Developer: '+info.name+' | Req #'+(req?req.id:'?')+': '+(req?(req.requirement||'').split('\n')[0].substring(0,60):'?')+' | '+rd.start_date+' → '+rd.end_date+(isLate?' [LATE]':'')+(overloads[devId]?' [OVERLOADED]':''));
+      });
+    });
+    const prompt='You are a project manager AI. Analyze this developer timeline and provide:\n1. A brief risk assessment\n2. Who is overloaded or at risk\n3. Specific suggestions to improve delivery\n4. Any requirements at risk of missing deadline\n\nTimeline data:\n'+lines.join('\n')+'\n\nToday: '+this.dateToISO(today)+'\n\nRespond in English, be concise, use bullet points.';
+    try{
+      const resp=await fetch(ANTH_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})});
+      const data=await resp.json();
+      const txt=data.content&&data.content[0]?data.content[0].text:'No response from AI.';
+      body.innerHTML=txt.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    }catch(e){body.innerHTML='AI analysis unavailable: '+e.message;}
+  },
+
   mkChart(id,type,labels,data,colors,horiz,gc,tc){
-    const el=document.getElementById(id); if(!el) return;
-    if(this.charts[id]) this.charts[id].destroy();
+    const el=document.getElementById(id);if(!el)return;
+    if(this.charts[id])this.charts[id].destroy();
     const isBar=type==='bar';
     const surf=document.body.classList.contains('dark')?'#111827':'#fff';
     this.charts[id]=new Chart(el.getContext('2d'),{
-      type:type,
-      data:{labels:labels,datasets:[{data:data,
+      type,data:{labels,datasets:[{data,
         backgroundColor:colors.length===1?data.map(()=>colors[0]+'99'):colors.map(c=>c+'cc'),
         borderColor:colors.length===1?data.map(()=>colors[0]):colors,
         borderWidth:isBar?0:2,borderRadius:isBar?4:0}]},
       options:{responsive:true,maintainAspectRatio:false,indexAxis:horiz?'y':'x',
         plugins:{legend:{display:!isBar,labels:{color:tc,font:{size:11},padding:12,boxWidth:10}},
           tooltip:{backgroundColor:surf,borderColor:gc,borderWidth:1,titleColor:tc,bodyColor:tc}},
-        scales:isBar?{
-          x:{ticks:{color:tc,font:{size:11}},grid:{color:gc},border:{display:false}},
-          y:{ticks:{color:tc,font:{size:11}},grid:{color:gc},border:{display:false}}
-        }:{}}
+        scales:isBar?{x:{ticks:{color:tc,font:{size:11}},grid:{color:gc},border:{display:false}},y:{ticks:{color:tc,font:{size:11}},grid:{color:gc},border:{display:false}}}:{}}
     });
   },
 
-  badge(s){
-    if(!s) return '';
-    const k=s.replace(/\s/g,'-');
-    return '<span class="badge b-'+k+'">'+s+'</span>';
-  },
-  fd(d){
-    if(!d) return '—';
-    const p=d.split('-');
-    return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;
-  },
-  esc(s){ return(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); },
+  badge(s){if(!s)return'';const k=s.replace(/\s/g,'-');return'<span class="badge b-'+k+'">'+s+'</span>';},
+  fd(d){if(!d)return'—';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;},
+  esc(s){return(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');},
   notify(msg,type){
-    type=type||'ok';
-    const el=document.getElementById('notif');
+    type=type||'ok';const el=document.getElementById('notif');
     el.textContent=(type==='ok'?'✓ ':type==='err'?'✕ ':'⚠ ')+msg;
     el.className='notif '+type+' show';
     setTimeout(()=>el.classList.remove('show'),4000);
