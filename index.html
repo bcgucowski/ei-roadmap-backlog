@@ -201,10 +201,11 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .dev-task-field .fctrl{font-size:12px;padding:6px 9px}
 /* GANTT / TIMELINE */
 .timeline-wrap{overflow-x:auto;margin-top:12px}
-.gantt-row{display:flex;align-items:center;min-height:40px;border-bottom:1px solid var(--border)}
-.gantt-label{width:160px;flex-shrink:0;font-size:12px;font-weight:500;padding:8px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gantt-bars{flex:1;position:relative;height:40px}
-.gantt-bar{position:absolute;top:6px;height:28px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:600;color:#fff;overflow:hidden;white-space:nowrap;cursor:pointer;transition:opacity .2s}
+.gantt-row{display:flex;border-bottom:1px solid var(--border)}
+.gantt-label{width:160px;flex-shrink:0;font-size:12px;font-weight:500;padding:8px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:flex-start;padding-top:10px}
+.gantt-bars{flex:1;position:relative;display:flex;flex-direction:column;gap:4px;padding:4px 0}
+.gantt-bar-row{position:relative;height:28px}
+.gantt-bar{position:absolute;top:0;height:28px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:600;color:#fff;overflow:hidden;white-space:nowrap;cursor:pointer;transition:opacity .2s;min-width:4px}
 .gantt-bar:hover{opacity:.85}
 .gantt-bar.green{background:var(--green)}
 .gantt-bar.red{background:var(--red)}
@@ -1585,28 +1586,47 @@ var App = {
 
     var rows=Object.entries(byDev).map(function(e){
       var devName=e[0], devTasks=e[1];
-      var color=colors[ci%colors.length]; ci++;
-      // Check overload: if any task overlaps with another for same dev
-      var isOverloaded=devTasks.length>1;
-      if(isOverloaded) overloaded.push(devName);
+      ci++;
 
-      var bars=devTasks.map(function(t){
+      // Detect real overlap: tasks whose date ranges intersect
+      var hasOverlap=false;
+      for(var a=0;a<devTasks.length&&!hasOverlap;a++){
+        for(var b=a+1;b<devTasks.length&&!hasOverlap;b++){
+          var aS=devTasks[a].start_date, aE=devTasks[a].end_date;
+          var bS=devTasks[b].start_date, bE=devTasks[b].end_date;
+          if(aS&&aE&&bS&&bE&&aS<=bE&&bS<=aE) hasOverlap=true;
+        }
+      }
+      if(hasOverlap) overloaded.push(devName);
+
+      // Each task gets its OWN horizontal sub-row — no more overlapping
+      var barRows=devTasks.map(function(t){
         var l=pct(t.start_date);
         var w=pctW(t.start_date,t.end_date);
         var isLate=t.end_date&&new Date(t.end_date)<now;
         var barColor=isLate?'#ef4444':'#22c55e';
-        var reqTitle=t.roadmap&&t.roadmap.requirement?(t.roadmap.requirement.split('\n')[0].substring(0,30)+'…'):'Task #'+t.id;
-        return '<div class="gantt-bar" style="left:'+l+'%;width:'+w+'%;background:'+barColor+'" title="'+reqTitle+' | '+App.fd(t.start_date)+' → '+App.fd(t.end_date)+'">'+reqTitle+'</div>';
+        var reqTitle=t.roadmap&&t.roadmap.requirement?(t.roadmap.requirement.split('\n')[0].substring(0,35)+'…'):'Task #'+t.id;
+        var pctDone=t.percent_completed!=null?(' · '+t.percent_completed+'%'):'';
+        var tooltip=reqTitle+pctDone+' | '+App.fd(t.start_date)+' → '+App.fd(t.end_date);
+        var progressBar=t.percent_completed>0
+          ?'<div style="position:absolute;left:0;top:0;height:100%;width:'+t.percent_completed+'%;background:rgba(255,255,255,.25);border-radius:4px 0 0 4px;pointer-events:none"></div>'
+          :'';
+        var todayLine='<div style="position:absolute;left:'+todayPct+'%;top:0;bottom:0;width:2px;background:rgba(239,68,68,.5);z-index:2;pointer-events:none"></div>';
+        return '<div style="position:relative;height:32px;margin-bottom:3px">'+
+          todayLine+
+          '<div class="gantt-bar" style="left:'+l+'%;width:'+w+'%;background:'+barColor+';top:2px;height:28px" title="'+tooltip+'">'+
+            progressBar+
+            '<span style="position:relative;z-index:1">'+reqTitle+'</span>'+
+          '</div>'+
+        '</div>';
       }).join('');
 
-      return '<div class="gantt-row">'+
-        '<div class="gantt-label" style="'+(isOverloaded?'color:var(--red);font-weight:700':'')+'">'+
-          (isOverloaded?'⚠️ ':'')+devName+
+      var labelStyle=hasOverlap?'color:var(--red);font-weight:700':'';
+      return '<div class="gantt-row" style="align-items:flex-start">'+
+        '<div class="gantt-label" style="'+labelStyle+';padding-top:6px">'+
+          (hasOverlap?'⚠️ ':'')+devName+
         '</div>'+
-        '<div class="gantt-bars">'+
-          '<div class="gantt-today" style="left:'+todayPct+'%"></div>'+
-          bars+
-        '</div>'+
+        '<div class="gantt-bars" style="padding:3px 0">'+barRows+'</div>'+
       '</div>';
     }).join('');
 
@@ -1615,9 +1635,13 @@ var App = {
         '<div class="gantt-header-label"></div>'+
         '<div class="gantt-header-dates" style="position:relative;height:18px">'+headerDates+'</div>'+
       '</div>'+
-      '<div style="position:relative">'+rows+'</div>'+
-      '<div style="margin-top:8px;font-size:11px;color:var(--dim)">'+
-        '🟢 On track &nbsp; 🔴 Overdue &nbsp; ─ Today</div>';
+      '<div>'+rows+'</div>'+
+      '<div style="margin-top:10px;font-size:11px;color:var(--dim);display:flex;gap:14px;align-items:center">'+
+        '<span>🟢 On track</span>'+
+        '<span>🔴 Overdue</span>'+
+        '<span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:2px;height:12px;background:var(--red);opacity:.6"></span> Today</span>'+
+        '<span style="color:var(--muted)">· Light overlay = % completed</span>'+
+      '</div>';
 
     // AI Analysis
     await this.renderAiAnalysis(tasks, overloaded);
@@ -1627,40 +1651,139 @@ var App = {
     var aiDiv=document.getElementById('aiAnalysis');
     var aiBody=document.getElementById('aiAnalysisBody');
     aiDiv.style.display='block';
-    aiBody.innerHTML='<span class="spinner"></span> Analyzing with AI...';
+    aiBody.innerHTML='<span class="spinner"></span> Analyzing...';
 
-    var now=new Date();
-    var summary=tasks.map(function(t){
-      var dev=(t.developers&&t.developers.name)||'Unknown';
-      var req=t.roadmap&&t.roadmap.requirement?(t.roadmap.requirement.split('\n')[0].substring(0,60)):'Req #'+t.roadmap_id;
-      var late=t.end_date&&new Date(t.end_date)<now?' (OVERDUE)':'';
-      return '- '+dev+': "'+req+'" | Start: '+t.start_date+' | End: '+t.end_date+late+' | '+t.percent_completed+'% done';
-    }).join('\n');
+    var now=new Date(); now.setHours(0,0,0,0);
 
-    var prompt='You are a delivery manager at Philips. Analyze the following developer tasks and provide:\n'+
-      '1. Key risks (overdue tasks, overloaded developers)\n'+
-      '2. Concrete recommendations to avoid delivery failures\n'+
-      '3. Any reallocation suggestions\n\n'+
-      'Current tasks:\n'+summary+'\n\n'+
-      (overloaded.length?'⚠️ Developers with multiple concurrent tasks: '+overloaded.join(', ')+'\n\n':'')+
-      'Be concise, bullet-pointed, and actionable. Max 200 words.';
+    // ── Build rich data-driven analysis ──────────────────────────────────────
+    var risks=[], warnings=[], actions=[], ok=[];
 
-    try{
-      var resp=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:400,
-          messages:[{role:'user',content:prompt}]
-        })
+    // Group by developer
+    var byDev={};
+    tasks.forEach(function(t){
+      var name=(t.developers&&t.developers.name)||'Unknown';
+      if(!byDev[name]) byDev[name]=[];
+      byDev[name].push(t);
+    });
+
+    var devStats=[];
+    Object.entries(byDev).forEach(function(e){
+      var name=e[0], devTasks=e[1];
+      var totalEffort=devTasks.reduce(function(a,t){return a+(t.effort||0);},0);
+      var dev=tasks.find(function(t){return (t.developers&&t.developers.name)===name;});
+      var hpd=(dev&&dev.developers&&dev.developers.hours_per_day)||8;
+      var overdueTasks=devTasks.filter(function(t){return t.end_date&&new Date(t.end_date)<now;});
+      var inProgressTasks=devTasks.filter(function(t){return t.status==='Develop'||t.status==='Validation';});
+
+      // Check real date overlap
+      var hasOverlap=false;
+      for(var a=0;a<devTasks.length&&!hasOverlap;a++){
+        for(var b=a+1;b<devTasks.length&&!hasOverlap;b++){
+          var aS=devTasks[a].start_date,aE=devTasks[a].end_date;
+          var bS=devTasks[b].start_date,bE=devTasks[b].end_date;
+          if(aS&&aE&&bS&&bE&&aS<=bE&&bS<=aE) hasOverlap=true;
+        }
+      }
+
+      devStats.push({name:name,tasks:devTasks,totalEffort:totalEffort,hpd:hpd,
+        overdue:overdueTasks,inProgress:inProgressTasks,hasOverlap:hasOverlap});
+    });
+
+    // Analyze each developer
+    devStats.forEach(function(d){
+      // 1. Overdue tasks
+      if(d.overdue.length>0){
+        d.overdue.forEach(function(t){
+          var daysLate=Math.round((now-new Date(t.end_date))/(1000*86400));
+          var req=t.roadmap&&t.roadmap.requirement?t.roadmap.requirement.split('\n')[0].substring(0,50):'Task #'+t.roadmap_id;
+          risks.push('🔴 <strong>'+d.name+'</strong> — "'+req+'" is <strong>'+daysLate+' day'+(daysLate>1?'s':'')+' overdue</strong>'
+            +(t.percent_completed!=null?' ('+t.percent_completed+'% done)':'')+'.');
+          actions.push('➡️ Review "'+req+'" with '+d.name+' immediately. Consider reassigning or reducing scope.');
+        });
+      }
+
+      // 2. Concurrent overlapping tasks
+      if(d.hasOverlap&&d.inProgress.length>1){
+        var taskNames=d.inProgress.map(function(t){
+          return '"'+(t.roadmap&&t.roadmap.requirement?t.roadmap.requirement.split('\n')[0].substring(0,35):'Task #'+t.roadmap_id)+'"';
+        }).join(', ');
+        warnings.push('⚠️ <strong>'+d.name+'</strong> has <strong>'+d.inProgress.length+' overlapping tasks</strong>: '+taskNames
+          +'. Context-switching risk may reduce effective output.');
+        actions.push('➡️ Prioritize tasks sequentially for '+d.name+' or adjust allocation % to reflect split focus.');
+      }
+
+      // 3. High effort load
+      if(d.totalEffort>0){
+        // Estimate workdays: total effort / (hpd * avg allocation)
+        var avgAlloc=d.tasks.reduce(function(a,t){return a+(t.percent_allocation||100);},0)/d.tasks.length/100;
+        var effectiveHpd=d.hpd*avgAlloc;
+        var estDays=Math.ceil(d.totalEffort/effectiveHpd);
+        if(estDays>20){
+          warnings.push('⚠️ <strong>'+d.name+'</strong> has <strong>'+d.totalEffort+'h of effort</strong> across '
+            +d.tasks.length+' tasks (~'+estDays+' workdays). Heavy workload — monitor capacity.');
+          actions.push('➡️ Consider distributing some of '+d.name+''s tasks to developers with lower load.');
+        }
+      }
+
+      // 4. Tasks with 0% progress but already started
+      d.inProgress.forEach(function(t){
+        if(t.start_date&&new Date(t.start_date)<=now&&(t.percent_completed==null||t.percent_completed===0)){
+          var req=t.roadmap&&t.roadmap.requirement?t.roadmap.requirement.split('\n')[0].substring(0,40):'Task #'+t.roadmap_id;
+          warnings.push('⚠️ <strong>'+d.name+'</strong> — "'+req+'" started but shows <strong>0% progress</strong>.');
+          actions.push('➡️ Check with '+d.name+' on status of "'+req+'" and update % completed.');
+        }
       });
-      var data=await resp.json();
-      var text=(data.content&&data.content[0]&&data.content[0].text)||'Could not generate analysis.';
-      aiBody.innerHTML=text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-    }catch(e){
-      aiBody.innerHTML='AI analysis unavailable: '+e.message;
+
+      // 5. All good
+      if(d.overdue.length===0&&!d.hasOverlap&&d.inProgress.length>0){
+        ok.push('✅ <strong>'+d.name+'</strong> — '+d.inProgress.length+' task'+(d.inProgress.length>1?'s':'')+' on track.');
+      }
+    });
+
+    // Build HTML output
+    var html='';
+
+    if(risks.length){
+      html+='<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:8px">🔴 Critical Risks</div>'
+        +'<div style="display:flex;flex-direction:column;gap:5px">'+risks.map(function(r){
+          return '<div style="padding:8px 12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:6px;font-size:12px;line-height:1.5">'+r+'</div>';
+        }).join('')+'</div></div>';
     }
+
+    if(warnings.length){
+      html+='<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--yellow);margin-bottom:8px">⚠️ Warnings</div>'
+        +'<div style="display:flex;flex-direction:column;gap:5px">'+warnings.map(function(w){
+          return '<div style="padding:8px 12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:6px;font-size:12px;line-height:1.5">'+w+'</div>';
+        }).join('')+'</div></div>';
+    }
+
+    if(actions.length){
+      html+='<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--cyan);margin-bottom:8px">💡 Recommended Actions</div>'
+        +'<div style="display:flex;flex-direction:column;gap:5px">'+actions.map(function(a){
+          return '<div style="padding:8px 12px;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);border-radius:6px;font-size:12px;line-height:1.5">'+a+'</div>';
+        }).join('')+'</div></div>';
+    }
+
+    if(ok.length){
+      html+='<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--green);margin-bottom:8px">✅ On Track</div>'
+        +'<div style="display:flex;flex-direction:column;gap:5px">'+ok.map(function(o){
+          return '<div style="padding:8px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:6px;font-size:12px;line-height:1.5">'+o+'</div>';
+        }).join('')+'</div></div>';
+    }
+
+    if(!html){
+      html='<div style="font-size:13px;color:var(--dim)">No active development tasks to analyze.</div>';
+    }
+
+    // Summary line
+    var summaryLine='<div style="font-size:11px;color:var(--dim);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">'
+      +'Analyzed <strong>'+tasks.length+'</strong> active task'+(tasks.length!==1?'s':'')+' across <strong>'+Object.keys(byDev).length+'</strong> developer'+(Object.keys(byDev).length!==1?'s':'')+'. '
+      +(risks.length?'<span style="color:var(--red)">'+risks.length+' critical risk'+(risks.length>1?'s':'')+'. </span>':'')
+      +(warnings.length?'<span style="color:var(--yellow)">'+warnings.length+' warning'+(warnings.length>1?'s':'')+'. </span>':'')
+      +(ok.length?'<span style="color:var(--green)">'+ok.length+' on track.</span>':'')
+      +'</div>';
+
+    aiBody.innerHTML=summaryLine+html;
   },
 
   mkChart(id,type,labels,data,colors,horiz,gc,tc,opts){
