@@ -604,27 +604,7 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 
 // ── SUPABASE ─────────────────────────────────────────────────────────────────
-function supaFetch(table, opts){
-  opts = opts || {};
-  var method = opts.method || 'GET';
-  var query  = opts.query  || '';
-  var body   = opts.body   ? JSON.stringify(opts.body) : undefined;
-  var prefer = opts.prefer || (method==='GET'?undefined:'return=representation');
-  var hdrs = {
-    'apikey': SUPA_KEY,
-    'Authorization': 'Bearer '+SUPA_KEY,
-    'Content-Type': 'application/json'
-  };
-  if(prefer) hdrs['Prefer'] = prefer;
-  return fetch(SUPA_URL+'/rest/v1/'+table+query, {method:method, headers:hdrs, body:body})
-    .then(function(r){
-      if(r.status===204||r.status===201&&method==='DELETE') return null;
-      if(!r.ok) return r.json().then(function(e){throw new Error(e.message||'HTTP '+r.status);});
-      var ct = r.headers.get('content-type')||'';
-      if(ct.includes('json')) return r.json();
-      return r.text();
-    });
-}
+// supaFetch defined below
 
 // Effort matrix (loaded from DB, cached here)
 var EFFORT_MATRIX = {};
@@ -778,7 +758,9 @@ var App = {
       await this.loadEffortMatrix();
       await this.loadDevelopers();
     }catch(e){
-      this.setSp(false,'Error'); this.notify('Error: '+e.message,'err');
+      this.setSp(false,'Error');
+      this.notify('Error loading: '+e.message,'err');
+    }finally{
       document.getElementById('loader').classList.add('hide');
     }
   },
@@ -813,6 +795,9 @@ var App = {
       await this.loadDevEffortMap();
       this.filter();
       this.populateDevReqSelect();
+    }catch(e){
+      this.setSp(false,'Error');
+      throw e;
     }finally{ document.getElementById('loader').classList.add('hide'); }
   },
 
