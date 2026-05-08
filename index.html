@@ -349,6 +349,22 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
       <div class="ctitle">Delivery Progress by Status</div>
       <div id="deliveryRows" style="margin-top:8px"></div>
     </div>
+    <!-- REQUESTER EFFORT -->
+    <div class="ccard">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="ctitle" style="margin-bottom:0">👤 Effort by Requester</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--dim)">Group by:</span>
+          <select id="requesterGroupBy" class="fsel" onchange="App.renderRequesterDash()" style="font-size:11px">
+            <option value="month">Month</option>
+            <option value="quarter">Quarter</option>
+            <option value="total">Total</option>
+          </select>
+        </div>
+      </div>
+      <div id="requesterDash"></div>
+    </div>
+
     <!-- TIMELINE -->
     <div class="ccard" style="margin-top:0">
       <div class="ctitle" style="margin-bottom:8px">Developer Timeline (In Progress)</div>
@@ -1525,8 +1541,186 @@ var App = {
         '<div class="dpct">'+cnt+' ('+pct+'%)</div></div>';
     }).join('');
 
+    // Requester effort dashboard
+    await this.renderRequesterDash();
+
     // Timeline
     await this.renderTimeline();
+  },
+
+  async renderRequesterDash(){
+    var wrap=document.getElementById('requesterDash'); if(!wrap) return;
+    wrap.innerHTML='<div style="padding:12px;text-align:center;color:var(--dim)"><span class="spinner"></span> Loading...</div>';
+
+    var groupBy=document.getElementById('requesterGroupBy')?.value||'month';
+
+    // Load dev_tasks joined with roadmap (to get requester) and developers
+    var tasks=[];
+    try{
+      tasks=await supaFetch('dev_tasks',
+        '?select=effort,start_date,roadmap_id,roadmap(requester,requirement),developers(name)'
+        +'&effort=not.is.null&order=start_date.asc');
+    }catch(e){ wrap.innerHTML='<p style="color:var(--dim);font-size:12px">Could not load data.</p>'; return; }
+
+    if(!tasks.length){
+      wrap.innerHTML='<div class="empty"><div class="empty-ico">👤</div><p>No dev tasks with effort logged yet.</p></div>';
+      return;
+    }
+
+    // Build data: requester → period → total hours
+    var data={};   // {requester: {period: hours}}
+    var periods=new Set();
+    var requesters=new Set();
+
+    tasks.forEach(function(t){
+      var req=(t.roadmap&&t.roadmap.requester)||'Unknown';
+      var effort=parseFloat(t.effort)||0;
+      var date=t.start_date?new Date(t.start_date):new Date();
+      var period;
+      if(groupBy==='month'){
+        period=(date.getMonth()+1).toString().padStart(2,'0')+'/'+date.getFullYear();
+      } else if(groupBy==='quarter'){
+        var q=Math.ceil((date.getMonth()+1)/3);
+        period='Q'+q+'/'+date.getFullYear();
+      } else {
+        period='Total';
+      }
+      requesters.add(req);
+      periods.add(period);
+      if(!data[req]) data[req]={};
+      data[req][period]=(data[req][period]||0)+effort;
+    });
+
+    // Sort periods chronologically
+    var sortedPeriods=[...periods].sort(function(a,b){
+      if(a==='Total'||b==='Total') return 0;
+      // Parse MM/YYYY or QN/YYYY
+      function parseP(p){
+        var parts=p.split('/');
+        var yr=parseInt(parts[1]);
+        var mo=p.startsWith('Q')?parseInt(p[1])*3:parseInt(parts[0]);
+        return yr*100+mo;
+      }
+      return parseP(a)-parseP(b);
+    });
+
+    var sortedRequesters=[...requesters].sort(function(a,b){
+      // Sort by total effort desc
+      var totA=Object.values(data[a]||{}).reduce(function(s,v){return s+v;},0);
+      var totB=Object.values(data[b]||{}).reduce(function(s,v){return s+v;},0);
+      return totB-totA;
+    });
+
+    var isDark=document.body.classList.contains('dark');
+    var colors=['#0073e6','#a855f7','#22c55e','#f59e0b','#06b6d4','#f97316','#ef4444','#3b9eff','#10b981','#6366f1'];
+
+    // ── Chart: Stacked bar (periods on X, stacked by requester) ──────────────
+    var chartWrap=document.createElement('div');
+    chartWrap.style.cssText='position:relative;height:260px;margin-bottom:20px';
+    var canvas=document.createElement('canvas');
+    canvas.id='cRequester';
+    chartWrap.appendChild(canvas);
+    wrap.innerHTML='';
+    wrap.appendChild(chartWrap);
+
+    var datasets=sortedRequesters.map(function(req,i){
+      return {
+        label:req,
+        data:sortedPeriods.map(function(p){ return Math.round((data[req][p]||0)*10)/10; }),
+        backgroundColor:colors[i%colors.length]+'cc',
+        borderColor:colors[i%colors.length],
+        borderWidth:1,
+        borderRadius:3,
+      };
+    });
+
+    var gc=isDark?'#1a2035':'#e8eef5';
+    var tc=isDark?'#7a8aaa':'#4a6080';
+    var surf=isDark?'#111827':'#fff';
+
+    if(this.charts['cRequester']) this.charts['cRequester'].destroy();
+    this.charts['cRequester']=new Chart(canvas.getContext('2d'),{
+      type:'bar',
+      data:{labels:sortedPeriods, datasets:datasets},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{
+          legend:{display:true,position:'bottom',labels:{color:tc,font:{size:11},padding:10,boxWidth:10}},
+          tooltip:{
+            backgroundColor:surf,borderColor:gc,borderWidth:1,titleColor:tc,bodyColor:tc,
+            callbacks:{
+              footer:function(items){
+                var total=items.reduce(function(s,i){return s+i.raw;},0);
+                return 'Total: '+Math.round(total*10)/10+'h';
+              }
+            }
+          }
+        },
+        scales:{
+          x:{stacked:true,ticks:{color:tc,font:{size:11}},grid:{color:gc},border:{display:false}},
+          y:{stacked:true,ticks:{color:tc,font:{size:11},callback:function(v){return v+'h';}},
+             grid:{color:gc},border:{display:false},title:{display:true,text:'Hours',color:tc,font:{size:11}}}
+        }
+      }
+    });
+
+    // ── Table: Requester summary ──────────────────────────────────────────────
+    var tableDiv=document.createElement('div');
+    tableDiv.style.cssText='overflow-x:auto;margin-top:4px';
+
+    var totalByPeriod={};
+    sortedPeriods.forEach(function(p){
+      totalByPeriod[p]=sortedRequesters.reduce(function(s,r){return s+(data[r][p]||0);},0);
+    });
+
+    var grandTotal=sortedRequesters.reduce(function(s,r){
+      return s+Object.values(data[r]||{}).reduce(function(a,v){return a+v;},0);
+    },0);
+
+    tableDiv.innerHTML=
+      '<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:400px">'+
+      '<thead><tr>'+
+        '<th style="text-align:left;padding:7px 10px;background:var(--surface2);border-bottom:1px solid var(--border);color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.5px;position:sticky;left:0">Requester</th>'+
+        sortedPeriods.map(function(p){
+          return '<th style="text-align:right;padding:7px 10px;background:var(--surface2);border-bottom:1px solid var(--border);color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">'+p+'</th>';
+        }).join('')+
+        '<th style="text-align:right;padding:7px 10px;background:var(--surface2);border-bottom:1px solid var(--border);color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px">Total</th>'+
+      '</tr></thead>'+
+      '<tbody>'+
+      sortedRequesters.map(function(req,i){
+        var rowTotal=Object.values(data[req]||{}).reduce(function(s,v){return s+v;},0);
+        var maxInRow=Math.max.apply(null,sortedPeriods.map(function(p){return data[req][p]||0;}));
+        return '<tr>'+
+          '<td style="padding:7px 10px;border-bottom:1px solid var(--border);font-weight:600;position:sticky;left:0;background:var(--surface)">'+
+            '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+colors[i%colors.length]+';margin-right:6px"></span>'+req+
+          '</td>'+
+          sortedPeriods.map(function(p){
+            var h=data[req][p]||0;
+            var intensity=maxInRow>0?(h/maxInRow):0;
+            var bg=h>0?('rgba(0,115,230,'+( 0.06+intensity*0.2).toFixed(2)+')'):'transparent';
+            return '<td style="text-align:right;padding:7px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;background:'+bg+'">'+
+              (h>0?Math.round(h*10)/10+'h':'—')+
+            '</td>';
+          }).join('')+
+          '<td style="text-align:right;padding:7px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent)">'+
+            Math.round(rowTotal*10)/10+'h'+
+          '</td>'+
+        '</tr>';
+      }).join('')+
+      '<tr style="background:var(--surface2)">'+
+        '<td style="padding:7px 10px;font-size:11px;font-weight:700;color:var(--dim);position:sticky;left:0;background:var(--surface2)">TOTAL</td>'+
+        sortedPeriods.map(function(p){
+          return '<td style="text-align:right;padding:7px 10px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--dim)">'+
+            (totalByPeriod[p]>0?Math.round(totalByPeriod[p]*10)/10+'h':'—')+
+          '</td>';
+        }).join('')+
+        '<td style="text-align:right;padding:7px 10px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent)">'+
+          Math.round(grandTotal*10)/10+'h'+
+        '</td>'+
+      '</tr>'+
+      '</tbody></table>';
+
+    wrap.appendChild(tableDiv);
   },
 
   async renderTimeline(){
