@@ -179,6 +179,24 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .notif.ok{border-left:3px solid var(--green)}.notif.err{border-left:3px solid var(--red)}.notif.warn{border-left:3px solid var(--yellow)}
 .empty{text-align:center;padding:50px 20px;color:var(--dim)}.empty-ico{font-size:40px;opacity:.3;margin-bottom:12px}
 .fsel{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:12px;border-radius:var(--radius-sm);padding:4px 8px;outline:none;cursor:pointer}
+/* Searchable requirement lookup */
+.req-lookup{position:relative}
+.req-lookup-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 36px 8px 11px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s;width:100%;cursor:text}
+.req-lookup-input:focus{border-color:var(--accent)}
+.req-lookup-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:0;line-height:1}
+.req-lookup-clear:hover{color:var(--red)}
+.req-lookup-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;z-index:500;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.3);display:none}
+.req-lookup-dropdown.open{display:block}
+.req-lookup-option{padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border);transition:background .1s}
+.req-lookup-option:last-child{border-bottom:none}
+.req-lookup-option:hover{background:var(--accentlight)}
+.req-lookup-option .opt-id{font-family:var(--mono);font-size:11px;color:var(--accent);margin-right:8px;flex-shrink:0}
+.req-lookup-option .opt-title{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.req-lookup-option .opt-meta{font-size:10px;color:var(--dim);margin-top:2px}
+.req-lookup-selected{display:flex;align-items:center;gap:8px;padding:7px 11px;background:var(--accentlight);border:1px solid rgba(0,115,230,.3);border-radius:var(--radius-sm);font-size:12px}
+.req-lookup-selected .sel-id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700}
+.req-lookup-selected .sel-title{color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.req-lookup-selected .sel-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0;flex-shrink:0}
 /* DEV PAGE */
 .dev-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .dev-req-info{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px}
@@ -255,7 +273,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <button class="ntab active" id="tab-backlog"     onclick="App.tab('backlog')">📋 Backlog</button>
   <button class="ntab"        id="tab-development" onclick="App.tab('development')">⚡ Development</button>
   <button class="ntab"        id="tab-dashboard"   onclick="App.tab('dashboard')">📈 Dashboard</button>
-  <button class="ntab"        id="tab-developers"  onclick="App.tab('developers')">👥 Developers</button>
+  <button class="ntab"        id="tab-developers"  onclick="App.tab('developers')">👥 People</button>
+  <button class="ntab"        id="tab-dashboards"  onclick="App.tab('dashboards')">📊 Dashboards</button>
 </div>
 
 <div class="app">
@@ -301,6 +320,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
           <th onclick="App.sort('expected_date')" id="th-expected_date">Expected Date ↕</th>
           <th onclick="App.sort('status')" id="th-status">Status ↕</th>
           <th id="th-dev_effort" style="white-space:nowrap">Dev Effort ↕</th>
+          <th style="white-space:nowrap">Linked Req</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -380,12 +400,73 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <div class="page" id="page-developers">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <div style="font-size:15px;font-weight:700">Developers</div>
-      <button class="btn btn-primary" onclick="App.openDeveloperModal(null)">+ New Developer</button>
+      <button class="btn btn-primary" onclick="App.openDeveloperModal(null)">+ New Person</button>
     </div>
     <div class="dev-grid" id="devGrid"></div>
   </div>
 
 </div>
+
+
+  <!-- DASHBOARDS PAGE -->
+  <div class="page" id="page-dashboards">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:2px">📊 Dashboards</div>
+        <div style="font-size:12px;color:var(--dim)">Manage dashboards and their Product Owners</div>
+      </div>
+      <button class="btn btn-primary" onclick="App.openDashboardModal(null)">+ New Dashboard</button>
+    </div>
+    <div class="twrap" style="min-width:unset">
+      <table style="min-width:600px">
+        <thead><tr>
+          <th style="width:60px">#</th>
+          <th>Dashboard Name</th>
+          <th>Area</th>
+          <th>Product Owner</th>
+          <th style="width:80px">Actions</th>
+        </tr></thead>
+        <tbody id="dashboardsTbody"><tr><td colspan="5" class="empty"><div class="empty-ico">📊</div><p>Loading...</p></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DASHBOARD MODAL -->
+  <div class="overlay" id="dashboardOverlay">
+    <div class="modal" style="max-width:500px">
+      <div class="mhead">
+        <div class="mtitle" id="dashboardModalTitle">New Dashboard</div>
+        <button class="mclose" onclick="App.closeDashboardModal()">✕</button>
+      </div>
+      <div class="mbody">
+        <div class="fgrid">
+          <div class="fg full">
+            <label class="flbl">Dashboard Name *</label>
+            <input type="text" class="fctrl" id="dash-name" placeholder="e.g. Funnel Management">
+          </div>
+          <div class="fg full">
+            <label class="flbl">Area</label>
+            <select class="fctrl" id="dash-area">
+              <option value="">— Select area —</option>
+              <option>Commercial</option><option>Marketing</option><option>SS&amp;D</option>
+              <option>BizOps</option><option>GBS</option><option>Pricing</option><option>Finance</option>
+            </select>
+          </div>
+          <div class="fg full">
+            <label class="flbl">Product Owner</label>
+            <select class="fctrl" id="dash-product_owner_id">
+              <option value="">— Select Product Owner —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="mfoot">
+        <button class="btn btn-ghost" onclick="App.closeDashboardModal()">Cancel</button>
+        <button class="btn btn-primary" id="dashSaveBtn" onclick="App.saveDashboard()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+
 
 <!-- NEW/EDIT REQUIREMENT MODAL -->
 <div class="overlay" id="modalOverlay">
@@ -477,6 +558,27 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
             <label class="chk-item"><input type="checkbox" id="f-margin_increasing_chk"><span>Margin Increasing</span></label>
           </div>
         </div>
+        <div class="fsec">Related Requirement</div>
+        <div class="fg full">
+          <label class="flbl">Linked Requirement <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(search by ID or description)</span></label>
+          <div class="req-lookup" id="relatedReqLookup">
+            <div id="relatedReqSelected" style="display:none" class="req-lookup-selected">
+              <span class="sel-id" id="relatedReqSelId"></span>
+              <span class="sel-title" id="relatedReqSelTitle"></span>
+              <button class="sel-remove" onclick="App.clearRelatedReq()" title="Remove link">✕</button>
+            </div>
+            <div id="relatedReqInputWrap">
+              <input type="text" class="req-lookup-input" id="relatedReqSearch"
+                placeholder="Type ID (e.g. 234) or keyword to search..."
+                oninput="App.searchRelatedReq(this.value)"
+                onfocus="App.searchRelatedReq(this.value)"
+                autocomplete="off">
+              <button class="req-lookup-clear" onclick="App.clearRelatedReqSearch()" title="Clear">✕</button>
+            </div>
+            <div class="req-lookup-dropdown" id="relatedReqDropdown"></div>
+          </div>
+        </div>
+
         <div class="fsec">Comments</div>
         <div class="fg full">
           <label class="flbl">Comments</label>
@@ -568,8 +670,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 
 <!-- DEVELOPER MODAL -->
 <div class="overlay" id="developerOverlay">
-  <div class="modal" style="max-width:480px">
-    <div class="mhead"><div class="mtitle" id="developerModalTitle">New Developer</div><button class="mclose" onclick="App.closeDeveloperModal()">✕</button></div>
+  <div class="modal" style="max-width:520px">
+    <div class="mhead"><div class="mtitle" id="developerModalTitle">New Person</div><button class="mclose" onclick="App.closeDeveloperModal()">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
         <div class="fg full">
@@ -581,6 +683,14 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
           <input type="email" class="fctrl" id="dev-email" placeholder="email@philips.com">
         </div>
         <div class="fg">
+          <label class="flbl">Role *</label>
+          <select class="fctrl" id="dev-role">
+            <option value="Developer">Developer</option>
+            <option value="Product Owner">Product Owner</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+        <div class="fg">
           <label class="flbl">Skill</label>
           <select class="fctrl" id="dev-skill">
             <option value="">—</option>
@@ -590,6 +700,12 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         <div class="fg">
           <label class="flbl">Hours / Day</label>
           <input type="number" class="fctrl" id="dev-hours_per_day" value="8" min="1" max="24" step="0.5">
+        </div>
+        <div class="fg">
+          <label class="flbl" style="opacity:0">.</label>
+          <div style="padding-top:6px;font-size:11px;color:var(--dim);line-height:1.6">
+            Hours/Day only applies to Developers.<br>Product Owners can be assigned to Dashboards.
+          </div>
         </div>
       </div>
     </div>
@@ -765,9 +881,14 @@ var App = {
     var t=localStorage.getItem('ei_theme')||'dark';
     this.applyTheme(t);
     this.initMS();
-    document.addEventListener('click',function(){
+    document.addEventListener('click',function(e){
       document.querySelectorAll('.ms-dropdown.open').forEach(function(d){d.classList.remove('open');});
       document.querySelectorAll('.ms-trigger.open').forEach(function(t){t.classList.remove('open');});
+      // Close req lookup dropdown if click outside
+      if(!e.target.closest('.req-lookup')){
+        var drop=document.getElementById('relatedReqDropdown');
+        if(drop) drop.classList.remove('open');
+      }
     });
     document.getElementById('loader').classList.remove('hide');
     document.getElementById('loaderTxt').textContent='Loading data...';
@@ -776,6 +897,7 @@ var App = {
       // loadEffortMatrix and loadDevelopers are non-critical — fail silently
       try{ await this.loadEffortMatrix(); }catch(e){ console.warn('loadEffortMatrix:',e.message); }
       try{ await this.loadDevelopers(); }catch(e){ console.warn('loadDevelopers:',e.message); }
+      try{ await this.loadDashboards(); }catch(e){ console.warn('loadDashboards:',e.message); }
     }catch(e){
       this.setSp(false,'Error: '+e.message);
       this.notify('Connection error: '+e.message,'err');
@@ -808,14 +930,24 @@ var App = {
   async load(){
     // loader managed by caller (init or explicit refresh)
     try{
-      this.data = await supaFetch('roadmap','?select=*&order=id.asc&limit=2000');
+      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id&order=id.asc&limit=2000');
       this.setSp(true,'Supabase · '+this.data.length+' requirements');
       this.populateMS();
       await this.loadDevEffortMap();
       this.filter();
       this.populateDevReqSelect();
     }catch(e){
+      var msg = e.message||'Unknown error';
       this.setSp(false,'Error');
+      console.error('load() error:', msg);
+      // Show error prominently so user knows what happened
+      var tbody = document.getElementById('tbody');
+      if(tbody) tbody.innerHTML = '<tr><td colspan="15" style="padding:30px;text-align:center;color:var(--red)">'+
+        '<div style="font-size:32px;margin-bottom:12px">⚠️</div>'+
+        '<div style="font-size:14px;font-weight:600;margin-bottom:8px">Failed to load data</div>'+
+        '<div style="font-size:12px;color:var(--dim);max-width:500px;margin:0 auto;line-height:1.6">'+msg+'</div>'+
+        '<button onclick="App.refreshData()" class="btn btn-primary btn-sm" style="margin-top:16px">↻ Retry</button>'+
+      '</td></tr>';
       throw e;
     }
   },
@@ -840,7 +972,7 @@ var App = {
 
   async loadDevEffortMap(){
     try{
-      var rows = await supaFetch('dev_tasks','?select=roadmap_id,effort&effort=not.is.null');
+      var rows = await supaFetch('dev_tasks','?select=roadmap_id,effort&effort=not.is.null&limit=5000');
       this.devEffortMap={};
       var self=this;
       rows.forEach(function(r){
@@ -855,6 +987,115 @@ var App = {
     this.developers = await supaFetch('developers','?select=*&order=name.asc');
     this.renderDeveloperGrid();
     this.populateDeveloperSelects();
+  },
+
+  // ── DASHBOARDS ───────────────────────────────────────────────────────────────
+  dashboards: [],
+  editingDashId: null,
+
+  async loadDashboards(){
+    try{
+      this.dashboards = await supaFetch('dashboards',
+        '?select=*,developers(id,name,role)&order=name.asc');
+      this.renderDashboardsTable();
+      this.populateDashboardSelects();
+    }catch(e){
+      // Table might not exist yet
+      console.warn('loadDashboards:',e.message);
+    }
+  },
+
+  renderDashboardsTable(){
+    var tbody=document.getElementById('dashboardsTbody'); if(!tbody) return;
+    var self=this;
+    if(!this.dashboards.length){
+      tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="empty-ico">📊</div><p>No dashboards yet. Click "+ New Dashboard" to add one.</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML=this.dashboards.map(function(d){
+      var po=d.developers;
+      return '<tr>'+
+        '<td class="td-mono">'+d.id+'</td>'+
+        '<td style="font-weight:600">'+self.esc(d.name)+'</td>'+
+        '<td style="font-size:12px">'+(d.area||'—')+'</td>'+
+        '<td style="font-size:12px">'+(po?
+          '<span style="display:flex;align-items:center;gap:6px">'+
+            '<span style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">'+
+              po.name.charAt(0).toUpperCase()+
+            '</span>'+
+            self.esc(po.name)+
+          '</span>'
+          :'<span style="color:var(--muted)">—</span>')+
+        '</td>'+
+        '<td><div class="td-actions">'+
+          '<button class="bico edit" onclick="App.openDashboardModal('+d.id+')">✏️</button>'+
+          '<button class="bico del" onclick="App.delDashboard('+d.id+')">🗑️</button>'+
+        '</div></td>'+
+      '</tr>';
+    }).join('');
+  },
+
+  populateDashboardSelects(){
+    // Populate Product Owner dropdown in dashboard modal
+    var poSel=document.getElementById('dash-product_owner_id'); if(!poSel) return;
+    var cur=poSel.value;
+    poSel.innerHTML='<option value="">— Select Product Owner —</option>';
+    // Only show people who are Product Owner or Both
+    this.developers
+      .filter(function(d){ return d.role==='Product Owner'||d.role==='Both'; })
+      .forEach(function(d){
+        var opt=document.createElement('option');
+        opt.value=d.id; opt.text=d.name+' ('+d.role+')';
+        poSel.appendChild(opt);
+      });
+    if(cur) poSel.value=cur;
+  },
+
+  delDashboard(id){ this.openConfirm(id,'dashboard'); },
+  openDashboardModal(id){
+    this.editingDashId=id;
+    document.getElementById('dashboardModalTitle').textContent=id?'Edit Dashboard':'New Dashboard';
+    this.populateDashboardSelects();
+    if(!id){
+      document.getElementById('dash-name').value='';
+      document.getElementById('dash-area').value='';
+      document.getElementById('dash-product_owner_id').value='';
+    }else{
+      var d=this.dashboards.find(function(x){return x.id===id;})||{};
+      document.getElementById('dash-name').value=d.name||'';
+      document.getElementById('dash-area').value=d.area||'';
+      document.getElementById('dash-product_owner_id').value=d.product_owner_id||'';
+    }
+    document.getElementById('dashboardOverlay').classList.add('open');
+  },
+  closeDashboardModal(){
+    document.getElementById('dashboardOverlay').classList.remove('open');
+    this.editingDashId=null;
+  },
+
+  async saveDashboard(){
+    var name=document.getElementById('dash-name').value.trim();
+    if(!name){this.notify('Dashboard name is required.','err');return;}
+    var rec={
+      name: name,
+      area: document.getElementById('dash-area').value||null,
+      product_owner_id: document.getElementById('dash-product_owner_id').value
+        ? parseInt(document.getElementById('dash-product_owner_id').value) : null,
+    };
+    var btn=document.getElementById('dashSaveBtn');
+    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
+    try{
+      if(this.editingDashId){
+        await supaFetch('dashboards','?id=eq.'+this.editingDashId,{method:'PATCH',body:rec,prefer:'return=minimal'});
+        this.notify('Dashboard updated! ✓','ok');
+      }else{
+        await supaFetch('dashboards','',{method:'POST',body:rec});
+        this.notify('Dashboard created! ✓','ok');
+      }
+      this.closeDashboardModal();
+      await this.loadDashboards();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
   },
 
   populateMS(){
@@ -906,6 +1147,7 @@ var App = {
     if(name==='dashboard') this.renderDash();
     if(name==='developers') this.renderDeveloperGrid();
     if(name==='development') this.loadDevTasks();
+    if(name==='dashboards')  this.loadDashboards();
   },
 
   filter(){
@@ -956,7 +1198,7 @@ var App = {
     var rows=sorted.slice(start,start+this.pageSize);
     var tbody=document.getElementById('tbody');
     if(!rows.length){
-      tbody.innerHTML='<tr><td colspan="14"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';
+      tbody.innerHTML='<tr><td colspan="15"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';
     }else{
       tbody.innerHTML=rows.map(function(r){
         return '<tr>'+
@@ -978,6 +1220,9 @@ var App = {
           '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
           '<td>'+self.badge(r.status)+'</td>'+
           '<td class="td-mono">'+(App.devEffortMap[r.id]?'<span style="color:var(--cyan);font-weight:600">'+Math.round(App.devEffortMap[r.id]*10)/10+'h</span>':'—')+'</td>'+
+          '<td>'+(r.related_requirement_id
+            ?'<span style="font-family:var(--mono);font-size:11px;color:var(--accent);cursor:pointer" onclick="App.openModal('+r.related_requirement_id+')" title="Open linked requirement">#'+r.related_requirement_id+'</span>'
+            :'<span style="color:var(--muted)">—</span>')+'</td>'+
         '</tr>';
       }).join('');
     }
@@ -1085,6 +1330,7 @@ var App = {
       business_case:this.getChkValue('business_case'),
       cost_reduction:this.getChkValue('cost_reduction'),
       margin_increasing:this.getChkValue('margin_increasing'),
+      related_requirement_id:this.relatedReqId||null,
     };
     var btn=document.getElementById('saveBtn');
     btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
@@ -1096,6 +1342,8 @@ var App = {
         var c=await supaFetch('roadmap','',{method:'POST',body:rec});
         var created=Array.isArray(c)?c[0]:c;
         this.notify('Requirement #'+created.id+' created! ✓','ok');
+        // Send email notification (non-blocking)
+        this.sendNotificationEmail(rec, created.id);
       }
       this.closeModal(); await this.load();
     }catch(e){this.notify('Error: '+e.message,'err');}
@@ -1184,6 +1432,7 @@ var App = {
       return;
     }
     var skillCls={'Front-end':'skill-fe','Back-end':'skill-be','Full-stack':'skill-fs'};
+    var roleCls={'Developer':'skill-be','Product Owner':'skill-fe','Both':'skill-fs'};
     container.innerHTML='<div class="dev-tasks-list">'+
       this.devTasks.map(function(t){
         var dev=t.developers||{};
@@ -1397,10 +1646,11 @@ var App = {
     var grid=document.getElementById('devGrid'); if(!grid) return;
     var self=this;
     if(!this.developers.length){
-      grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No developers registered yet.</p></div>';
+      grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No people registered yet. Click "+ New Person" to add one.</p></div>';
       return;
     }
     var skillCls={'Front-end':'skill-fe','Back-end':'skill-be','Full-stack':'skill-fs'};
+    var roleCls={'Developer':'skill-be','Product Owner':'skill-fe','Both':'skill-fs'};
     grid.innerHTML=this.developers.map(function(d){
       return '<div class="dev-card">'+
         '<div class="dev-card-actions">'+
@@ -1409,9 +1659,10 @@ var App = {
         '</div>'+
         '<div class="dev-card-name">'+self.esc(d.name)+'</div>'+
         '<div class="dev-card-email">'+self.esc(d.email)+'</div>'+
-        '<div class="dev-card-meta">'+
+        '<div class="dev-card-meta" style="gap:6px;flex-wrap:wrap">'+
+          '<span class="dev-task-skill '+(roleCls[d.role||'Developer']||'skill-be')+'">'+(d.role||'Developer')+'</span>'+
           (d.skill?'<span class="dev-task-skill '+(skillCls[d.skill]||'')+'">'+d.skill+'</span>':'')+
-          '<span style="font-size:11px;color:var(--dim)">⏱ '+(d.hours_per_day||8)+'h/day</span>'+
+          (d.role!=='Product Owner'?'<span style="font-size:11px;color:var(--dim)">⏱ '+(d.hours_per_day||8)+'h/day</span>':'')+
         '</div>'+
       '</div>';
     }).join('');
@@ -1419,10 +1670,11 @@ var App = {
 
   openDeveloperModal(id){
     this.editingDevId=id;
-    document.getElementById('developerModalTitle').textContent=id?'Edit Developer':'New Developer';
+    document.getElementById('developerModalTitle').textContent=id?'Edit Person':'New Person';
     if(!id){
       document.getElementById('dev-name').value='';
       document.getElementById('dev-email').value='';
+      document.getElementById('dev-role').value='Developer';
       document.getElementById('dev-skill').value='';
       document.getElementById('dev-hours_per_day').value='8';
     } else {
@@ -1430,6 +1682,7 @@ var App = {
       if(!d) return;
       document.getElementById('dev-name').value=d.name||'';
       document.getElementById('dev-email').value=d.email||'';
+      document.getElementById('dev-role').value=d.role||'Developer';
       document.getElementById('dev-skill').value=d.skill||'';
       document.getElementById('dev-hours_per_day').value=d.hours_per_day||8;
     }
@@ -1443,6 +1696,7 @@ var App = {
     if(!name||!email){this.notify('Name and email are required.','err');return;}
     var rec={
       name:name, email:email,
+      role:document.getElementById('dev-role').value||'Developer',
       skill:document.getElementById('dev-skill').value||null,
       hours_per_day:parseFloat(document.getElementById('dev-hours_per_day').value)||8,
     };
@@ -1451,10 +1705,10 @@ var App = {
     try{
       if(this.editingDevId){
         await supaFetch('developers','?id=eq.'+this.editingDevId,{method:'PATCH',body:rec,prefer:'return=minimal'});
-        this.notify('Developer updated! ✓','ok');
+        this.notify('Person updated! ✓','ok');
       } else {
         await supaFetch('developers','',{method:'POST',body:rec});
-        this.notify('Developer created! ✓','ok');
+        this.notify('Person created! ✓','ok');
       }
       this.closeDeveloperModal();
       await this.loadDevelopers();
@@ -2084,7 +2338,8 @@ var App = {
     var msg='';
     if(type==='req'){ var r=this.data.find(function(x){return x.id===id;}); msg='Delete requirement #'+id+': "'+(r?r.requirement.split('\n')[0].substring(0,60):'')+'"?'; }
     else if(type==='devtask'){ msg='Delete this developer task assignment?'; }
-    else if(type==='developer'){ var d=this.developers.find(function(x){return x.id===id;}); msg='Delete developer "'+(d?d.name:id)+'"?'; }
+    else if(type==='developer'){ var d=this.developers.find(function(x){return x.id===id;}); msg='Delete "'+(d?d.name:id)+'"?'; }
+    else if(type==='dashboard'){ var db=this.dashboards.find(function(x){return x.id===id;}); msg='Delete dashboard "'+(db?db.name:id)+'"?'; }
     document.getElementById('confirmMsg').textContent=msg+' This cannot be undone.';
     document.getElementById('confirmOverlay').classList.add('open');
   },
@@ -2107,10 +2362,119 @@ var App = {
         await this.load();
       } else if(type==='developer'){
         await supaFetch('developers','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-        this.notify('Developer deleted.','ok'); this.closeConfirm(); await this.loadDevelopers();
+        this.notify('Person deleted.','ok'); this.closeConfirm(); await this.loadDevelopers();
+      } else if(type==='dashboard'){
+        await supaFetch('dashboards','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
+        this.notify('Dashboard deleted.','ok'); this.closeConfirm(); await this.loadDashboards();
       }
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='Delete';btn.disabled=false;}
+  },
+
+  // ── RELATED REQUIREMENT LOOKUP ──────────────────────────────────────────────
+  relatedReqId: null,
+
+  searchRelatedReq(q){
+    var drop=document.getElementById('relatedReqDropdown');
+    if(!drop) return;
+    q=(q||'').trim();
+
+    // Filter data: match by ID or requirement text
+    var results=this.data.filter(function(r){
+      if(!r.requirement) return false;
+      // Exclude current editing record
+      if(App.editingId && r.id===App.editingId) return false;
+      if(!q) return true;
+      // Match by exact ID
+      if(String(r.id)===q) return true;
+      // Match by numeric prefix (e.g. "23" matches #234)
+      if(/^\d+$/.test(q) && String(r.id).startsWith(q)) return true;
+      // Match by text
+      return (r.requirement||'').toLowerCase().includes(q.toLowerCase());
+    }).slice(0,12);
+
+    if(!results.length){
+      drop.innerHTML='<div class="req-lookup-option" style="color:var(--dim);cursor:default">No results found</div>';
+      drop.classList.add('open');
+      return;
+    }
+
+    drop.innerHTML=results.map(function(r){
+      var title=(r.requirement||'').replace(/[\r\n].*/,'').substring(0,80);
+      var meta=[r.area,r.dashboard,r.status].filter(Boolean).join(' · ');
+      return '<div class="req-lookup-option" data-rid="'+r.id+'" data-rtitle="'+App.esc(title)+'">'+
+        '<div style="display:flex;align-items:center">'+
+          '<span class="opt-id">#'+r.id+'</span>'+
+          '<span class="opt-title">'+title+'</span>'+
+        '</div>'+
+        (meta?'<div class="opt-meta">'+meta+'</div>':'')+
+      '</div>';
+    }).join('');
+    drop.querySelectorAll('.req-lookup-option[data-rid]').forEach(function(el){
+      el.addEventListener('click',function(){
+        App.selectRelatedReq(parseInt(el.dataset.rid),el.dataset.rtitle);
+      });
+    });
+    drop.classList.add('open');
+  },
+
+  selectRelatedReq(id, title){
+    this.relatedReqId=id;
+    // Show selected pill
+    document.getElementById('relatedReqSelected').style.display='flex';
+    document.getElementById('relatedReqInputWrap').style.display='none';
+    document.getElementById('relatedReqSelId').textContent='#'+id;
+    document.getElementById('relatedReqSelTitle').textContent=title;
+    document.getElementById('relatedReqDropdown').classList.remove('open');
+    document.getElementById('relatedReqSearch').value='';
+  },
+
+  clearRelatedReq(){
+    this.relatedReqId=null;
+    document.getElementById('relatedReqSelected').style.display='none';
+    document.getElementById('relatedReqInputWrap').style.display='';
+    document.getElementById('relatedReqSearch').value='';
+    document.getElementById('relatedReqDropdown').classList.remove('open');
+  },
+
+  clearRelatedReqSearch(){
+    document.getElementById('relatedReqSearch').value='';
+    document.getElementById('relatedReqDropdown').classList.remove('open');
+  },
+
+  // ── EMAIL NOTIFICATION (Microsoft Graph via Supabase Edge Function) ────────
+  async sendNotificationEmail(rec, id){
+    try{
+      var payload={
+        id:            id,
+        requirement:   (rec.requirement||'').substring(0,500),
+        status:        rec.status||'Idea',
+        area:          rec.area||'',
+        dashboard:     rec.dashboard||'',
+        requester:     rec.requester||'',
+        business_owner:rec.business_owner||'',
+        expected_date: rec.expected_date?rec.expected_date.split('-').reverse().join('/'):'',
+        impacts:       (rec.impacts||'').substring(0,300),
+      };
+      var resp=await fetch('https://iuzlpllhckzrddwdqpyl.supabase.co/functions/v1/send-email',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1emxwbGxoY2t6cmRkd2RxcHlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNzYzNTcsImV4cCI6MjA5MzY1MjM1N30.gU8fyfogHBQKfy5_pVW1oaIGehJ2yDNxkUdPHdvCBH0',
+        },
+        body:JSON.stringify(payload),
+      });
+      if(resp.ok){
+        this.notify((payload.status==='Defect'?'🚨 ':'📧 ')+'Email sent to team! ✓','ok');
+      }else{
+        var err=await resp.json().catch(function(){return {};});
+        console.warn('Email fn error:',err);
+        this.notify('Saved — email not sent ('+(err.error||'check edge fn')+')','warn');
+      }
+    }catch(e){
+      console.warn('sendNotificationEmail:',e.message);
+      this.notify('Requirement saved — email service unavailable','warn');
+    }
   },
 
   badge(s){
