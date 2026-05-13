@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BizOps Requirement Management v2026-05-13 13:11 -->
+<!-- BizOps Requirement Management v2026-05-13 13:17 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -258,7 +258,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 <div class="header">
   <div style="display:flex;align-items:center">
     <div class="hlogo">EI</div>
-    <div class="htitle">BizOps — Requirement Management <span>v2026-05-13 13:11</span></div>
+    <div class="htitle">BizOps — Requirement Management <span>v2026-05-13 13:17</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <div class="sp-pill" id="spPill"><div class="sp-dot"></div><span id="spTxt">Connecting...</span></div>
@@ -859,7 +859,7 @@ var App = {
   async load(){
     // loader managed by caller (init or explicit refresh)
     try{
-      this.data = await supaFetch('roadmap','?select=*&order=id.asc&limit=2000');
+      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id&order=id.asc&limit=2000');
       this.setSp(true,'Supabase · '+this.data.length+' requirements');
       this.populateMS();
       await this.loadDevEffortMap();
