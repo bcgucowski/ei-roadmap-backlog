@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BizOps Requirement Management v2026-05-13 13:17 -->
+<!-- v2026-05-13 17:13 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -180,24 +180,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .notif.ok{border-left:3px solid var(--green)}.notif.err{border-left:3px solid var(--red)}.notif.warn{border-left:3px solid var(--yellow)}
 .empty{text-align:center;padding:50px 20px;color:var(--dim)}.empty-ico{font-size:40px;opacity:.3;margin-bottom:12px}
 .fsel{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:12px;border-radius:var(--radius-sm);padding:4px 8px;outline:none;cursor:pointer}
-/* Searchable requirement lookup */
-.req-lookup{position:relative}
-.req-lookup-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 36px 8px 11px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s;width:100%;cursor:text}
-.req-lookup-input:focus{border-color:var(--accent)}
-.req-lookup-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:0;line-height:1}
-.req-lookup-clear:hover{color:var(--red)}
-.req-lookup-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;z-index:500;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.3);display:none}
-.req-lookup-dropdown.open{display:block}
-.req-lookup-option{padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border);transition:background .1s}
-.req-lookup-option:last-child{border-bottom:none}
-.req-lookup-option:hover{background:var(--accentlight)}
-.req-lookup-option .opt-id{font-family:var(--mono);font-size:11px;color:var(--accent);margin-right:8px;flex-shrink:0}
-.req-lookup-option .opt-title{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.req-lookup-option .opt-meta{font-size:10px;color:var(--dim);margin-top:2px}
-.req-lookup-selected{display:flex;align-items:center;gap:8px;padding:7px 11px;background:var(--accentlight);border:1px solid rgba(0,115,230,.3);border-radius:var(--radius-sm);font-size:12px}
-.req-lookup-selected .sel-id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700}
-.req-lookup-selected .sel-title{color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.req-lookup-selected .sel-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0;flex-shrink:0}
 /* DEV PAGE */
 .dev-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .dev-req-info{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px}
@@ -258,7 +240,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 <div class="header">
   <div style="display:flex;align-items:center">
     <div class="hlogo">EI</div>
-    <div class="htitle">BizOps — Requirement Management <span>v2026-05-13 13:17</span></div>
+    <div class="htitle">BizOps — Requirement Management <span>Supabase Connected</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <div class="sp-pill" id="spPill"><div class="sp-dot"></div><span id="spTxt">Connecting...</span></div>
@@ -320,7 +302,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
           <th onclick="App.sort('expected_date')" id="th-expected_date">Expected Date ↕</th>
           <th onclick="App.sort('status')" id="th-status">Status ↕</th>
           <th id="th-dev_effort" style="white-space:nowrap">Dev Effort ↕</th>
-          <th style="white-space:nowrap">Linked Req</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -406,9 +387,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   </div>
 
 </div>
-
-
-
 
 <!-- NEW/EDIT REQUIREMENT MODAL -->
 <div class="overlay" id="modalOverlay">
@@ -500,27 +478,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
             <label class="chk-item"><input type="checkbox" id="f-margin_increasing_chk"><span>Margin Increasing</span></label>
           </div>
         </div>
-        <div class="fsec">Related Requirement</div>
-        <div class="fg full">
-          <label class="flbl">Linked Requirement <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(search by ID or description)</span></label>
-          <div class="req-lookup" id="relatedReqLookup">
-            <div id="relatedReqSelected" style="display:none" class="req-lookup-selected">
-              <span class="sel-id" id="relatedReqSelId"></span>
-              <span class="sel-title" id="relatedReqSelTitle"></span>
-              <button class="sel-remove" onclick="App.clearRelatedReq()" title="Remove link">✕</button>
-            </div>
-            <div id="relatedReqInputWrap">
-              <input type="text" class="req-lookup-input" id="relatedReqSearch"
-                placeholder="Type ID (e.g. 234) or keyword to search..."
-                oninput="App.searchRelatedReq(this.value)"
-                onfocus="App.searchRelatedReq(this.value)"
-                autocomplete="off">
-              <button class="req-lookup-clear" onclick="App.clearRelatedReqSearch()" title="Clear">✕</button>
-            </div>
-            <div class="req-lookup-dropdown" id="relatedReqDropdown"></div>
-          </div>
-        </div>
-
         <div class="fsec">Comments</div>
         <div class="fg full">
           <label class="flbl">Comments</label>
@@ -612,7 +569,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 
 <!-- DEVELOPER MODAL -->
 <div class="overlay" id="developerOverlay">
-  <div class="modal" style="max-width:520px">
+  <div class="modal" style="max-width:480px">
     <div class="mhead"><div class="mtitle" id="developerModalTitle">New Developer</div><button class="mclose" onclick="App.closeDeveloperModal()">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
@@ -635,7 +592,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
           <label class="flbl">Hours / Day</label>
           <input type="number" class="fctrl" id="dev-hours_per_day" value="8" min="1" max="24" step="0.5">
         </div>
-
       </div>
     </div>
     <div class="mfoot">
@@ -661,8 +617,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 
 <script>
 const SUPA_URL = 'https://iuzlpllhckzrddwdqpyl.supabase.co';
-// Use legacy anon key (works from any origin, no allowlist restriction)
-const SUPA_KEY = 'sb_publishable_GmmMX1n94OftJVHuEWTeJg_EMkWTn8m';
+const SUPA_KEY = 'sb_publishable_FbI1wuw_deFXB5qbDx-cBg_zz1P-JyU';
 
 
 // ── SUPABASE ─────────────────────────────────────────────────────────────────
@@ -811,14 +766,9 @@ var App = {
     var t=localStorage.getItem('ei_theme')||'dark';
     this.applyTheme(t);
     this.initMS();
-    document.addEventListener('click',function(e){
+    document.addEventListener('click',function(){
       document.querySelectorAll('.ms-dropdown.open').forEach(function(d){d.classList.remove('open');});
       document.querySelectorAll('.ms-trigger.open').forEach(function(t){t.classList.remove('open');});
-      // Close req lookup dropdown if click outside
-      if(!e.target.closest('.req-lookup')){
-        var drop=document.getElementById('relatedReqDropdown');
-        if(drop) drop.classList.remove('open');
-      }
     });
     document.getElementById('loader').classList.remove('hide');
     document.getElementById('loaderTxt').textContent='Loading data...';
@@ -866,17 +816,7 @@ var App = {
       this.filter();
       this.populateDevReqSelect();
     }catch(e){
-      var msg = e.message||'Unknown error';
       this.setSp(false,'Error');
-      console.error('load() error:', msg);
-      // Show error prominently so user knows what happened
-      var tbody = document.getElementById('tbody');
-      if(tbody) tbody.innerHTML = '<tr><td colspan="15" style="padding:30px;text-align:center;color:var(--red)">'+
-        '<div style="font-size:32px;margin-bottom:12px">⚠️</div>'+
-        '<div style="font-size:14px;font-weight:600;margin-bottom:8px">Failed to load data</div>'+
-        '<div style="font-size:12px;color:var(--dim);max-width:500px;margin:0 auto;line-height:1.6">'+msg+'</div>'+
-        '<button onclick="App.refreshData()" class="btn btn-primary btn-sm" style="margin-top:16px">↻ Retry</button>'+
-      '</td></tr>';
       throw e;
     }
   },
@@ -901,7 +841,7 @@ var App = {
 
   async loadDevEffortMap(){
     try{
-      var rows = await supaFetch('dev_tasks','?select=roadmap_id,effort&effort=not.is.null&limit=5000');
+      var rows = await supaFetch('dev_tasks','?select=roadmap_id,effort&effort=not.is.null');
       this.devEffortMap={};
       var self=this;
       rows.forEach(function(r){
@@ -916,6 +856,503 @@ var App = {
     this.developers = await supaFetch('developers','?select=*&order=name.asc');
     this.renderDeveloperGrid();
     this.populateDeveloperSelects();
+  },
+
+  populateMS(){
+    var self=this;
+    var MAP={'ms-status':'status','ms-area':'area','ms-dashboard':'dashboard',
+      'ms-developer':'developer','ms-complexity':'complexity',
+      'ms-business_partner':'business_partner','ms-requester':'requester'};
+    Object.entries(MAP).forEach(function(e){
+      var id=e[0],key=e[1];
+      var vals=[...new Set(self.data.map(function(r){return r[key];}).filter(Boolean))];
+      if(self.ms[id]) self.ms[id].setOpts(vals);
+    });
+  },
+
+  populateDevReqSelect(){
+    var sel=document.getElementById('devReqSelect'); if(!sel) return;
+    var cur=sel.value;
+    sel.innerHTML='<option value="">— Select a requirement —</option>';
+    this.data.forEach(function(r){
+      var opt=document.createElement('option');
+      opt.value=r.id;
+      opt.text='#'+r.id+' — '+(r.requirement||'').split('\n')[0].substring(0,60);
+      sel.appendChild(opt);
+    });
+    if(cur) sel.value=cur;
+  },
+
+  populateDeveloperSelects(){
+    var self=this;
+    ['dt-developer_id'].forEach(function(id){
+      var sel=document.getElementById(id); if(!sel) return;
+      var cur=sel.value;
+      sel.innerHTML='<option value="">— Select developer —</option>';
+      self.developers.forEach(function(d){
+        var opt=document.createElement('option');
+        opt.value=d.id;
+        opt.text=d.name+(d.skill?' ('+d.skill+')':'');
+        sel.appendChild(opt);
+      });
+      if(cur) sel.value=cur;
+    });
+  },
+
+  tab(name){
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    document.querySelectorAll('.ntab').forEach(function(b){b.classList.remove('active');});
+    document.getElementById('page-'+name).classList.add('active');
+    document.getElementById('tab-'+name).classList.add('active');
+    if(name==='dashboard') this.renderDash();
+    if(name==='developers') this.renderDeveloperGrid();
+    if(name==='development') this.loadDevTasks();
+  },
+
+  filter(){
+    var q=(document.getElementById('fSearch').value||'').toLowerCase();
+    var MAP={'ms-status':'status','ms-area':'area','ms-dashboard':'dashboard',
+      'ms-developer':'developer','ms-complexity':'complexity',
+      'ms-business_partner':'business_partner','ms-requester':'requester'};
+    var active={};
+    var self=this;
+    Object.entries(MAP).forEach(function(e){
+      var id=e[0],key=e[1];
+      var sel=self.ms[id]?self.ms[id].get():[];
+      if(sel.length) active[key]=new Set(sel);
+    });
+    this.filtered=this.data.filter(function(r){
+      if(q){
+        var txt=[r.requirement,r.requester,r.dashboard,r.comments,r.business_partner,r.impacts]
+          .map(function(v){return(v||'').toLowerCase();}).join(' ');
+        if(!txt.includes(q)) return false;
+      }
+      for(var key in active) if(!active[key].has(r[key]||'')) return false;
+      return true;
+    });
+    this.page=1; this.renderTable();
+  },
+
+  resetFilters(){ document.getElementById('fSearch').value=''; Object.values(this.ms).forEach(function(m){m.clear();}); this.filter(); },
+
+  sort(key){
+    if(this.sortKey===key) this.sortDir*=-1; else{this.sortKey=key;this.sortDir=1;}
+    document.querySelectorAll('th').forEach(function(th){th.classList.remove('th-s');});
+    var el=document.getElementById('th-'+key); if(el) el.classList.add('th-s');
+    this.renderTable();
+  },
+
+  renderTable(){
+    var self=this;
+    var sorted=[...this.filtered].sort(function(a,b){
+      var av=a[self.sortKey]!=null?a[self.sortKey]:'';
+      var bv=b[self.sortKey]!=null?b[self.sortKey]:'';
+      if(typeof av==='number'&&typeof bv==='number') return(av-bv)*self.sortDir;
+      return String(av).localeCompare(String(bv))*self.sortDir;
+    });
+    document.getElementById('cShown').textContent=this.filtered.length;
+    document.getElementById('cTotal').textContent=this.data.length;
+    document.getElementById('cEffort').textContent=this.filtered.reduce(function(a,r){return a+(r.effort||0);},0).toLocaleString();
+    var start=(this.page-1)*this.pageSize;
+    var rows=sorted.slice(start,start+this.pageSize);
+    var tbody=document.getElementById('tbody');
+    if(!rows.length){
+      tbody.innerHTML='<tr><td colspan="14"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';
+    }else{
+      tbody.innerHTML=rows.map(function(r){
+        return '<tr>'+
+          '<td style="position:sticky;left:0;z-index:1;background:var(--surface)"><div class="td-actions">'+
+            '<button class="bico edit" onclick="App.openModal('+r.id+')" title="Edit">✏️</button>'+
+            '<button class="bico dev" onclick="App.goToDev('+r.id+')" title="Dev">⚡</button>'+
+            '<button class="bico del" onclick="App.openConfirm('+r.id+',\'req\')" title="Delete">🗑️</button>'+
+          '</div></td>'+
+          '<td class="td-mono">'+r.id+'</td>'+
+          '<td class="td-mono">'+(r.priority!=null?r.priority:'—')+'</td>'+
+          '<td style="font-size:11px;white-space:nowrap">'+(r.business_partner||'—')+'</td>'+
+          '<td class="td-mono">'+self.fd(r.request_date)+'</td>'+
+          '<td><span class="td-clip" title="'+self.esc(r.requirement||'')+'">'+(r.requirement?r.requirement.split('\n')[0]:'—')+'</span></td>'+
+          '<td><span class="td-clip" title="'+self.esc(r.impacts||'')+'">'+(r.impacts||'—')+'</span></td>'+
+          '<td style="font-size:11px">'+(r.requester||'—')+'</td>'+
+          '<td style="font-size:11px">'+(r.area||'—')+'</td>'+
+          '<td><span class="td-clip" style="max-width:110px;font-size:11px">'+(r.dashboard||'—')+'</span></td>'+
+          '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
+          '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
+          '<td>'+self.badge(r.status)+'</td>'+
+          '<td class="td-mono">'+(App.devEffortMap[r.id]?'<span style="color:var(--cyan);font-weight:600">'+Math.round(App.devEffortMap[r.id]*10)/10+'h</span>':'—')+'</td>'+
+        '</tr>';
+      }).join('');
+    }
+    this.renderPg(sorted.length);
+  },
+
+  renderPg(total){
+    var pages=Math.ceil(total/this.pageSize);
+    var el=document.getElementById('pagination');
+    if(pages<=1){el.innerHTML='';return;}
+    var self=this;
+    var h='<button class="pgbtn" onclick="App.goPage('+(this.page-1)+')" '+(this.page===1?'disabled':'')+'>‹</button>';
+    for(var i=1;i<=pages;i++){
+      if(pages>10&&i>3&&i<pages-2&&Math.abs(i-this.page)>1){if(i===4||i===pages-3) h+='<span style="color:var(--dim);padding:0 4px;font-size:12px">…</span>';continue;}
+      h+='<button class="pgbtn '+(i===this.page?'active':'')+'" onclick="App.goPage('+i+')">'+i+'</button>';
+    }
+    h+='<button class="pgbtn" onclick="App.goPage('+(this.page+1)+')" '+(this.page===pages?'disabled':'')+'>›</button>';
+    el.innerHTML=h;
+  },
+  goPage(p){var pg=Math.ceil(this.filtered.length/this.pageSize);if(p<1||p>pg)return;this.page=p;this.renderTable();},
+
+  // ── REQUIREMENT MODAL ───────────────────────────────────────────────────────
+  today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); },
+  onDashboardChange(){
+    var sel=document.getElementById('f-dashboard');
+    var other=document.getElementById('f-dashboard-other');
+    other.style.display=sel.value==='Other'?'block':'none';
+    if(sel.value!=='Other') other.value='';
+  },
+  getDashboardValue(){
+    var sel=document.getElementById('f-dashboard');
+    if(sel.value==='Other'){ var v=document.getElementById('f-dashboard-other').value.trim(); return v||null; }
+    return sel.value||null;
+  },
+  getChkValue(field){
+    var chk=document.getElementById('f-'+field+'_chk');
+    return(chk&&chk.checked)?1:null;
+  },
+
+  openModal(id){
+    this.editingId=id;
+    document.getElementById('modalTitle').textContent=id?'Edit Requirement #'+id:'New Requirement';
+    if(!id){
+      ['requirement','impacts','comments'].forEach(function(f){var el=document.getElementById('f-'+f);if(el)el.value='';});
+      document.getElementById('f-status').value='Idea';
+      document.getElementById('f-area').value='';
+      document.getElementById('f-dashboard').value='';
+      document.getElementById('f-dashboard-other').style.display='none';
+      document.getElementById('f-requester').value='';
+      document.getElementById('f-business_owner').value='';
+      document.getElementById('f-requester_priority').value='';
+      document.getElementById('f-expected_date').value='';
+      document.getElementById('f-request_date').value=this.today();
+      ['business_case','cost_reduction','margin_increasing'].forEach(function(f){var c=document.getElementById('f-'+f+'_chk');if(c)c.checked=false;});
+    } else {
+      var r=this.data.find(function(x){return x.id===id;})||{};
+      document.getElementById('f-requirement').value=r.requirement||'';
+      document.getElementById('f-impacts').value=r.impacts||'';
+      document.getElementById('f-comments').value=r.comments||'';
+      // Status - handle non-standard values
+      var sSel=document.getElementById('f-status');
+      var tmp=document.getElementById('tmp-status-opt'); if(tmp) tmp.remove();
+      var sv=r.status||'Idea';
+      if(![...sSel.options].some(function(o){return o.value===sv;})){
+        var opt=document.createElement('option');opt.value=sv;opt.text=sv;opt.id='tmp-status-opt';sSel.appendChild(opt);
+      }
+      sSel.value=sv;
+      document.getElementById('f-area').value=r.area||'';
+      var dSel=document.getElementById('f-dashboard');
+      var dOther=document.getElementById('f-dashboard-other');
+      if(r.dashboard&&![...dSel.options].some(function(o){return o.value===r.dashboard;})){
+        dSel.value='Other'; dOther.value=r.dashboard; dOther.style.display='block';
+      } else { dSel.value=r.dashboard||''; dOther.value=''; dOther.style.display='none'; }
+      document.getElementById('f-requester').value=r.requester||'';
+      document.getElementById('f-business_owner').value=r.business_owner||'';
+      document.getElementById('f-requester_priority').value=r.requester_priority||'';
+      document.getElementById('f-expected_date').value=r.expected_date||'';
+      document.getElementById('f-request_date').value=r.request_date||this.today();
+      ['business_case','cost_reduction','margin_increasing'].forEach(function(f){
+        var c=document.getElementById('f-'+f+'_chk');
+        if(c) c.checked=(r[f]!=null&&r[f]!==0&&r[f]!=='');
+      });
+    }
+    document.getElementById('modalOverlay').classList.add('open');
+  },
+  closeModal(){
+    document.getElementById('modalOverlay').classList.remove('open'); this.editingId=null;
+    var tmp=document.getElementById('tmp-status-opt'); if(tmp) tmp.remove();
+  },
+
+  async saveRecord(){
+    var req=document.getElementById('f-requirement').value.trim();
+    if(!req){this.notify('Requirement field is required.','err');return;}
+    var rec={
+      requirement:req, impacts:document.getElementById('f-impacts').value.trim()||null,
+      status:document.getElementById('f-status').value||'Idea',
+      area:document.getElementById('f-area').value||null,
+      dashboard:this.getDashboardValue(),
+      requester:document.getElementById('f-requester').value.trim()||null,
+      business_owner:document.getElementById('f-business_owner').value.trim()||null,
+      requester_priority:document.getElementById('f-requester_priority').value||null,
+      expected_date:document.getElementById('f-expected_date').value||null,
+      request_date:document.getElementById('f-request_date').value||null,
+      comments:document.getElementById('f-comments').value.trim()||null,
+      business_case:this.getChkValue('business_case'),
+      cost_reduction:this.getChkValue('cost_reduction'),
+      margin_increasing:this.getChkValue('margin_increasing'),
+    };
+    var btn=document.getElementById('saveBtn');
+    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
+    try{
+      if(this.editingId){
+        await supaFetch('roadmap','?id=eq.'+this.editingId,{method:'PATCH',body:rec,prefer:'return=minimal'});
+        this.notify('Requirement #'+this.editingId+' updated! ✓','ok');
+      } else {
+        var c=await supaFetch('roadmap','',{method:'POST',body:rec});
+        var created=Array.isArray(c)?c[0]:c;
+        this.notify('Requirement #'+created.id+' created! ✓','ok');
+      }
+      this.closeModal(); await this.load();
+    }catch(e){this.notify('Error: '+e.message,'err');}
+    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
+  },
+
+  // Override supaFetch for PATCH/POST with proper opts format
+  // (inline above uses the global one)
+
+  // ── AI IMPROVE ──────────────────────────────────────────────────────────────
+  async aiImprove(field){
+    var el=document.getElementById('f-'+field);
+    var btn=document.getElementById('ai'+(field==='requirement'?'Req':'Imp')+'Btn');
+    var text=el.value.trim();
+    if(!text){this.notify('Please enter some text first.','warn');return;}
+    btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
+    try{
+      var sysPrompt=field==='requirement'
+        ?"You are a business analyst at Philips. Improve the following software requirement to be clearer, more specific, and follow SMART criteria. Return only the improved text, no preamble."
+        :"You are a business analyst at Philips. Given this requirement context, write a clear and compelling impact description explaining the business value. Return only the improved text, no preamble.";
+      var resp=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:500,
+          system:sysPrompt,
+          messages:[{role:'user',content:text}]
+        })
+      });
+      var data=await resp.json();
+      var improved=(data.content&&data.content[0]&&data.content[0].text)||text;
+      el.value=improved;
+      this.notify('Text improved by AI ✓','ok');
+    }catch(e){this.notify('AI error: '+e.message,'err');}
+    finally{btn.innerHTML='✨ AI Improve';btn.disabled=false;}
+  },
+
+  // ── DEVELOPMENT TAB ─────────────────────────────────────────────────────────
+  goToDev(reqId){
+    this.tab('development');
+    document.getElementById('devReqSelect').value=reqId;
+    this.loadDevTasks();
+  },
+
+  async loadDevTasks(){
+    var sel=document.getElementById('devReqSelect');
+    var reqId=sel&&sel.value?parseInt(sel.value):null;
+    this.currentReqId=reqId||null;
+    var addBtn=document.getElementById('addDevTaskBtn');
+    var infoDiv=document.getElementById('devReqInfo');
+    var container=document.getElementById('devTasksContainer');
+
+    if(!reqId){
+      if(addBtn) addBtn.style.display='none';
+      infoDiv.style.display='none';
+      container.innerHTML='<div class="empty"><div class="empty-ico">⚡</div><p>Select a requirement above to manage development tasks.</p></div>';
+      return;
+    }
+
+    // Show req info
+    var req=this.data.find(function(r){return r.id===reqId;});
+    if(req){
+      document.getElementById('devReqTitle').textContent=(req.requirement||'').split('\n')[0];
+      document.getElementById('devReqMeta').innerHTML=
+        '<span>Status: <strong>'+App.badge(req.status)+'</strong></span>'+
+        '<span>Area: <strong>'+(req.area||'—')+'</strong></span>'+
+        '<span>Dashboard: <strong>'+(req.dashboard||'—')+'</strong></span>'+
+        '<span>Expected: <strong>'+this.fd(req.expected_date)+'</strong></span>';
+      infoDiv.style.display='block';
+    }
+    if(addBtn) addBtn.style.display='flex';
+
+    container.innerHTML='<div style="padding:20px;text-align:center;color:var(--dim)"><span class="spinner"></span> Loading...</div>';
+    try{
+      this.devTasks=await supaFetch('dev_tasks','?roadmap_id=eq.'+reqId+'&select=*,developers(name,email,skill,hours_per_day)&order=id.asc');
+      this.renderDevTasks();
+    }catch(e){container.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
+  },
+
+  renderDevTasks(){
+    var container=document.getElementById('devTasksContainer');
+    var self=this;
+    if(!this.devTasks.length){
+      container.innerHTML='<div class="empty"><div class="empty-ico">👨‍💻</div><p>No developer assigned yet. Click "+ Add Developer" to assign one.</p></div>';
+      return;
+    }
+    var skillCls={'Front-end':'skill-fe','Back-end':'skill-be','Full-stack':'skill-fs'};
+    container.innerHTML='<div class="dev-tasks-list">'+
+      this.devTasks.map(function(t){
+        var dev=t.developers||{};
+        var skill=dev.skill||'';
+        return '<div class="dev-task-card">'+
+          '<div class="dev-task-header">'+
+            '<div>'+
+              '<span class="dev-task-dev">'+(dev.name||'No developer')+'</span>'+
+              (skill?'<span class="dev-task-skill '+(skillCls[skill]||'')+'">'+skill+'</span>':'')+
+            '</div>'+
+            '<div style="display:flex;gap:6px">'+
+              '<button class="btn btn-ghost btn-xs" onclick="App.openDevTaskModal('+t.id+')">✏️ Edit</button>'+
+              '<button class="btn btn-danger btn-xs" onclick="App.openConfirm('+t.id+',\'devtask\')">🗑️</button>'+
+            '</div>'+
+          '</div>'+
+          '<div class="dev-task-grid">'+
+            '<div class="dev-task-field"><label>Status</label><div>'+self.badge(t.status)+'</div></div>'+
+            '<div class="dev-task-field"><label>% Done</label><div class="td-mono">'+(t.percent_completed!=null?t.percent_completed+'%':'—')+'</div></div>'+
+            '<div class="dev-task-field"><label>Complexity</label><div style="font-size:12px">'+(t.complexity||'—')+'</div></div>'+
+            '<div class="dev-task-field"><label>Size</label><div style="font-size:12px">'+(t.size||'—')+'</div></div>'+
+            '<div class="dev-task-field"><label>Effort</label><div class="td-mono">'+(t.effort!=null?t.effort+'h':'—')+'</div></div>'+
+            '<div class="dev-task-field"><label>Allocation</label><div class="td-mono">'+(t.percent_allocation!=null?t.percent_allocation+'%':'100%')+'</div></div>'+
+            '<div class="dev-task-field"><label>Start</label><div class="td-mono">'+self.fd(t.start_date)+'</div></div>'+
+            '<div class="dev-task-field"><label>End</label><div class="td-mono">'+self.fd(t.end_date)+'</div></div>'+
+            (t.closed_date?'<div class="dev-task-field"><label>Closed</label><div class="td-mono">'+self.fd(t.closed_date)+'</div></div>':'')+
+            (t.comments?'<div class="dev-task-field full" style="grid-column:1/-1"><label>Comments</label><div style="font-size:12px">'+self.esc(t.comments)+'</div></div>':'')+
+          '</div>'+
+        '</div>';
+      }).join('')+
+    '</div>';
+  },
+
+  // DEV TASK MODAL
+  openDevTaskModal(id){
+    this.editingDevTaskId=id;
+    document.getElementById('devTaskTitle').textContent=id?'Edit Developer Task':'Add Developer Task';
+    if(!id){
+      document.getElementById('dt-developer_id').value='';
+      document.getElementById('dt-status').value='Dev Backlog';
+      document.getElementById('dt-percent_completed').value='';
+      document.getElementById('dt-closed_date').value='';
+      document.getElementById('dt-complexity').value='';
+      document.getElementById('dt-size').value='';
+      document.getElementById('dt-percent_allocation').value='100';
+      document.getElementById('dt-effort').value='';
+      document.getElementById('dt-start_date').value='';
+      document.getElementById('dt-end_date').value='';
+      document.getElementById('dt-comments').value='';
+    } else {
+      var t=this.devTasks.find(function(x){return x.id===id;});
+      if(!t) return;
+      document.getElementById('dt-developer_id').value=t.developer_id||'';
+      document.getElementById('dt-status').value=t.status||'Dev Backlog';
+      document.getElementById('dt-percent_completed').value=t.percent_completed!=null?t.percent_completed:'';
+      document.getElementById('dt-closed_date').value=t.closed_date||'';
+      document.getElementById('dt-complexity').value=t.complexity||'';
+      document.getElementById('dt-size').value=t.size||'';
+      document.getElementById('dt-percent_allocation').value=t.percent_allocation!=null?t.percent_allocation:100;
+      document.getElementById('dt-effort').value=t.effort!=null?t.effort:'';
+      document.getElementById('dt-start_date').value=t.start_date||'';
+      document.getElementById('dt-end_date').value=t.end_date||'';
+      document.getElementById('dt-comments').value=t.comments||'';
+    }
+    document.getElementById('devTaskOverlay').classList.add('open');
+  },
+  closeDevTaskModal(){ document.getElementById('devTaskOverlay').classList.remove('open'); this.editingDevTaskId=null; },
+
+  calcEffort(){
+    var c=document.getElementById('dt-complexity').value;
+    var s=document.getElementById('dt-size').value;
+    var key=c+'|'+s;
+    var ef=document.getElementById('dt-effort');
+    if(c&&s&&EFFORT_MATRIX[key]!=null){
+      ef.value=EFFORT_MATRIX[key];
+    }
+    this.calcEndDate();
+  },
+
+  calcEndDate(){
+    var effort=parseFloat(document.getElementById('dt-effort').value)||0;
+    var alloc=parseFloat(document.getElementById('dt-percent_allocation').value)||100;
+    var start=document.getElementById('dt-start_date').value;
+    if(!effort||!start){ return; }
+
+    // Get developer hours/day from their profile
+    var devId=parseInt(document.getElementById('dt-developer_id').value);
+    var dev=this.developers.find(function(d){return d.id===devId;});
+    var hpd=(dev&&dev.hours_per_day)?parseFloat(dev.hours_per_day):8;
+
+    // Effective hours available per workday given the allocation %
+    var effectiveHpd = hpd * (alloc / 100);
+    if(effectiveHpd <= 0) effectiveHpd = 1;
+
+    // How many workdays needed (fractional)
+    var daysNeeded = effort / effectiveHpd;
+
+    // Extra days BEYOND the start day
+    // e.g. daysNeeded=1.0 → fits exactly in start day → 0 extra days → end = start
+    // e.g. daysNeeded=1.1 → needs 1 extra workday → end = start + 1 workday
+    // e.g. daysNeeded=2.5 → needs 2 extra workdays → end = start + 2 workdays
+    var extraDays = Math.max(0, Math.ceil(daysNeeded) - 1);
+
+    // If start date is a weekend/holiday, move forward to next workday
+    var startD = new Date(start);
+    while(!isWorkday(startD)){
+      startD.setDate(startD.getDate()+1);
+    }
+
+    var endDate = extraDays === 0
+      ? startD                        // fits in start day
+      : addWorkdays(toISO(startD), extraDays);
+
+    document.getElementById('dt-end_date').value=toISO(endDate);
+  },
+
+  onDevStatusChange(){
+    var st=document.getElementById('dt-status').value;
+    var cd=document.getElementById('dt-closed_date');
+    if(st==='Close'){
+      // Auto-fill today only if empty — user can still change it
+      if(!cd.value) cd.value=today();
+    } else {
+      // Clear closed date when moving away from Close
+      cd.value='';
+    }
+  },
+
+  async saveDevTask(){
+    if(!this.currentReqId){this.notify('No requirement selected.','err');return;}
+    var devId=document.getElementById('dt-developer_id').value;
+    if(!devId){this.notify('Please select a developer.','err');return;}
+    var status=document.getElementById('dt-status').value;
+    var closedDate=null;
+    if(status==='Close'){
+      closedDate=document.getElementById('dt-closed_date').value||today();
+    }
+    var rec={
+      roadmap_id:this.currentReqId,
+      developer_id:parseInt(devId),
+      status:status,
+      percent_completed:document.getElementById('dt-percent_completed').value?parseFloat(document.getElementById('dt-percent_completed').value):null,
+      closed_date:closedDate,
+      complexity:document.getElementById('dt-complexity').value||null,
+      size:document.getElementById('dt-size').value||null,
+      percent_allocation:document.getElementById('dt-percent_allocation').value?parseFloat(document.getElementById('dt-percent_allocation').value):100,
+      effort:document.getElementById('dt-effort').value?parseFloat(document.getElementById('dt-effort').value):null,
+      start_date:document.getElementById('dt-start_date').value||null,
+      end_date:document.getElementById('dt-end_date').value||null,
+      comments:document.getElementById('dt-comments').value.trim()||null,
+      updated_at:new Date().toISOString(),
+    };
+    var btn=document.getElementById('devTaskSaveBtn');
+    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
+    try{
+      if(this.editingDevTaskId){
+        await supaFetch('dev_tasks','?id=eq.'+this.editingDevTaskId,{method:'PATCH',body:rec,prefer:'return=minimal'});
+        this.notify('Task updated! ✓','ok');
+      } else {
+        await supaFetch('dev_tasks','',{method:'POST',body:rec});
+        this.notify('Task created! ✓','ok');
+      }
+      this.closeDevTaskModal();
+      await this.syncReqStatus(this.currentReqId);
+      await this.loadDevTasks();
+      await this.loadDevEffortMap();
+      await this.load();  // reload all so backlog table reflects new status
+    }catch(e){this.notify('Error: '+e.message,'err');}
+    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
   },
 
   // ── SYNC REQUIREMENT STATUS FROM DEV TASKS ─────────────────────────────────
@@ -961,7 +1398,7 @@ var App = {
     var grid=document.getElementById('devGrid'); if(!grid) return;
     var self=this;
     if(!this.developers.length){
-      grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No people registered yet. Click "+ New Person" to add one.</p></div>';
+      grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No developers registered yet.</p></div>';
       return;
     }
     var skillCls={'Front-end':'skill-fe','Back-end':'skill-be','Full-stack':'skill-fs'};
@@ -1648,7 +2085,7 @@ var App = {
     var msg='';
     if(type==='req'){ var r=this.data.find(function(x){return x.id===id;}); msg='Delete requirement #'+id+': "'+(r?r.requirement.split('\n')[0].substring(0,60):'')+'"?'; }
     else if(type==='devtask'){ msg='Delete this developer task assignment?'; }
-    else if(type==='developer'){ var d=this.developers.find(function(x){return x.id===id;}); msg='Delete "'+(d?d.name:id)+'"?'; }
+    else if(type==='developer'){ var d=this.developers.find(function(x){return x.id===id;}); msg='Delete developer "'+(d?d.name:id)+'"?'; }
     document.getElementById('confirmMsg').textContent=msg+' This cannot be undone.';
     document.getElementById('confirmOverlay').classList.add('open');
   },
@@ -1675,112 +2112,6 @@ var App = {
       }
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='Delete';btn.disabled=false;}
-  },
-
-  // ── RELATED REQUIREMENT LOOKUP ──────────────────────────────────────────────
-  relatedReqId: null,
-
-  searchRelatedReq(q){
-    var drop=document.getElementById('relatedReqDropdown');
-    if(!drop) return;
-    q=(q||'').trim();
-
-    // Filter data: match by ID or requirement text
-    var results=this.data.filter(function(r){
-      if(!r.requirement) return false;
-      // Exclude current editing record
-      if(App.editingId && r.id===App.editingId) return false;
-      if(!q) return true;
-      // Match by exact ID
-      if(String(r.id)===q) return true;
-      // Match by numeric prefix (e.g. "23" matches #234)
-      if(/^\d+$/.test(q) && String(r.id).startsWith(q)) return true;
-      // Match by text
-      return (r.requirement||'').toLowerCase().includes(q.toLowerCase());
-    }).slice(0,12);
-
-    if(!results.length){
-      drop.innerHTML='<div class="req-lookup-option" style="color:var(--dim);cursor:default">No results found</div>';
-      drop.classList.add('open');
-      return;
-    }
-
-    drop.innerHTML=results.map(function(r){
-      var title=(r.requirement||'').replace(/[\r\n].*/,'').substring(0,80);
-      var meta=[r.area,r.dashboard,r.status].filter(Boolean).join(' · ');
-      return '<div class="req-lookup-option" data-rid="'+r.id+'" data-rtitle="'+App.esc(title)+'">'+
-        '<div style="display:flex;align-items:center">'+
-          '<span class="opt-id">#'+r.id+'</span>'+
-          '<span class="opt-title">'+title+'</span>'+
-        '</div>'+
-        (meta?'<div class="opt-meta">'+meta+'</div>':'')+
-      '</div>';
-    }).join('');
-    drop.querySelectorAll('.req-lookup-option[data-rid]').forEach(function(el){
-      el.addEventListener('click',function(){
-        App.selectRelatedReq(parseInt(el.dataset.rid),el.dataset.rtitle);
-      });
-    });
-    drop.classList.add('open');
-  },
-
-  selectRelatedReq(id, title){
-    this.relatedReqId=id;
-    // Show selected pill
-    document.getElementById('relatedReqSelected').style.display='flex';
-    document.getElementById('relatedReqInputWrap').style.display='none';
-    document.getElementById('relatedReqSelId').textContent='#'+id;
-    document.getElementById('relatedReqSelTitle').textContent=title;
-    document.getElementById('relatedReqDropdown').classList.remove('open');
-    document.getElementById('relatedReqSearch').value='';
-  },
-
-  clearRelatedReq(){
-    this.relatedReqId=null;
-    document.getElementById('relatedReqSelected').style.display='none';
-    document.getElementById('relatedReqInputWrap').style.display='';
-    document.getElementById('relatedReqSearch').value='';
-    document.getElementById('relatedReqDropdown').classList.remove('open');
-  },
-
-  clearRelatedReqSearch(){
-    document.getElementById('relatedReqSearch').value='';
-    document.getElementById('relatedReqDropdown').classList.remove('open');
-  },
-
-  // ── EMAIL NOTIFICATION (Microsoft Graph via Supabase Edge Function) ────────
-  async sendNotificationEmail(rec, id){
-    try{
-      var payload={
-        id:            id,
-        requirement:   (rec.requirement||'').substring(0,500),
-        status:        rec.status||'Idea',
-        area:          rec.area||'',
-        dashboard:     rec.dashboard||'',
-        requester:     rec.requester||'',
-        business_owner:rec.business_owner||'',
-        expected_date: rec.expected_date?rec.expected_date.split('-').reverse().join('/'):'',
-        impacts:       (rec.impacts||'').substring(0,300),
-      };
-      var resp=await fetch('https://iuzlpllhckzrddwdqpyl.supabase.co/functions/v1/send-email',{
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer sb_publishable_GmmMX1n94OftJVHuEWTeJg_EMkWTn8m',
-        },
-        body:JSON.stringify(payload),
-      });
-      if(resp.ok){
-        this.notify((payload.status==='Defect'?'🚨 ':'📧 ')+'Email sent to team! ✓','ok');
-      }else{
-        var err=await resp.json().catch(function(){return {};});
-        console.warn('Email fn error:',err);
-        this.notify('Saved — email not sent ('+(err.error||'check edge fn')+')','warn');
-      }
-    }catch(e){
-      console.warn('sendNotificationEmail:',e.message);
-      this.notify('Requirement saved — email service unavailable','warn');
-    }
   },
 
   badge(s){
