@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BizOps Requirement Management v2026-05-13 12:37 -->
+<!-- BizOps Requirement Management v2026-05-13 12:53 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -258,7 +258,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 <div class="header">
   <div style="display:flex;align-items:center">
     <div class="hlogo">EI</div>
-    <div class="htitle">BizOps — Requirement Management <span>v2026-05-13 12:37</span></div>
+    <div class="htitle">BizOps — Requirement Management <span>v2026-05-13 12:53</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <div class="sp-pill" id="spPill"><div class="sp-dot"></div><span id="spTxt">Connecting...</span></div>
@@ -274,8 +274,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <button class="ntab active" id="tab-backlog"     onclick="App.tab('backlog')">📋 Backlog</button>
   <button class="ntab"        id="tab-development" onclick="App.tab('development')">⚡ Development</button>
   <button class="ntab"        id="tab-dashboard"   onclick="App.tab('dashboard')">📈 Dashboard</button>
-  <button class="ntab"        id="tab-developers"  onclick="App.tab('developers')">👥 People</button>
-  <button class="ntab"        id="tab-dashboards"  onclick="App.tab('dashboards')">📊 Dashboards</button>
+  <button class="ntab"        id="tab-developers"  onclick="App.tab('developers')">👥 Developers</button>
 </div>
 
 <div class="app">
@@ -401,7 +400,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <div class="page" id="page-developers">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <div style="font-size:15px;font-weight:700">Developers</div>
-      <button class="btn btn-primary" onclick="App.openDeveloperModal(null)">+ New Person</button>
+      <button class="btn btn-primary" onclick="App.openDeveloperModal(null)">+ New Developer</button>
     </div>
     <div class="dev-grid" id="devGrid"></div>
   </div>
@@ -409,64 +408,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 </div>
 
 
-  <!-- DASHBOARDS PAGE -->
-  <div class="page" id="page-dashboards">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div>
-        <div style="font-size:15px;font-weight:700;margin-bottom:2px">📊 Dashboards</div>
-        <div style="font-size:12px;color:var(--dim)">Manage dashboards and their Product Owners</div>
-      </div>
-      <button class="btn btn-primary" onclick="App.openDashboardModal(null)">+ New Dashboard</button>
-    </div>
-    <div class="twrap" style="min-width:unset">
-      <table style="min-width:600px">
-        <thead><tr>
-          <th style="width:60px">#</th>
-          <th>Dashboard Name</th>
-          <th>Area</th>
-          <th>Product Owner</th>
-          <th style="width:80px">Actions</th>
-        </tr></thead>
-        <tbody id="dashboardsTbody"><tr><td colspan="5" class="empty"><div class="empty-ico">📊</div><p>Loading...</p></td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- DASHBOARD MODAL -->
-  <div class="overlay" id="dashboardOverlay">
-    <div class="modal" style="max-width:500px">
-      <div class="mhead">
-        <div class="mtitle" id="dashboardModalTitle">New Dashboard</div>
-        <button class="mclose" onclick="App.closeDashboardModal()">✕</button>
-      </div>
-      <div class="mbody">
-        <div class="fgrid">
-          <div class="fg full">
-            <label class="flbl">Dashboard Name *</label>
-            <input type="text" class="fctrl" id="dash-name" placeholder="e.g. Funnel Management">
-          </div>
-          <div class="fg full">
-            <label class="flbl">Area</label>
-            <select class="fctrl" id="dash-area">
-              <option value="">— Select area —</option>
-              <option>Commercial</option><option>Marketing</option><option>SS&amp;D</option>
-              <option>BizOps</option><option>GBS</option><option>Pricing</option><option>Finance</option>
-            </select>
-          </div>
-          <div class="fg full">
-            <label class="flbl">Product Owner</label>
-            <select class="fctrl" id="dash-product_owner_id">
-              <option value="">— Select Product Owner —</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="mfoot">
-        <button class="btn btn-ghost" onclick="App.closeDashboardModal()">Cancel</button>
-        <button class="btn btn-primary" id="dashSaveBtn" onclick="App.saveDashboard()">💾 Save</button>
-      </div>
-    </div>
-  </div>
 
 
 <!-- NEW/EDIT REQUIREMENT MODAL -->
@@ -672,7 +613,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 <!-- DEVELOPER MODAL -->
 <div class="overlay" id="developerOverlay">
   <div class="modal" style="max-width:520px">
-    <div class="mhead"><div class="mtitle" id="developerModalTitle">New Person</div><button class="mclose" onclick="App.closeDeveloperModal()">✕</button></div>
+    <div class="mhead"><div class="mtitle" id="developerModalTitle">New Developer</div><button class="mclose" onclick="App.closeDeveloperModal()">✕</button></div>
     <div class="mbody">
       <div class="fgrid">
         <div class="fg full">
@@ -682,14 +623,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         <div class="fg full">
           <label class="flbl">Email *</label>
           <input type="email" class="fctrl" id="dev-email" placeholder="email@philips.com">
-        </div>
-        <div class="fg">
-          <label class="flbl">Role *</label>
-          <select class="fctrl" id="dev-role">
-            <option value="Developer">Developer</option>
-            <option value="Product Owner">Product Owner</option>
-            <option value="Both">Both</option>
-          </select>
         </div>
         <div class="fg">
           <label class="flbl">Skill</label>
@@ -702,12 +635,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
           <label class="flbl">Hours / Day</label>
           <input type="number" class="fctrl" id="dev-hours_per_day" value="8" min="1" max="24" step="0.5">
         </div>
-        <div class="fg">
-          <label class="flbl" style="opacity:0">.</label>
-          <div style="padding-top:6px;font-size:11px;color:var(--dim);line-height:1.6">
-            Hours/Day only applies to Developers.<br>Product Owners can be assigned to Dashboards.
-          </div>
-        </div>
+
       </div>
     </div>
     <div class="mfoot">
@@ -898,7 +826,6 @@ var App = {
       // loadEffortMatrix and loadDevelopers are non-critical — fail silently
       try{ await this.loadEffortMatrix(); }catch(e){ console.warn('loadEffortMatrix:',e.message); }
       try{ await this.loadDevelopers(); }catch(e){ console.warn('loadDevelopers:',e.message); }
-      try{ await this.loadDashboards(); }catch(e){ console.warn('loadDashboards:',e.message); }
     }catch(e){
       this.setSp(false,'Error: '+e.message);
       this.notify('Connection error: '+e.message,'err');
@@ -931,7 +858,7 @@ var App = {
   async load(){
     // loader managed by caller (init or explicit refresh)
     try{
-      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id&order=id.asc&limit=2000');
+      this.data = await supaFetch('roadmap','?select=*&order=id.asc&limit=2000');
       this.setSp(true,'Supabase · '+this.data.length+' requirements');
       this.populateMS();
       await this.loadDevEffortMap();
@@ -990,620 +917,6 @@ var App = {
     this.populateDeveloperSelects();
   },
 
-  // ── DASHBOARDS ───────────────────────────────────────────────────────────────
-  dashboards: [],
-  editingDashId: null,
-
-  async loadDashboards(){
-    try{
-      this.dashboards = await supaFetch('dashboards',
-        '?select=*,developers(id,name,role)&order=name.asc');
-      this.renderDashboardsTable();
-      this.populateDashboardSelects();
-    }catch(e){
-      // Table might not exist yet
-      console.warn('loadDashboards:',e.message);
-    }
-  },
-
-  renderDashboardsTable(){
-    var tbody=document.getElementById('dashboardsTbody'); if(!tbody) return;
-    var self=this;
-    if(!this.dashboards.length){
-      tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="empty-ico">📊</div><p>No dashboards yet. Click "+ New Dashboard" to add one.</p></div></td></tr>';
-      return;
-    }
-    tbody.innerHTML=this.dashboards.map(function(d){
-      var po=d.developers;
-      return '<tr>'+
-        '<td class="td-mono">'+d.id+'</td>'+
-        '<td style="font-weight:600">'+self.esc(d.name)+'</td>'+
-        '<td style="font-size:12px">'+(d.area||'—')+'</td>'+
-        '<td style="font-size:12px">'+(po?
-          '<span style="display:flex;align-items:center;gap:6px">'+
-            '<span style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">'+
-              po.name.charAt(0).toUpperCase()+
-            '</span>'+
-            self.esc(po.name)+
-          '</span>'
-          :'<span style="color:var(--muted)">—</span>')+
-        '</td>'+
-        '<td><div class="td-actions">'+
-          '<button class="bico edit" onclick="App.openDashboardModal('+d.id+')">✏️</button>'+
-          '<button class="bico del" onclick="App.delDashboard('+d.id+')">🗑️</button>'+
-        '</div></td>'+
-      '</tr>';
-    }).join('');
-  },
-
-  populateDashboardSelects(){
-    // Populate Product Owner dropdown in dashboard modal
-    var poSel=document.getElementById('dash-product_owner_id'); if(!poSel) return;
-    var cur=poSel.value;
-    poSel.innerHTML='<option value="">— Select Product Owner —</option>';
-    // Only show people who are Product Owner or Both
-    this.developers
-      .filter(function(d){ return d.role==='Product Owner'||d.role==='Both'; })
-      .forEach(function(d){
-        var opt=document.createElement('option');
-        opt.value=d.id; opt.text=d.name+' ('+d.role+')';
-        poSel.appendChild(opt);
-      });
-    if(cur) poSel.value=cur;
-  },
-
-  delDashboard(id){ this.openConfirm(id,'dashboard'); },
-  openDashboardModal(id){
-    this.editingDashId=id;
-    document.getElementById('dashboardModalTitle').textContent=id?'Edit Dashboard':'New Dashboard';
-    this.populateDashboardSelects();
-    if(!id){
-      document.getElementById('dash-name').value='';
-      document.getElementById('dash-area').value='';
-      document.getElementById('dash-product_owner_id').value='';
-    }else{
-      var d=this.dashboards.find(function(x){return x.id===id;})||{};
-      document.getElementById('dash-name').value=d.name||'';
-      document.getElementById('dash-area').value=d.area||'';
-      document.getElementById('dash-product_owner_id').value=d.product_owner_id||'';
-    }
-    document.getElementById('dashboardOverlay').classList.add('open');
-  },
-  closeDashboardModal(){
-    document.getElementById('dashboardOverlay').classList.remove('open');
-    this.editingDashId=null;
-  },
-
-  async saveDashboard(){
-    var name=document.getElementById('dash-name').value.trim();
-    if(!name){this.notify('Dashboard name is required.','err');return;}
-    var rec={
-      name: name,
-      area: document.getElementById('dash-area').value||null,
-      product_owner_id: document.getElementById('dash-product_owner_id').value
-        ? parseInt(document.getElementById('dash-product_owner_id').value) : null,
-    };
-    var btn=document.getElementById('dashSaveBtn');
-    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
-    try{
-      if(this.editingDashId){
-        await supaFetch('dashboards','?id=eq.'+this.editingDashId,{method:'PATCH',body:rec,prefer:'return=minimal'});
-        this.notify('Dashboard updated! ✓','ok');
-      }else{
-        await supaFetch('dashboards','',{method:'POST',body:rec});
-        this.notify('Dashboard created! ✓','ok');
-      }
-      this.closeDashboardModal();
-      await this.loadDashboards();
-    }catch(e){this.notify('Error: '+e.message,'err');}
-    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
-  },
-
-  populateMS(){
-    var self=this;
-    var MAP={'ms-status':'status','ms-area':'area','ms-dashboard':'dashboard',
-      'ms-developer':'developer','ms-complexity':'complexity',
-      'ms-business_partner':'business_partner','ms-requester':'requester'};
-    Object.entries(MAP).forEach(function(e){
-      var id=e[0],key=e[1];
-      var vals=[...new Set(self.data.map(function(r){return r[key];}).filter(Boolean))];
-      if(self.ms[id]) self.ms[id].setOpts(vals);
-    });
-  },
-
-  populateDevReqSelect(){
-    var sel=document.getElementById('devReqSelect'); if(!sel) return;
-    var cur=sel.value;
-    sel.innerHTML='<option value="">— Select a requirement —</option>';
-    this.data.forEach(function(r){
-      var opt=document.createElement('option');
-      opt.value=r.id;
-      opt.text='#'+r.id+' — '+(r.requirement||'').split('\n')[0].substring(0,60);
-      sel.appendChild(opt);
-    });
-    if(cur) sel.value=cur;
-  },
-
-  populateDeveloperSelects(){
-    var self=this;
-    ['dt-developer_id'].forEach(function(id){
-      var sel=document.getElementById(id); if(!sel) return;
-      var cur=sel.value;
-      sel.innerHTML='<option value="">— Select developer —</option>';
-      self.developers.forEach(function(d){
-        var opt=document.createElement('option');
-        opt.value=d.id;
-        opt.text=d.name+(d.skill?' ('+d.skill+')':'');
-        sel.appendChild(opt);
-      });
-      if(cur) sel.value=cur;
-    });
-  },
-
-  tab(name){
-    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-    document.querySelectorAll('.ntab').forEach(function(b){b.classList.remove('active');});
-    document.getElementById('page-'+name).classList.add('active');
-    document.getElementById('tab-'+name).classList.add('active');
-    if(name==='dashboard') this.renderDash();
-    if(name==='developers') this.renderDeveloperGrid();
-    if(name==='development') this.loadDevTasks();
-    if(name==='dashboards')  this.loadDashboards();
-  },
-
-  filter(){
-    var q=(document.getElementById('fSearch').value||'').toLowerCase();
-    var MAP={'ms-status':'status','ms-area':'area','ms-dashboard':'dashboard',
-      'ms-developer':'developer','ms-complexity':'complexity',
-      'ms-business_partner':'business_partner','ms-requester':'requester'};
-    var active={};
-    var self=this;
-    Object.entries(MAP).forEach(function(e){
-      var id=e[0],key=e[1];
-      var sel=self.ms[id]?self.ms[id].get():[];
-      if(sel.length) active[key]=new Set(sel);
-    });
-    this.filtered=this.data.filter(function(r){
-      if(q){
-        var txt=[r.requirement,r.requester,r.dashboard,r.comments,r.business_partner,r.impacts]
-          .map(function(v){return(v||'').toLowerCase();}).join(' ');
-        if(!txt.includes(q)) return false;
-      }
-      for(var key in active) if(!active[key].has(r[key]||'')) return false;
-      return true;
-    });
-    this.page=1; this.renderTable();
-  },
-
-  resetFilters(){ document.getElementById('fSearch').value=''; Object.values(this.ms).forEach(function(m){m.clear();}); this.filter(); },
-
-  sort(key){
-    if(this.sortKey===key) this.sortDir*=-1; else{this.sortKey=key;this.sortDir=1;}
-    document.querySelectorAll('th').forEach(function(th){th.classList.remove('th-s');});
-    var el=document.getElementById('th-'+key); if(el) el.classList.add('th-s');
-    this.renderTable();
-  },
-
-  renderTable(){
-    var self=this;
-    var sorted=[...this.filtered].sort(function(a,b){
-      var av=a[self.sortKey]!=null?a[self.sortKey]:'';
-      var bv=b[self.sortKey]!=null?b[self.sortKey]:'';
-      if(typeof av==='number'&&typeof bv==='number') return(av-bv)*self.sortDir;
-      return String(av).localeCompare(String(bv))*self.sortDir;
-    });
-    document.getElementById('cShown').textContent=this.filtered.length;
-    document.getElementById('cTotal').textContent=this.data.length;
-    document.getElementById('cEffort').textContent=this.filtered.reduce(function(a,r){return a+(r.effort||0);},0).toLocaleString();
-    var start=(this.page-1)*this.pageSize;
-    var rows=sorted.slice(start,start+this.pageSize);
-    var tbody=document.getElementById('tbody');
-    if(!rows.length){
-      tbody.innerHTML='<tr><td colspan="15"><div class="empty"><div class="empty-ico">🔍</div><p>No requirements found.</p></div></td></tr>';
-    }else{
-      tbody.innerHTML=rows.map(function(r){
-        return '<tr>'+
-          '<td style="position:sticky;left:0;z-index:1;background:var(--surface)"><div class="td-actions">'+
-            '<button class="bico edit" onclick="App.openModal('+r.id+')" title="Edit">✏️</button>'+
-            '<button class="bico dev" onclick="App.goToDev('+r.id+')" title="Dev">⚡</button>'+
-            '<button class="bico del" onclick="App.openConfirm('+r.id+',\'req\')" title="Delete">🗑️</button>'+
-          '</div></td>'+
-          '<td class="td-mono">'+r.id+'</td>'+
-          '<td class="td-mono">'+(r.priority!=null?r.priority:'—')+'</td>'+
-          '<td style="font-size:11px;white-space:nowrap">'+(r.business_partner||'—')+'</td>'+
-          '<td class="td-mono">'+self.fd(r.request_date)+'</td>'+
-          '<td><span class="td-clip" title="'+self.esc(r.requirement||'')+'">'+(r.requirement?r.requirement.split('\n')[0]:'—')+'</span></td>'+
-          '<td><span class="td-clip" title="'+self.esc(r.impacts||'')+'">'+(r.impacts||'—')+'</span></td>'+
-          '<td style="font-size:11px">'+(r.requester||'—')+'</td>'+
-          '<td style="font-size:11px">'+(r.area||'—')+'</td>'+
-          '<td><span class="td-clip" style="max-width:110px;font-size:11px">'+(r.dashboard||'—')+'</span></td>'+
-          '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
-          '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
-          '<td>'+self.badge(r.status)+'</td>'+
-          '<td class="td-mono">'+(App.devEffortMap[r.id]?'<span style="color:var(--cyan);font-weight:600">'+Math.round(App.devEffortMap[r.id]*10)/10+'h</span>':'—')+'</td>'+
-          '<td>'+(r.related_requirement_id
-            ?'<span style="font-family:var(--mono);font-size:11px;color:var(--accent);cursor:pointer" onclick="App.openModal('+r.related_requirement_id+')" title="Open linked requirement">#'+r.related_requirement_id+'</span>'
-            :'<span style="color:var(--muted)">—</span>')+'</td>'+
-        '</tr>';
-      }).join('');
-    }
-    this.renderPg(sorted.length);
-  },
-
-  renderPg(total){
-    var pages=Math.ceil(total/this.pageSize);
-    var el=document.getElementById('pagination');
-    if(pages<=1){el.innerHTML='';return;}
-    var self=this;
-    var h='<button class="pgbtn" onclick="App.goPage('+(this.page-1)+')" '+(this.page===1?'disabled':'')+'>‹</button>';
-    for(var i=1;i<=pages;i++){
-      if(pages>10&&i>3&&i<pages-2&&Math.abs(i-this.page)>1){if(i===4||i===pages-3) h+='<span style="color:var(--dim);padding:0 4px;font-size:12px">…</span>';continue;}
-      h+='<button class="pgbtn '+(i===this.page?'active':'')+'" onclick="App.goPage('+i+')">'+i+'</button>';
-    }
-    h+='<button class="pgbtn" onclick="App.goPage('+(this.page+1)+')" '+(this.page===pages?'disabled':'')+'>›</button>';
-    el.innerHTML=h;
-  },
-  goPage(p){var pg=Math.ceil(this.filtered.length/this.pageSize);if(p<1||p>pg)return;this.page=p;this.renderTable();},
-
-  // ── REQUIREMENT MODAL ───────────────────────────────────────────────────────
-  today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); },
-  onDashboardChange(){
-    var sel=document.getElementById('f-dashboard');
-    var other=document.getElementById('f-dashboard-other');
-    other.style.display=sel.value==='Other'?'block':'none';
-    if(sel.value!=='Other') other.value='';
-  },
-  getDashboardValue(){
-    var sel=document.getElementById('f-dashboard');
-    if(sel.value==='Other'){ var v=document.getElementById('f-dashboard-other').value.trim(); return v||null; }
-    return sel.value||null;
-  },
-  getChkValue(field){
-    var chk=document.getElementById('f-'+field+'_chk');
-    return(chk&&chk.checked)?1:null;
-  },
-
-  openModal(id){
-    this.editingId=id;
-    document.getElementById('modalTitle').textContent=id?'Edit Requirement #'+id:'New Requirement';
-    if(!id){
-      ['requirement','impacts','comments'].forEach(function(f){var el=document.getElementById('f-'+f);if(el)el.value='';});
-      document.getElementById('f-status').value='Idea';
-      document.getElementById('f-area').value='';
-      document.getElementById('f-dashboard').value='';
-      document.getElementById('f-dashboard-other').style.display='none';
-      document.getElementById('f-requester').value='';
-      document.getElementById('f-business_owner').value='';
-      document.getElementById('f-requester_priority').value='';
-      document.getElementById('f-expected_date').value='';
-      document.getElementById('f-request_date').value=this.today();
-      ['business_case','cost_reduction','margin_increasing'].forEach(function(f){var c=document.getElementById('f-'+f+'_chk');if(c)c.checked=false;});
-    } else {
-      var r=this.data.find(function(x){return x.id===id;})||{};
-      document.getElementById('f-requirement').value=r.requirement||'';
-      document.getElementById('f-impacts').value=r.impacts||'';
-      document.getElementById('f-comments').value=r.comments||'';
-      // Status - handle non-standard values
-      var sSel=document.getElementById('f-status');
-      var tmp=document.getElementById('tmp-status-opt'); if(tmp) tmp.remove();
-      var sv=r.status||'Idea';
-      if(![...sSel.options].some(function(o){return o.value===sv;})){
-        var opt=document.createElement('option');opt.value=sv;opt.text=sv;opt.id='tmp-status-opt';sSel.appendChild(opt);
-      }
-      sSel.value=sv;
-      document.getElementById('f-area').value=r.area||'';
-      var dSel=document.getElementById('f-dashboard');
-      var dOther=document.getElementById('f-dashboard-other');
-      if(r.dashboard&&![...dSel.options].some(function(o){return o.value===r.dashboard;})){
-        dSel.value='Other'; dOther.value=r.dashboard; dOther.style.display='block';
-      } else { dSel.value=r.dashboard||''; dOther.value=''; dOther.style.display='none'; }
-      document.getElementById('f-requester').value=r.requester||'';
-      document.getElementById('f-business_owner').value=r.business_owner||'';
-      document.getElementById('f-requester_priority').value=r.requester_priority||'';
-      document.getElementById('f-expected_date').value=r.expected_date||'';
-      document.getElementById('f-request_date').value=r.request_date||this.today();
-      ['business_case','cost_reduction','margin_increasing'].forEach(function(f){
-        var c=document.getElementById('f-'+f+'_chk');
-        if(c) c.checked=(r[f]!=null&&r[f]!==0&&r[f]!=='');
-      });
-    }
-    document.getElementById('modalOverlay').classList.add('open');
-  },
-  closeModal(){
-    document.getElementById('modalOverlay').classList.remove('open'); this.editingId=null;
-    var tmp=document.getElementById('tmp-status-opt'); if(tmp) tmp.remove();
-  },
-
-  async saveRecord(){
-    var req=document.getElementById('f-requirement').value.trim();
-    if(!req){this.notify('Requirement field is required.','err');return;}
-    var rec={
-      requirement:req, impacts:document.getElementById('f-impacts').value.trim()||null,
-      status:document.getElementById('f-status').value||'Idea',
-      area:document.getElementById('f-area').value||null,
-      dashboard:this.getDashboardValue(),
-      requester:document.getElementById('f-requester').value.trim()||null,
-      business_owner:document.getElementById('f-business_owner').value.trim()||null,
-      requester_priority:document.getElementById('f-requester_priority').value||null,
-      expected_date:document.getElementById('f-expected_date').value||null,
-      request_date:document.getElementById('f-request_date').value||null,
-      comments:document.getElementById('f-comments').value.trim()||null,
-      business_case:this.getChkValue('business_case'),
-      cost_reduction:this.getChkValue('cost_reduction'),
-      margin_increasing:this.getChkValue('margin_increasing'),
-      related_requirement_id:this.relatedReqId||null,
-    };
-    var btn=document.getElementById('saveBtn');
-    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
-    try{
-      if(this.editingId){
-        await supaFetch('roadmap','?id=eq.'+this.editingId,{method:'PATCH',body:rec,prefer:'return=minimal'});
-        this.notify('Requirement #'+this.editingId+' updated! ✓','ok');
-      } else {
-        var c=await supaFetch('roadmap','',{method:'POST',body:rec});
-        var created=Array.isArray(c)?c[0]:c;
-        this.notify('Requirement #'+created.id+' created! ✓','ok');
-        // Send email notification (non-blocking)
-        this.sendNotificationEmail(rec, created.id);
-      }
-      this.closeModal(); await this.load();
-    }catch(e){this.notify('Error: '+e.message,'err');}
-    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
-  },
-
-  // Override supaFetch for PATCH/POST with proper opts format
-  // (inline above uses the global one)
-
-  // ── AI IMPROVE ──────────────────────────────────────────────────────────────
-  async aiImprove(field){
-    var el=document.getElementById('f-'+field);
-    var btn=document.getElementById('ai'+(field==='requirement'?'Req':'Imp')+'Btn');
-    var text=el.value.trim();
-    if(!text){this.notify('Please enter some text first.','warn');return;}
-    btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
-    try{
-      var sysPrompt=field==='requirement'
-        ?"You are a business analyst at Philips. Improve the following software requirement to be clearer, more specific, and follow SMART criteria. Return only the improved text, no preamble."
-        :"You are a business analyst at Philips. Given this requirement context, write a clear and compelling impact description explaining the business value. Return only the improved text, no preamble.";
-      var resp=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:500,
-          system:sysPrompt,
-          messages:[{role:'user',content:text}]
-        })
-      });
-      var data=await resp.json();
-      var improved=(data.content&&data.content[0]&&data.content[0].text)||text;
-      el.value=improved;
-      this.notify('Text improved by AI ✓','ok');
-    }catch(e){this.notify('AI error: '+e.message,'err');}
-    finally{btn.innerHTML='✨ AI Improve';btn.disabled=false;}
-  },
-
-  // ── DEVELOPMENT TAB ─────────────────────────────────────────────────────────
-  goToDev(reqId){
-    this.tab('development');
-    document.getElementById('devReqSelect').value=reqId;
-    this.loadDevTasks();
-  },
-
-  async loadDevTasks(){
-    var sel=document.getElementById('devReqSelect');
-    var reqId=sel&&sel.value?parseInt(sel.value):null;
-    this.currentReqId=reqId||null;
-    var addBtn=document.getElementById('addDevTaskBtn');
-    var infoDiv=document.getElementById('devReqInfo');
-    var container=document.getElementById('devTasksContainer');
-
-    if(!reqId){
-      if(addBtn) addBtn.style.display='none';
-      infoDiv.style.display='none';
-      container.innerHTML='<div class="empty"><div class="empty-ico">⚡</div><p>Select a requirement above to manage development tasks.</p></div>';
-      return;
-    }
-
-    // Show req info
-    var req=this.data.find(function(r){return r.id===reqId;});
-    if(req){
-      document.getElementById('devReqTitle').textContent=(req.requirement||'').split('\n')[0];
-      document.getElementById('devReqMeta').innerHTML=
-        '<span>Status: <strong>'+App.badge(req.status)+'</strong></span>'+
-        '<span>Area: <strong>'+(req.area||'—')+'</strong></span>'+
-        '<span>Dashboard: <strong>'+(req.dashboard||'—')+'</strong></span>'+
-        '<span>Expected: <strong>'+this.fd(req.expected_date)+'</strong></span>';
-      infoDiv.style.display='block';
-    }
-    if(addBtn) addBtn.style.display='flex';
-
-    container.innerHTML='<div style="padding:20px;text-align:center;color:var(--dim)"><span class="spinner"></span> Loading...</div>';
-    try{
-      this.devTasks=await supaFetch('dev_tasks','?roadmap_id=eq.'+reqId+'&select=*,developers(name,email,skill,hours_per_day)&order=id.asc');
-      this.renderDevTasks();
-    }catch(e){container.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
-  },
-
-  renderDevTasks(){
-    var container=document.getElementById('devTasksContainer');
-    var self=this;
-    if(!this.devTasks.length){
-      container.innerHTML='<div class="empty"><div class="empty-ico">👨‍💻</div><p>No developer assigned yet. Click "+ Add Developer" to assign one.</p></div>';
-      return;
-    }
-    var skillCls={'Front-end':'skill-fe','Back-end':'skill-be','Full-stack':'skill-fs'};
-    var roleCls={'Developer':'skill-be','Product Owner':'skill-fe','Both':'skill-fs'};
-    container.innerHTML='<div class="dev-tasks-list">'+
-      this.devTasks.map(function(t){
-        var dev=t.developers||{};
-        var skill=dev.skill||'';
-        return '<div class="dev-task-card">'+
-          '<div class="dev-task-header">'+
-            '<div>'+
-              '<span class="dev-task-dev">'+(dev.name||'No developer')+'</span>'+
-              (skill?'<span class="dev-task-skill '+(skillCls[skill]||'')+'">'+skill+'</span>':'')+
-            '</div>'+
-            '<div style="display:flex;gap:6px">'+
-              '<button class="btn btn-ghost btn-xs" onclick="App.openDevTaskModal('+t.id+')">✏️ Edit</button>'+
-              '<button class="btn btn-danger btn-xs" onclick="App.openConfirm('+t.id+',\'devtask\')">🗑️</button>'+
-            '</div>'+
-          '</div>'+
-          '<div class="dev-task-grid">'+
-            '<div class="dev-task-field"><label>Status</label><div>'+self.badge(t.status)+'</div></div>'+
-            '<div class="dev-task-field"><label>% Done</label><div class="td-mono">'+(t.percent_completed!=null?t.percent_completed+'%':'—')+'</div></div>'+
-            '<div class="dev-task-field"><label>Complexity</label><div style="font-size:12px">'+(t.complexity||'—')+'</div></div>'+
-            '<div class="dev-task-field"><label>Size</label><div style="font-size:12px">'+(t.size||'—')+'</div></div>'+
-            '<div class="dev-task-field"><label>Effort</label><div class="td-mono">'+(t.effort!=null?t.effort+'h':'—')+'</div></div>'+
-            '<div class="dev-task-field"><label>Allocation</label><div class="td-mono">'+(t.percent_allocation!=null?t.percent_allocation+'%':'100%')+'</div></div>'+
-            '<div class="dev-task-field"><label>Start</label><div class="td-mono">'+self.fd(t.start_date)+'</div></div>'+
-            '<div class="dev-task-field"><label>End</label><div class="td-mono">'+self.fd(t.end_date)+'</div></div>'+
-            (t.closed_date?'<div class="dev-task-field"><label>Closed</label><div class="td-mono">'+self.fd(t.closed_date)+'</div></div>':'')+
-            (t.comments?'<div class="dev-task-field full" style="grid-column:1/-1"><label>Comments</label><div style="font-size:12px">'+self.esc(t.comments)+'</div></div>':'')+
-          '</div>'+
-        '</div>';
-      }).join('')+
-    '</div>';
-  },
-
-  // DEV TASK MODAL
-  openDevTaskModal(id){
-    this.editingDevTaskId=id;
-    document.getElementById('devTaskTitle').textContent=id?'Edit Developer Task':'Add Developer Task';
-    if(!id){
-      document.getElementById('dt-developer_id').value='';
-      document.getElementById('dt-status').value='Dev Backlog';
-      document.getElementById('dt-percent_completed').value='';
-      document.getElementById('dt-closed_date').value='';
-      document.getElementById('dt-complexity').value='';
-      document.getElementById('dt-size').value='';
-      document.getElementById('dt-percent_allocation').value='100';
-      document.getElementById('dt-effort').value='';
-      document.getElementById('dt-start_date').value='';
-      document.getElementById('dt-end_date').value='';
-      document.getElementById('dt-comments').value='';
-    } else {
-      var t=this.devTasks.find(function(x){return x.id===id;});
-      if(!t) return;
-      document.getElementById('dt-developer_id').value=t.developer_id||'';
-      document.getElementById('dt-status').value=t.status||'Dev Backlog';
-      document.getElementById('dt-percent_completed').value=t.percent_completed!=null?t.percent_completed:'';
-      document.getElementById('dt-closed_date').value=t.closed_date||'';
-      document.getElementById('dt-complexity').value=t.complexity||'';
-      document.getElementById('dt-size').value=t.size||'';
-      document.getElementById('dt-percent_allocation').value=t.percent_allocation!=null?t.percent_allocation:100;
-      document.getElementById('dt-effort').value=t.effort!=null?t.effort:'';
-      document.getElementById('dt-start_date').value=t.start_date||'';
-      document.getElementById('dt-end_date').value=t.end_date||'';
-      document.getElementById('dt-comments').value=t.comments||'';
-    }
-    document.getElementById('devTaskOverlay').classList.add('open');
-  },
-  closeDevTaskModal(){ document.getElementById('devTaskOverlay').classList.remove('open'); this.editingDevTaskId=null; },
-
-  calcEffort(){
-    var c=document.getElementById('dt-complexity').value;
-    var s=document.getElementById('dt-size').value;
-    var key=c+'|'+s;
-    var ef=document.getElementById('dt-effort');
-    if(c&&s&&EFFORT_MATRIX[key]!=null){
-      ef.value=EFFORT_MATRIX[key];
-    }
-    this.calcEndDate();
-  },
-
-  calcEndDate(){
-    var effort=parseFloat(document.getElementById('dt-effort').value)||0;
-    var alloc=parseFloat(document.getElementById('dt-percent_allocation').value)||100;
-    var start=document.getElementById('dt-start_date').value;
-    if(!effort||!start){ return; }
-
-    // Get developer hours/day from their profile
-    var devId=parseInt(document.getElementById('dt-developer_id').value);
-    var dev=this.developers.find(function(d){return d.id===devId;});
-    var hpd=(dev&&dev.hours_per_day)?parseFloat(dev.hours_per_day):8;
-
-    // Effective hours available per workday given the allocation %
-    var effectiveHpd = hpd * (alloc / 100);
-    if(effectiveHpd <= 0) effectiveHpd = 1;
-
-    // How many workdays needed (fractional)
-    var daysNeeded = effort / effectiveHpd;
-
-    // Extra days BEYOND the start day
-    // e.g. daysNeeded=1.0 → fits exactly in start day → 0 extra days → end = start
-    // e.g. daysNeeded=1.1 → needs 1 extra workday → end = start + 1 workday
-    // e.g. daysNeeded=2.5 → needs 2 extra workdays → end = start + 2 workdays
-    var extraDays = Math.max(0, Math.ceil(daysNeeded) - 1);
-
-    // If start date is a weekend/holiday, move forward to next workday
-    var startD = new Date(start);
-    while(!isWorkday(startD)){
-      startD.setDate(startD.getDate()+1);
-    }
-
-    var endDate = extraDays === 0
-      ? startD                        // fits in start day
-      : addWorkdays(toISO(startD), extraDays);
-
-    document.getElementById('dt-end_date').value=toISO(endDate);
-  },
-
-  onDevStatusChange(){
-    var st=document.getElementById('dt-status').value;
-    var cd=document.getElementById('dt-closed_date');
-    if(st==='Close'){
-      // Auto-fill today only if empty — user can still change it
-      if(!cd.value) cd.value=today();
-    } else {
-      // Clear closed date when moving away from Close
-      cd.value='';
-    }
-  },
-
-  async saveDevTask(){
-    if(!this.currentReqId){this.notify('No requirement selected.','err');return;}
-    var devId=document.getElementById('dt-developer_id').value;
-    if(!devId){this.notify('Please select a developer.','err');return;}
-    var status=document.getElementById('dt-status').value;
-    var closedDate=null;
-    if(status==='Close'){
-      closedDate=document.getElementById('dt-closed_date').value||today();
-    }
-    var rec={
-      roadmap_id:this.currentReqId,
-      developer_id:parseInt(devId),
-      status:status,
-      percent_completed:document.getElementById('dt-percent_completed').value?parseFloat(document.getElementById('dt-percent_completed').value):null,
-      closed_date:closedDate,
-      complexity:document.getElementById('dt-complexity').value||null,
-      size:document.getElementById('dt-size').value||null,
-      percent_allocation:document.getElementById('dt-percent_allocation').value?parseFloat(document.getElementById('dt-percent_allocation').value):100,
-      effort:document.getElementById('dt-effort').value?parseFloat(document.getElementById('dt-effort').value):null,
-      start_date:document.getElementById('dt-start_date').value||null,
-      end_date:document.getElementById('dt-end_date').value||null,
-      comments:document.getElementById('dt-comments').value.trim()||null,
-      updated_at:new Date().toISOString(),
-    };
-    var btn=document.getElementById('devTaskSaveBtn');
-    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
-    try{
-      if(this.editingDevTaskId){
-        await supaFetch('dev_tasks','?id=eq.'+this.editingDevTaskId,{method:'PATCH',body:rec,prefer:'return=minimal'});
-        this.notify('Task updated! ✓','ok');
-      } else {
-        await supaFetch('dev_tasks','',{method:'POST',body:rec});
-        this.notify('Task created! ✓','ok');
-      }
-      this.closeDevTaskModal();
-      await this.syncReqStatus(this.currentReqId);
-      await this.loadDevTasks();
-      await this.loadDevEffortMap();
-      await this.load();  // reload all so backlog table reflects new status
-    }catch(e){this.notify('Error: '+e.message,'err');}
-    finally{btn.innerHTML='💾 Save';btn.disabled=false;}
-  },
-
   // ── SYNC REQUIREMENT STATUS FROM DEV TASKS ─────────────────────────────────
   async syncReqStatus(reqId){
     try{
@@ -1651,7 +964,6 @@ var App = {
       return;
     }
     var skillCls={'Front-end':'skill-fe','Back-end':'skill-be','Full-stack':'skill-fs'};
-    var roleCls={'Developer':'skill-be','Product Owner':'skill-fe','Both':'skill-fs'};
     grid.innerHTML=this.developers.map(function(d){
       return '<div class="dev-card">'+
         '<div class="dev-card-actions">'+
@@ -1660,10 +972,9 @@ var App = {
         '</div>'+
         '<div class="dev-card-name">'+self.esc(d.name)+'</div>'+
         '<div class="dev-card-email">'+self.esc(d.email)+'</div>'+
-        '<div class="dev-card-meta" style="gap:6px;flex-wrap:wrap">'+
-          '<span class="dev-task-skill '+(roleCls[d.role||'Developer']||'skill-be')+'">'+(d.role||'Developer')+'</span>'+
+        '<div class="dev-card-meta">'+
           (d.skill?'<span class="dev-task-skill '+(skillCls[d.skill]||'')+'">'+d.skill+'</span>':'')+
-          (d.role!=='Product Owner'?'<span style="font-size:11px;color:var(--dim)">⏱ '+(d.hours_per_day||8)+'h/day</span>':'')+
+          '<span style="font-size:11px;color:var(--dim)">⏱ '+(d.hours_per_day||8)+'h/day</span>'+
         '</div>'+
       '</div>';
     }).join('');
@@ -1671,11 +982,10 @@ var App = {
 
   openDeveloperModal(id){
     this.editingDevId=id;
-    document.getElementById('developerModalTitle').textContent=id?'Edit Person':'New Person';
+    document.getElementById('developerModalTitle').textContent=id?'Edit Developer':'New Developer';
     if(!id){
       document.getElementById('dev-name').value='';
       document.getElementById('dev-email').value='';
-      document.getElementById('dev-role').value='Developer';
       document.getElementById('dev-skill').value='';
       document.getElementById('dev-hours_per_day').value='8';
     } else {
@@ -1683,7 +993,6 @@ var App = {
       if(!d) return;
       document.getElementById('dev-name').value=d.name||'';
       document.getElementById('dev-email').value=d.email||'';
-      document.getElementById('dev-role').value=d.role||'Developer';
       document.getElementById('dev-skill').value=d.skill||'';
       document.getElementById('dev-hours_per_day').value=d.hours_per_day||8;
     }
@@ -1697,7 +1006,6 @@ var App = {
     if(!name||!email){this.notify('Name and email are required.','err');return;}
     var rec={
       name:name, email:email,
-      role:document.getElementById('dev-role').value||'Developer',
       skill:document.getElementById('dev-skill').value||null,
       hours_per_day:parseFloat(document.getElementById('dev-hours_per_day').value)||8,
     };
@@ -1706,10 +1014,10 @@ var App = {
     try{
       if(this.editingDevId){
         await supaFetch('developers','?id=eq.'+this.editingDevId,{method:'PATCH',body:rec,prefer:'return=minimal'});
-        this.notify('Person updated! ✓','ok');
+        this.notify('Developer updated! ✓','ok');
       } else {
         await supaFetch('developers','',{method:'POST',body:rec});
-        this.notify('Person created! ✓','ok');
+        this.notify('Developer created! ✓','ok');
       }
       this.closeDeveloperModal();
       await this.loadDevelopers();
@@ -2340,7 +1648,6 @@ var App = {
     if(type==='req'){ var r=this.data.find(function(x){return x.id===id;}); msg='Delete requirement #'+id+': "'+(r?r.requirement.split('\n')[0].substring(0,60):'')+'"?'; }
     else if(type==='devtask'){ msg='Delete this developer task assignment?'; }
     else if(type==='developer'){ var d=this.developers.find(function(x){return x.id===id;}); msg='Delete "'+(d?d.name:id)+'"?'; }
-    else if(type==='dashboard'){ var db=this.dashboards.find(function(x){return x.id===id;}); msg='Delete dashboard "'+(db?db.name:id)+'"?'; }
     document.getElementById('confirmMsg').textContent=msg+' This cannot be undone.';
     document.getElementById('confirmOverlay').classList.add('open');
   },
@@ -2363,10 +1670,7 @@ var App = {
         await this.load();
       } else if(type==='developer'){
         await supaFetch('developers','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-        this.notify('Person deleted.','ok'); this.closeConfirm(); await this.loadDevelopers();
-      } else if(type==='dashboard'){
-        await supaFetch('dashboards','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-        this.notify('Dashboard deleted.','ok'); this.closeConfirm(); await this.loadDashboards();
+        this.notify('Developer deleted.','ok'); this.closeConfirm(); await this.loadDevelopers();
       }
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='Delete';btn.disabled=false;}
