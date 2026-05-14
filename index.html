@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-13 18:28 -->
+<!-- v2026-05-13 19:31 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -49,9 +49,19 @@ body.philips .tbtn.active{background:rgba(255,255,255,.9);color:#0073e6}
 .nav{padding:0 20px;display:flex;gap:2px;flex-shrink:0}
 body.dark .nav{background:#111827;border-bottom:1px solid #1e2d4a}
 body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
+.nav-dropdown{position:relative;display:inline-block}
+.nav-dropdown-btn{background:none;border:none;color:var(--dim);font-family:var(--font);font-size:13px;font-weight:500;padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.nav-dropdown-btn:hover,.nav-dropdown-btn.open{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-dropdown-btn .arrow{font-size:9px;transition:transform .2s}
+.nav-dropdown-btn.open .arrow{transform:rotate(180deg)}
+.nav-dropdown-menu{position:absolute;top:calc(100% + 2px);left:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:100;display:none;overflow:hidden}
+.nav-dropdown-menu.open{display:block}
+.nav-dropdown-item{display:block;width:100%;text-align:left;background:none;border:none;padding:10px 16px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;font-family:var(--font);transition:background .15s;white-space:nowrap}
+.nav-dropdown-item:hover{background:var(--accentlight);color:var(--accent)}
+.nav-dropdown-item.active{color:var(--accent);background:var(--accentlight)}
 .ntab{background:none;border:none;color:var(--dim);font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
 .ntab:hover{color:var(--text)}.ntab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.app{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px}
+.app{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 20px 20px}
 .page{display:none}.page.active{display:block}
 .btn{border:none;font-family:var(--font);font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--radius-sm);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn:disabled{opacity:.4;cursor:not-allowed}
@@ -105,6 +115,23 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .td-mono{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .td-clip{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .td-actions{display:flex;gap:4px}
+.req-lookup{position:relative}
+.req-lookup-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 32px 8px 11px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s}
+.req-lookup-input:focus{border-color:var(--accent)}
+.req-lookup-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim);cursor:pointer;font-size:15px;line-height:1;padding:0}
+.req-lookup-clear:hover{color:var(--red)}
+.req-lookup-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;z-index:600;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.25);display:none}
+.req-lookup-dropdown.open{display:block}
+.req-lookup-option{padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:8px}
+.req-lookup-option:last-child{border-bottom:none}
+.req-lookup-option:hover{background:var(--accentlight)}
+.req-lookup-opt-id{font-family:var(--mono);font-size:11px;color:var(--accent);flex-shrink:0;margin-top:1px}
+.req-lookup-opt-title{color:var(--text);line-height:1.4}
+.req-lookup-opt-meta{font-size:10px;color:var(--dim);margin-top:2px}
+.req-lookup-selected{display:flex;align-items:center;gap:8px;padding:7px 11px;background:var(--accentlight);border:1px solid rgba(0,115,230,.25);border-radius:var(--radius-sm);font-size:12px}
+.req-lookup-sel-id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700;flex-shrink:0}
+.req-lookup-sel-title{color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.req-lookup-sel-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:15px;padding:0;flex-shrink:0;line-height:1}
 .bico{background:none;border:none;cursor:pointer;padding:3px 5px;border-radius:4px;font-size:12px;transition:background .15s}
 .bico:hover{background:var(--surface3)}.bico.edit{color:var(--accent)}.bico.del{color:var(--red)}.bico.dev{color:var(--green)}
 /* BADGES */
@@ -206,7 +233,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .gantt-label{width:160px;flex-shrink:0;font-size:12px;font-weight:500;padding:8px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:flex-start;padding-top:10px}
 .gantt-bars{flex:1;position:relative;display:flex;flex-direction:column;gap:4px;padding:4px 0}
 .gantt-bar-row{position:relative;height:28px}
-.gantt-bar{position:absolute;top:0;height:28px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:600;color:#fff;overflow:hidden;white-space:nowrap;cursor:pointer;transition:opacity .2s;min-width:4px}
+.gantt-bar{position:absolute;top:0;height:20px;border-radius:3px;display:flex;align-items:center;padding:0 6px;font-size:9px;font-weight:600;color:#fff;overflow:hidden;white-space:nowrap;cursor:pointer;transition:opacity .2s;min-width:4px}
 .gantt-bar:hover{opacity:.85}
 .gantt-bar.green{background:var(--green)}
 .gantt-bar.red{background:var(--red)}
@@ -256,7 +283,16 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <button class="ntab active" id="tab-backlog"     onclick="App.tab('backlog')">📋 Backlog</button>
   <button class="ntab"        id="tab-development" onclick="App.tab('development')">⚡ Development</button>
   <button class="ntab"        id="tab-dashboard"   onclick="App.tab('dashboard')">📈 Dashboard</button>
-  <button class="ntab"        id="tab-developers"  onclick="App.tab('developers')">👥 Developers</button>
+  <button class="ntab"        id="tab-timeline"    onclick="App.tab('timeline')">🗓️ Timeline</button>
+  <div class="nav-dropdown" id="nav-dropdown-cadastros">
+    <button class="nav-dropdown-btn" id="tab-cadastros" onclick="App.toggleSetupMenu()">
+      ⚙️ Setup <span class="arrow">▼</span>
+    </button>
+    <div class="nav-dropdown-menu" id="cadastros-menu">
+      <button class="nav-dropdown-item" id="tab-developers" onclick="App.tab('developers')">👥 Developers</button>
+      <button class="nav-dropdown-item" id="tab-dashboards" onclick="App.tab('dashboards')">📊 Dashboards</button>
+    </div>
+  </div>
 </div>
 
 <div class="app">
@@ -388,6 +424,126 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 
 </div>
 
+  <!-- TIMELINE PAGE -->
+  <div class="page" id="page-timeline" style="margin:-16px -20px 0;padding:12px 20px 0">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-size:15px;font-weight:700">🗓️ Development Timeline</div>
+        <div style="font-size:11px;color:var(--dim)">Click any bar or name to open in Backlog</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <label style="font-size:11px;color:var(--dim)">Show:</label>
+        <select class="fctrl" id="tl-filter" onchange="App.renderTimelinePage()" style="font-size:11px;padding:4px 8px">
+          <option value="all">All active tasks</option>
+          <option value="dev">Developers only</option>
+          <option value="po">Product Owners only</option>
+          <option value="overdue">Overdue only</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="App.renderTimelinePage()" style="padding:4px 10px;font-size:11px">↻</button>
+      </div>
+    </div>
+
+    <!-- DEVELOPERS TIMELINE -->
+    <div class="ccard" style="margin-bottom:8px;padding:10px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="ctitle" style="margin-bottom:0;font-size:12px">👨‍💻 Developers</div>
+        <div id="tl-dev-stats" style="font-size:11px;color:var(--dim)"></div>
+      </div>
+      <div id="tl-dev-wrap" style="overflow-x:auto;overflow-y:auto;max-height:calc(40vh - 60px);min-height:160px">
+        <div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>
+      </div>
+    </div>
+
+    <!-- PRODUCT OWNERS TIMELINE -->
+    <div class="ccard" style="padding:10px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="ctitle" style="margin-bottom:0;font-size:12px">🎯 Product Owners</div>
+        <div id="tl-po-stats" style="font-size:11px;color:var(--dim)"></div>
+      </div>
+      <div id="tl-po-wrap" style="overflow-x:auto;overflow-y:auto;max-height:calc(40vh - 60px);min-height:160px">
+        <div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>
+      </div>
+    </div>
+
+    <!-- LEGEND -->
+    <div style="margin-top:10px;font-size:11px;color:var(--dim);display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <span>🟢 On track</span>
+      <span>🔴 Overdue</span>
+      <span>🟡 Validation</span>
+      <span style="display:flex;align-items:center;gap:4px">
+        <span style="display:inline-block;width:2px;height:12px;background:var(--red);opacity:.7;border-radius:1px"></span> Today
+      </span>
+      <span>· Lighter overlay = % completed · ⚠️ = overlapping tasks</span>
+    </div>
+  </div>
+
+  <!-- DASHBOARDS PAGE -->
+  <div class="page" id="page-dashboards">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:15px;font-weight:700">📊 Dashboards</div>
+        <div style="font-size:12px;color:var(--dim);margin-top:2px" id="dashCount">Loading...</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="text" class="fctrl" id="dashSearch" placeholder="🔍 Search dashboards..."
+          style="width:200px;font-size:12px" oninput="App.filterDashboards()">
+        <button class="btn btn-primary" onclick="App.openDashModal(null)">+ New Dashboard</button>
+      </div>
+    </div>
+    <div class="twrap" style="overflow:auto;max-height:calc(100vh - 220px)">
+      <table style="min-width:600px">
+        <thead><tr>
+          <th style="width:80px;position:sticky;top:0;z-index:2">Actions</th>
+          <th style="width:60px;position:sticky;top:0;z-index:2">#</th>
+          <th style="position:sticky;top:0;z-index:2">Dashboard Name</th>
+          <th style="width:150px;position:sticky;top:0;z-index:2">Area</th>
+          <th style="width:200px;position:sticky;top:0;z-index:2">Product Owner</th>
+        </tr></thead>
+        <tbody id="dashTbody">
+          <tr><td colspan="5" class="empty"><div class="empty-ico">📊</div><p>Loading...</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--dim)" id="dashPagination"></div>
+  </div>
+
+  <!-- DASHBOARD MODAL -->
+  <div class="overlay" id="dashOverlay">
+    <div class="modal" style="max-width:480px">
+      <div class="mhead">
+        <div class="mtitle" id="dashModalTitle">New Dashboard</div>
+        <button class="mclose" onclick="App.closeDashModal()">✕</button>
+      </div>
+      <div class="mbody">
+        <div class="fgrid">
+          <div class="fg full">
+            <label class="flbl">Dashboard Name *</label>
+            <input type="text" class="fctrl" id="dash-name" placeholder="e.g. Sales Incentive">
+          </div>
+          <div class="fg full">
+            <label class="flbl">Area</label>
+            <select class="fctrl" id="dash-area">
+              <option value="">— Select area —</option>
+              <option>Commercial</option><option>Marketing</option><option>SS&amp;D</option>
+              <option>BizOps</option><option>GBS</option><option>Pricing</option>
+              <option>Finance</option><option>Operations</option>
+            </select>
+          </div>
+          <div class="fg full">
+            <label class="flbl">Product Owner</label>
+            <select class="fctrl" id="dash-po">
+              <option value="">— Select Product Owner —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="mfoot">
+        <button class="btn btn-ghost" onclick="App.closeDashModal()">Cancel</button>
+        <button class="btn btn-primary" id="dashSaveBtn" onclick="App.saveDash()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+
 <!-- NEW/EDIT REQUIREMENT MODAL -->
 <div class="overlay" id="modalOverlay">
   <div class="modal">
@@ -426,30 +582,13 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         </div>
         <div class="fg full">
           <label class="flbl">Dashboard</label>
-          <select class="fctrl" id="f-dashboard" onchange="App.onDashboardChange()">
-            <option value="">— Select —</option>
-            <option>4D Medical</option><option>AI/Agent</option><option>AI/Agents</option><option>AV Bundle</option>
-            <option>Accounting Planning</option><option>Adjustments</option><option>Adresseble Europe Market</option>
-            <option>All</option><option>Analysis</option><option>Automation</option><option>Book and Bill</option>
-            <option>Cloud Dashboard</option><option>Co-Sell</option><option>Command Center</option>
-            <option>Contract Dashboard</option><option>Control Tower</option><option>Control Tower - Path to AOP</option>
-            <option>Defect</option><option>EI MCOS</option><option>Forecast Analysis</option>
-            <option>Funnel Management</option><option>Funnel Managemet</option><option>Funnel Progression</option>
-            <option>GBS Daily Management</option><option>Inside Sales</option><option>Insights</option>
-            <option>KAM</option><option>MCOS</option><option>Markting</option><option>New Dashboard</option>
-            <option>New Logo (SI)</option><option>Partner</option><option>Path to AOP</option>
-            <option>Path to Green</option><option>Playbook</option><option>Pulse Dashboard</option>
-            <option>Pushed out Dash</option><option>SMA Dashboard</option><option>ST3 Forecasting</option>
-            <option>Sales Incentive</option><option>Sales League</option><option>Service Dashboard</option>
-            <option>Strategic Initiatives</option><option>Top Account</option><option>Weekly Check-in</option>
-            <option value="Other">Other...</option>
+          <select class="fctrl" id="f-dashboard_id">
+            <option value="">— Select Dashboard —</option>
           </select>
-          <input type="text" class="fctrl" id="f-dashboard-other" placeholder="Enter dashboard name..." style="display:none;margin-top:6px">
         </div>
-        <div class="fsec">People</div>
         <div class="fg">
           <label class="flbl">Requester</label>
-          <input type="text" class="fctrl" id="f-requester" placeholder="Name of requester">
+          <input type="text" class="fctrl" id="f-requester" placeholder="Requester name">
         </div>
         <div class="fg">
           <label class="flbl">Business Owner</label>
@@ -458,8 +597,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         <div class="fg">
           <label class="flbl">Requester Priority</label>
           <select class="fctrl" id="f-requester_priority">
-            <option value="">—</option><option>Very Low</option><option>Low</option>
-            <option>Medium</option><option>High</option><option>Very High</option>
+            <option value="">—</option>
+            <option>High</option><option>Medium</option><option>Low</option>
           </select>
         </div>
         <div class="fg">
@@ -479,6 +618,26 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
           </div>
         </div>
         <div class="fsec">Comments</div>
+        <div class="fg full">
+          <label class="flbl">Related Requirement <span style="font-weight:400;color:var(--dim);text-transform:none;letter-spacing:0">(search by ID or keyword)</span></label>
+          <div class="req-lookup" id="relReqLookup">
+            <div id="relReqSelected" style="display:none" class="req-lookup-selected">
+              <span class="req-lookup-sel-id" id="relReqSelId"></span>
+              <span class="req-lookup-sel-title" id="relReqSelTitle"></span>
+              <button class="req-lookup-sel-remove" onclick="App.clearRelReq()" title="Remove">✕</button>
+            </div>
+            <div id="relReqInputWrap">
+              <input type="text" class="req-lookup-input" id="relReqSearch"
+                placeholder="Type #ID or keyword..."
+                oninput="App.searchRelReq(this.value)"
+                onfocus="App.searchRelReq(this.value)"
+                autocomplete="off">
+              <button class="req-lookup-clear" onclick="App.clearRelReqSearch()" title="Clear">✕</button>
+            </div>
+            <div class="req-lookup-dropdown" id="relReqDropdown"></div>
+          </div>
+        </div>
+
         <div class="fg full">
           <label class="flbl">Comments</label>
           <textarea class="fctrl" id="f-comments" rows="3" placeholder="Additional notes..."></textarea>
@@ -580,6 +739,13 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         <div class="fg full">
           <label class="flbl">Email *</label>
           <input type="email" class="fctrl" id="dev-email" placeholder="email@philips.com">
+        </div>
+        <div class="fg">
+          <label class="flbl">Role *</label>
+          <select class="fctrl" id="dev-role">
+            <option value="Developer">Developer</option>
+            <option value="Product Owner">Product Owner</option>
+          </select>
         </div>
         <div class="fg">
           <label class="flbl">Skill</label>
@@ -766,9 +932,19 @@ var App = {
     var t=localStorage.getItem('ei_theme')||'dark';
     this.applyTheme(t);
     this.initMS();
-    document.addEventListener('click',function(){
+    document.addEventListener('click',function(e){
       document.querySelectorAll('.ms-dropdown.open').forEach(function(d){d.classList.remove('open');});
       document.querySelectorAll('.ms-trigger.open').forEach(function(t){t.classList.remove('open');});
+      if(!e.target.closest('.req-lookup')){var dd=document.getElementById('relReqDropdown');if(dd)dd.classList.remove('open');}
+      // Close cadastros dropdown if click outside
+      if(!e.target.closest('#nav-dropdown-cadastros')){
+        var cm=document.getElementById('cadastros-menu');
+        var cb=document.getElementById('tab-cadastros');
+        var active=document.getElementById('page-developers')&&document.getElementById('page-developers').classList.contains('active')||
+                   document.getElementById('page-dashboards')&&document.getElementById('page-dashboards').classList.contains('active');
+        if(cm&&!active) cm.classList.remove('open');
+        if(cb&&!active) cb.classList.remove('open');
+      }
     });
     document.getElementById('loader').classList.remove('hide');
     document.getElementById('loaderTxt').textContent='Loading data...';
@@ -777,6 +953,7 @@ var App = {
       // loadEffortMatrix and loadDevelopers are non-critical — fail silently
       try{ await this.loadEffortMatrix(); }catch(e){ console.warn('loadEffortMatrix:',e.message); }
       try{ await this.loadDevelopers(); }catch(e){ console.warn('loadDevelopers:',e.message); }
+      try{ await this.loadDashboards(); }catch(e){ console.warn('loadDashboards:',e.message); }
     }catch(e){
       this.setSp(false,'Error: '+e.message);
       this.notify('Connection error: '+e.message,'err');
@@ -809,7 +986,7 @@ var App = {
   async load(){
     // loader managed by caller (init or explicit refresh)
     try{
-      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id&order=id.asc&limit=2000');
+      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,dashboard_id,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id&order=id.asc&limit=2000');
       this.setSp(true,'Supabase · '+this.data.length+' requirements');
       this.populateMS();
       await this.loadDevEffortMap();
@@ -901,12 +1078,44 @@ var App = {
 
   tab(name){
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-    document.querySelectorAll('.ntab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.ntab,.nav-dropdown-item').forEach(function(b){b.classList.remove('active');});
     document.getElementById('page-'+name).classList.add('active');
-    document.getElementById('tab-'+name).classList.add('active');
+    var tabEl = document.getElementById('tab-'+name);
+    if(tabEl) tabEl.classList.add('active');
+    // Highlight the Setup dropdown button if a sub-item is active
+    var cadastrosBtn = document.getElementById('tab-cadastros');
+    if(name==='developers'||name==='dashboards'){
+      if(cadastrosBtn) cadastrosBtn.classList.add('open');
+    } else {
+      if(cadastrosBtn) cadastrosBtn.classList.remove('open');
+      App.closeSetupMenu();
+    }
     if(name==='dashboard') this.renderDash();
     if(name==='developers') this.renderDeveloperGrid();
     if(name==='development') this.loadDevTasks();
+    if(name==='dashboards') this.loadDashboards();
+    if(name==='timeline') this.renderTimelinePage();
+  },
+
+  toggleSetupMenu(){
+    var menu = document.getElementById('cadastros-menu');
+    var btn  = document.getElementById('tab-cadastros');
+    if(!menu) return;
+    var isOpen = menu.classList.contains('open');
+    if(isOpen){
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+    } else {
+      menu.classList.add('open');
+      btn.classList.add('open');
+    }
+  },
+
+  closeSetupMenu(){
+    var menu = document.getElementById('cadastros-menu');
+    var btn  = document.getElementById('tab-cadastros');
+    if(menu) menu.classList.remove('open');
+    if(btn)  btn.classList.remove('open');
   },
 
   filter(){
@@ -974,7 +1183,7 @@ var App = {
           '<td><span class="td-clip" title="'+self.esc(r.impacts||'')+'">'+(r.impacts||'—')+'</span></td>'+
           '<td style="font-size:11px">'+(r.requester||'—')+'</td>'+
           '<td style="font-size:11px">'+(r.area||'—')+'</td>'+
-          '<td><span class="td-clip" style="max-width:110px;font-size:11px">'+(r.dashboard||'—')+'</span></td>'+
+          '<td><span class="td-clip" style="max-width:110px;font-size:11px">'+((function(){ if(r.dashboard_id){var d=(App.dashboards||[]).find(function(x){return x.id===r.dashboard_id;});return d?d.name:(r.dashboard||'—');}return r.dashboard||'—'; }()))+'</span></td>'+
           '<td style="font-size:11px">'+(r.requester_priority||'—')+'</td>'+
           '<td class="td-mono">'+self.fd(r.expected_date)+'</td>'+
           '<td>'+self.badge(r.status)+'</td>'+
@@ -1025,11 +1234,20 @@ var App = {
       ['requirement','impacts','comments'].forEach(function(f){var el=document.getElementById('f-'+f);if(el)el.value='';});
       document.getElementById('f-status').value='Idea';
       document.getElementById('f-area').value='';
-      document.getElementById('f-dashboard').value='';
-      document.getElementById('f-dashboard-other').style.display='none';
-      document.getElementById('f-requester').value='';
-      document.getElementById('f-business_owner').value='';
-      document.getElementById('f-requester_priority').value='';
+      var dSel2=document.getElementById('f-dashboard_id');
+      if(dSel2){
+        dSel2.innerHTML='<option value="">— Select Dashboard —</option>';
+        (App.dashboards||[]).forEach(function(d){
+          var o=document.createElement('option');
+          o.value=d.id; o.textContent=d.name+(d.area?' ('+d.area+')':'');
+          dSel2.appendChild(o);
+        });
+        dSel2.value='';
+      }
+      var dOth2=document.getElementById('f-dashboard-other'); if(dOth2) dOth2.style.display='none';
+      var fReq=document.getElementById('f-requester'); if(fReq) fReq.value='';
+      var fBO=document.getElementById('f-business_owner'); if(fBO) fBO.value='';
+      var fRP=document.getElementById('f-requester_priority'); if(fRP) fRP.value='';
       document.getElementById('f-expected_date').value='';
       document.getElementById('f-request_date').value=this.today();
       ['business_case','cost_reduction','margin_increasing'].forEach(function(f){var c=document.getElementById('f-'+f+'_chk');if(c)c.checked=false;});
@@ -1047,14 +1265,28 @@ var App = {
       }
       sSel.value=sv;
       document.getElementById('f-area').value=r.area||'';
-      var dSel=document.getElementById('f-dashboard');
+      // Populate dashboard select first, then set value
+      var dSel=document.getElementById('f-dashboard_id');
+      if(dSel){
+        dSel.innerHTML='<option value="">— Select Dashboard —</option>';
+        (App.dashboards||[]).forEach(function(d){
+          var o=document.createElement('option');
+          o.value=d.id; o.textContent=d.name+(d.area?' ('+d.area+')':'');
+          dSel.appendChild(o);
+        });
+        dSel.value=r.dashboard_id||'';
+      }
       var dOther=document.getElementById('f-dashboard-other');
-      if(r.dashboard&&![...dSel.options].some(function(o){return o.value===r.dashboard;})){
-        dSel.value='Other'; dOther.value=r.dashboard; dOther.style.display='block';
-      } else { dSel.value=r.dashboard||''; dOther.value=''; dOther.style.display='none'; }
-      document.getElementById('f-requester').value=r.requester||'';
-      document.getElementById('f-business_owner').value=r.business_owner||'';
-      document.getElementById('f-requester_priority').value=r.requester_priority||'';
+      if(dOther) dOther.style.display='none';
+      // Set related requirement lookup
+      this.clearRelReq();
+      if(r.related_requirement_id){
+        var rel = this.data.find(function(x){ return x.id===r.related_requirement_id; });
+        if(rel) this.selectRelReq(rel.id, (rel.requirement||'').split('\n')[0].substring(0,60));
+      }
+      var fReq=document.getElementById('f-requester'); if(fReq) fReq.value=r.requester||'';
+      var fBO=document.getElementById('f-business_owner'); if(fBO) fBO.value=r.business_owner||'';
+      var fRP=document.getElementById('f-requester_priority'); if(fRP) fRP.value=r.requester_priority||'';
       document.getElementById('f-expected_date').value=r.expected_date||'';
       document.getElementById('f-request_date').value=r.request_date||this.today();
       ['business_case','cost_reduction','margin_increasing'].forEach(function(f){
@@ -1076,12 +1308,14 @@ var App = {
       requirement:req, impacts:document.getElementById('f-impacts').value.trim()||null,
       status:document.getElementById('f-status').value||'Idea',
       area:document.getElementById('f-area').value||null,
-      dashboard:this.getDashboardValue(),
+      dashboard_id: (function(){ var s=document.getElementById('f-dashboard_id'); return s&&s.value?parseInt(s.value):null; })(),
+      dashboard: (function(){ var s=document.getElementById('f-dashboard_id'); return s&&s.selectedIndex>0?s.options[s.selectedIndex].text:null; })(),
       requester:document.getElementById('f-requester').value.trim()||null,
       business_owner:document.getElementById('f-business_owner').value.trim()||null,
       requester_priority:document.getElementById('f-requester_priority').value||null,
       expected_date:document.getElementById('f-expected_date').value||null,
       request_date:document.getElementById('f-request_date').value||null,
+      related_requirement_id:this.relReqId||null,
       comments:document.getElementById('f-comments').value.trim()||null,
       business_case:this.getChkValue('business_case'),
       cost_reduction:this.getChkValue('cost_reduction'),
@@ -1334,7 +1568,6 @@ var App = {
       start_date:document.getElementById('dt-start_date').value||null,
       end_date:document.getElementById('dt-end_date').value||null,
       comments:document.getElementById('dt-comments').value.trim()||null,
-      updated_at:new Date().toISOString(),
     };
     var btn=document.getElementById('devTaskSaveBtn');
     btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
@@ -1348,11 +1581,106 @@ var App = {
       }
       this.closeDevTaskModal();
       await this.syncReqStatus(this.currentReqId);
+
+      // ── Check if should create validation task ────────────────────────────
+      if(status === 'Close' && closedDate){
+        await this.checkValidationTask(this.currentReqId, closedDate);
+      }
+
       await this.loadDevTasks();
       await this.loadDevEffortMap();
-      await this.load();  // reload all so backlog table reflects new status
+      await this.load();
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='💾 Save';btn.disabled=false;}
+  },
+
+  // ── VALIDATION TASK LOGIC ─────────────────────────────────────────────────
+  async checkValidationTask(reqId, closedDate){
+    try{
+      // 1. Load all dev_tasks for this requirement
+      var allTasks = await supaFetch('dev_tasks',
+        '?roadmap_id=eq.'+reqId+'&select=id,status,developer_id,developers(id,name,role,hours_per_day)&order=id.asc');
+
+      // 2. Check if there are still open tasks (non-Close, non-Validation)
+      var openTasks = allTasks.filter(function(t){
+        return t.status !== 'Close' && t.status !== 'Validation';
+      });
+      if(openTasks.length > 0){
+        // Still have open dev tasks — not the last one closing
+        return;
+      }
+
+      // 3. Check if a Validation task already exists for a PO
+      var existingValidation = allTasks.find(function(t){ return t.status === 'Validation'; });
+      if(existingValidation) return; // already has validation task
+
+      // 4. Find the Product Owner from the dashboard of this requirement
+      var req = this.data.find(function(r){ return r.id === reqId; });
+      var po = null;
+      if(req && req.dashboard_id){
+        var dash = this.dashboards.find(function(d){ return d.id === req.dashboard_id; });
+        if(dash && dash.product_owner_id){
+          po = this.developers.find(function(d){ return d.id === dash.product_owner_id; });
+        }
+      }
+      if(!po){
+        // No PO found — skip silently
+        return;
+      }
+
+      // 5. Ask user if should create validation task
+      var self = this;
+      this.showValidationPrompt(po, closedDate, reqId);
+
+    }catch(e){
+      console.warn('checkValidationTask error:', e.message);
+    }
+  },
+
+  showValidationPrompt(po, closedDate, reqId){
+    var self = this;
+
+    // Calculate start date: 1 business day after closed date (or today if closed < today)
+    var today = new Date(); today.setHours(0,0,0,0);
+    var closed = new Date(closedDate); closed.setHours(0,0,0,0);
+    var baseDate = closed < today ? today : closed;
+    var startDate = addWorkdays(toISO(baseDate), 1);
+    // End date: 1 week (5 business days) after start
+    var hpd = parseFloat(po.hours_per_day)||8;
+    var endDate = addWorkdays(toISO(startDate), 4); // 5 days total including start
+
+    var startFmt = toISO(startDate).split('-').reverse().join('/');
+    var endFmt   = toISO(endDate).split('-').reverse().join('/');
+    var msg = '🔍 All developers closed their tasks.' +
+      '\n\nCreate a Validation task for:' +
+      '\n👤 ' + po.name + ' (Product Owner)' +
+      '\n📅 Start: ' + startFmt +
+      '\n📅 End: '   + endFmt +
+      '\n\nClick OK to create.';
+
+    if(confirm(msg)){
+      self.createValidationTask(reqId, po, toISO(startDate), toISO(endDate));
+    }
+  },
+
+  async createValidationTask(reqId, po, startDate, endDate){
+    try{
+      var rec = {
+        roadmap_id:         reqId,
+        developer_id:       po.id,
+        status:             'Validation',
+        percent_completed:  0,
+        percent_allocation: 100,
+        start_date:         startDate,
+        end_date:           endDate,
+        comments:           'Auto-generated validation task for Product Owner.',
+      };
+      await supaFetch('dev_tasks','',{method:'POST',body:rec});
+      this.notify('✅ Validation task created for '+po.name+'!','ok');
+      await this.loadDevTasks();
+    }catch(e){
+      this.notify('Error creating validation task: '+e.message,'err');
+    }
   },
 
   // ── SYNC REQUIREMENT STATUS FROM DEV TASKS ─────────────────────────────────
@@ -1394,6 +1722,162 @@ var App = {
   },
 
   // ── DEVELOPERS PAGE ─────────────────────────────────────────────────────────
+  // ── DASHBOARDS ──────────────────────────────────────────────────────────────
+  dashboards: [],
+  editingDashId: null,
+
+  async loadDashboards(){
+    try{
+      this.dashboards = await supaFetch('dashboards',
+        '?select=id,name,area,product_owner_id,developers(id,name)&order=name.asc');
+    }catch(e){ this.dashboards=[]; console.warn('loadDashboards:',e.message); }
+    this.renderDashTable();
+    this.populateDashPO();
+  },
+
+  dashPage: 1,
+  dashPerPage: 20,
+  dashFilter: '',
+
+  filterDashboards(){
+    this.dashFilter = (document.getElementById('dashSearch')||{}).value||'';
+    this.dashPage = 1;
+    this.renderDashTable();
+  },
+
+  renderDashTable(){
+    var tbody = document.getElementById('dashTbody'); if(!tbody) return;
+    var self = this;
+    var q = this.dashFilter.toLowerCase();
+
+    var filtered = this.dashboards.filter(function(d){
+      if(!q) return true;
+      return (d.name||'').toLowerCase().includes(q) ||
+             (d.area||'').toLowerCase().includes(q) ||
+             (d.developers&&d.developers.name||'').toLowerCase().includes(q);
+    });
+
+    var total = filtered.length;
+    var pages = Math.ceil(total / this.dashPerPage) || 1;
+    if(this.dashPage > pages) this.dashPage = pages;
+    var start = (this.dashPage - 1) * this.dashPerPage;
+    var page  = filtered.slice(start, start + this.dashPerPage);
+
+    // Count
+    var countEl = document.getElementById('dashCount');
+    if(countEl) countEl.textContent = total + ' dashboard' + (total!==1?'s':'') + (q?' (filtered)':'') + ' · Page '+this.dashPage+'/'+pages;
+
+    if(!page.length){
+      tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="empty-ico">📊</div><p>'+(q?'No dashboards match your search.':'No dashboards yet.')+'</p></div></td></tr>';
+    } else {
+      tbody.innerHTML = page.map(function(d){
+        var po = d.developers;
+        return '<tr data-id="'+r.id+'">'+
+          '<td><div class="td-actions">'+
+            '<button class="bico edit" onclick="App.openDashModal('+d.id+')">✏️</button>'+
+            '<button class="bico del" onclick="App.confirmDelDash('+d.id+')">🗑️</button>'+
+          '</div></td>'+
+          '<td class="td-mono" style="color:var(--dim)">'+d.id+'</td>'+
+          '<td style="font-weight:600">'+self.esc(d.name)+'</td>'+
+          '<td>'+(d.area?'<span style="background:var(--accentlight);color:var(--accent);font-size:11px;padding:2px 8px;border-radius:4px;display:inline-block">'+d.area+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
+          '<td>'+(po
+            ? '<span style="display:flex;align-items:center;gap:6px">'+
+                '<span style="width:26px;height:26px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">'+po.name.charAt(0).toUpperCase()+'</span>'+
+                self.esc(po.name)+
+              '</span>'
+            : '<span style="color:var(--muted)">—</span>')+
+          '</td>'+
+        '</tr>';
+      }).join('');
+    }
+
+    // Pagination
+    var pgEl = document.getElementById('dashPagination');
+    if(pgEl){
+      if(pages <= 1){ pgEl.innerHTML=''; return; }
+      var btns = '';
+      btns += '<button class="btn btn-ghost btn-sm" onclick="App.dashPage=Math.max(1,App.dashPage-1);App.renderDashTable()" '+(self.dashPage<=1?'disabled':'')+'>← Prev</button>';
+      // Page numbers
+      for(var p=1;p<=pages;p++){
+        if(p===1||p===pages||Math.abs(p-self.dashPage)<=1){
+          btns += '<button class="btn btn-sm '+(p===self.dashPage?'btn-primary':'btn-ghost')+'" onclick="App.dashPage='+p+';App.renderDashTable()">'+p+'</button>';
+        } else if(Math.abs(p-self.dashPage)===2){
+          btns += '<span style="padding:0 4px;color:var(--dim)">…</span>';
+        }
+      }
+      btns += '<button class="btn btn-ghost btn-sm" onclick="App.dashPage=Math.min('+pages+',App.dashPage+1);App.renderDashTable()" '+(self.dashPage>=pages?'disabled':'')+'>Next →</button>';
+      pgEl.innerHTML = '<span>'+total+' total</span><div style="display:flex;align-items:center;gap:4px">'+btns+'</div>';
+    }
+  },
+
+  populateDashPO(){
+    var sel = document.getElementById('dash-po'); if(!sel) return;
+    var cur = sel.value;
+    sel.innerHTML = '<option value="">— Select Product Owner —</option>';
+    // Only show Product Owners
+    this.developers
+      .filter(function(d){ return d.role === 'Product Owner'; })
+      .forEach(function(d){
+        var o = document.createElement('option');
+        o.value = d.id; o.textContent = d.name;
+        sel.appendChild(o);
+      });
+    if(cur) sel.value = cur;
+  },
+
+  openDashModal(id){
+    this.editingDashId = id;
+    this.populateDashPO();
+    document.getElementById('dashModalTitle').textContent = id ? 'Edit Dashboard' : 'New Dashboard';
+    if(!id){
+      document.getElementById('dash-name').value = '';
+      document.getElementById('dash-area').value = '';
+      document.getElementById('dash-po').value   = '';
+    } else {
+      var d = this.dashboards.find(function(x){ return x.id===id; }) || {};
+      document.getElementById('dash-name').value = d.name || '';
+      document.getElementById('dash-area').value = d.area || '';
+      document.getElementById('dash-po').value   = d.product_owner_id || '';
+    }
+    document.getElementById('dashOverlay').classList.add('open');
+  },
+
+  closeDashModal(){
+    document.getElementById('dashOverlay').classList.remove('open');
+    this.editingDashId = null;
+  },
+
+  async saveDash(){
+    var name = document.getElementById('dash-name').value.trim();
+    if(!name){ this.notify('Dashboard name is required.','err'); return; }
+    var rec = {
+      name: name,
+      area: document.getElementById('dash-area').value || null,
+      product_owner_id: document.getElementById('dash-po').value
+        ? parseInt(document.getElementById('dash-po').value) : null,
+    };
+    var btn = document.getElementById('dashSaveBtn');
+    btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
+    try{
+      if(this.editingDashId){
+        await supaFetch('dashboards','?id=eq.'+this.editingDashId,
+          {method:'PATCH',body:rec,prefer:'return=minimal'});
+        this.notify('Dashboard updated! ✓','ok');
+      } else {
+        await supaFetch('dashboards','',{method:'POST',body:rec});
+        this.notify('Dashboard created! ✓','ok');
+      }
+      this.closeDashModal();
+      await this.loadDashboards();
+    }catch(e){ this.notify('Error: '+e.message,'err'); }
+    finally{ btn.innerHTML='💾 Save'; btn.disabled=false; }
+  },
+
+  confirmDelDash(id){
+    var d = this.dashboards.find(function(x){ return x.id===id; });
+    this.openConfirm(id, 'dashboard', 'Delete dashboard "' + (d?d.name:id) + '"?');
+  },
+
   renderDeveloperGrid(){
     var grid=document.getElementById('devGrid'); if(!grid) return;
     var self=this;
@@ -1411,8 +1895,9 @@ var App = {
         '<div class="dev-card-name">'+self.esc(d.name)+'</div>'+
         '<div class="dev-card-email">'+self.esc(d.email)+'</div>'+
         '<div class="dev-card-meta">'+
+          '<span class="dev-task-skill" style="background:'+(d.role==='Product Owner'?'var(--purple)':'var(--accent)')+'22;color:'+(d.role==='Product Owner'?'var(--purple)':'var(--accent)')+';">'+(d.role||'Developer')+'</span>'+
           (d.skill?'<span class="dev-task-skill '+(skillCls[d.skill]||'')+'">'+d.skill+'</span>':'')+
-          '<span style="font-size:11px;color:var(--dim)">⏱ '+(d.hours_per_day||8)+'h/day</span>'+
+          (d.role!=='Product Owner'?'<span style="font-size:11px;color:var(--dim)">⏱ '+(d.hours_per_day||8)+'h/day</span>':'')+
         '</div>'+
       '</div>';
     }).join('');
@@ -1424,6 +1909,7 @@ var App = {
     if(!id){
       document.getElementById('dev-name').value='';
       document.getElementById('dev-email').value='';
+      document.getElementById('dev-role').value='Developer';
       document.getElementById('dev-skill').value='';
       document.getElementById('dev-hours_per_day').value='8';
     } else {
@@ -1431,6 +1917,7 @@ var App = {
       if(!d) return;
       document.getElementById('dev-name').value=d.name||'';
       document.getElementById('dev-email').value=d.email||'';
+      document.getElementById('dev-role').value=d.role||'Developer';
       document.getElementById('dev-skill').value=d.skill||'';
       document.getElementById('dev-hours_per_day').value=d.hours_per_day||8;
     }
@@ -1444,6 +1931,7 @@ var App = {
     if(!name||!email){this.notify('Name and email are required.','err');return;}
     var rec={
       name:name, email:email,
+      role:document.getElementById('dev-role').value||'Developer',
       skill:document.getElementById('dev-skill').value||null,
       hours_per_day:parseFloat(document.getElementById('dev-hours_per_day').value)||8,
     };
@@ -1724,6 +2212,213 @@ var App = {
     wrap.appendChild(tableDiv);
   },
 
+  // ── TIMELINE PAGE ────────────────────────────────────────────────────────────
+  async renderTimelinePage(){
+    var devWrap = document.getElementById('tl-dev-wrap');
+    var poWrap  = document.getElementById('tl-po-wrap');
+    if(!devWrap||!poWrap) return;
+
+    devWrap.innerHTML = '<div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>';
+    poWrap.innerHTML  = '<div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>';
+
+    var filter = (document.getElementById('tl-filter')||{}).value||'all';
+
+    // Load all active dev_tasks (include Validation too)
+    var tasks = [];
+    try{
+      tasks = await supaFetch('dev_tasks',
+        '?status=in.(Idea,Develop,Validation,Blocked)&select=*,developers(id,name,skill,hours_per_day,role),roadmap(id,requirement,dashboard_id)&order=start_date.asc');
+    }catch(e){
+      devWrap.innerHTML='<div style="color:var(--red);padding:12px">Error: '+e.message+'</div>';
+      return;
+    }
+
+    if(!tasks.length){
+      devWrap.innerHTML='<div class="empty"><div class="empty-ico">📅</div><p>No active tasks found.</p></div>';
+      poWrap.innerHTML ='<div class="empty"><div class="empty-ico">📅</div><p>No active tasks found.</p></div>';
+      return;
+    }
+
+    // Separate devs from POs
+    var devTasks = tasks.filter(function(t){
+      var role = t.developers&&t.developers.role;
+      return role !== 'Product Owner';
+    });
+    var poTasks = tasks.filter(function(t){
+      var role = t.developers&&t.developers.role;
+      return role === 'Product Owner';
+    });
+
+    // Apply filter
+    if(filter === 'dev')  { poTasks=[]; }
+    if(filter === 'po')   { devTasks=[]; }
+    if(filter === 'overdue'){
+      var now2=new Date(); now2.setHours(0,0,0,0);
+      devTasks=devTasks.filter(function(t){return t.end_date&&new Date(t.end_date)<now2;});
+      poTasks =poTasks.filter(function(t){return t.end_date&&new Date(t.end_date)<now2;});
+    }
+
+    // Compute shared date range across all tasks
+    var now=new Date(); now.setHours(0,0,0,0);
+    var allT = devTasks.concat(poTasks);
+    var minD=new Date(now); minD.setDate(minD.getDate()-7);
+    var maxD=new Date(now); maxD.setDate(maxD.getDate()+60);
+    allT.forEach(function(t){
+      if(t.start_date){var d=new Date(t.start_date);if(d<minD)minD=d;}
+      if(t.end_date)  {var d=new Date(t.end_date);  if(d>maxD)maxD=d;}
+    });
+    var totalDays=Math.max(1,(maxD-minD)/(1000*86400));
+    var todayPct=Math.min(100,Math.max(0,((now-minD)/(1000*86400))/totalDays*100));
+
+    function pct(ds){ if(!ds)return 0; return Math.max(0,Math.min(99,((new Date(ds)-minD)/(1000*86400))/totalDays*100)); }
+    function pctW(s,e){ if(!s||!e)return 1; return Math.max(0.5,((new Date(e)-new Date(s))/(1000*86400))/totalDays*100); }
+
+    // Build header
+    function buildHeader(){
+      var h=''; var cur=new Date(minD);
+      while(cur<=maxD){
+        var lp=((cur-minD)/(1000*86400))/totalDays*100;
+        h+='<div style="position:absolute;left:'+lp+'%;font-size:10px;color:var(--dim);white-space:nowrap">'+
+          (cur.getMonth()+1)+'/'+cur.getDate()+'</div>';
+        cur.setDate(cur.getDate()+7);
+      }
+      return h;
+    }
+
+    // Build gantt rows for a group
+    function buildRows(groupTasks, colorFn){
+      var byPerson={};
+      groupTasks.forEach(function(t){
+        var name=(t.developers&&t.developers.name)||'Unknown';
+        if(!byPerson[name]) byPerson[name]=[];
+        byPerson[name].push(t);
+      });
+
+      var overloadedPeople=[];
+      var rows=Object.entries(byPerson).map(function(entry){
+        var name=entry[0], pTasks=entry[1];
+        var devId = pTasks[0]&&pTasks[0].developers&&pTasks[0].developers.id;
+
+        // Detect overlap
+        var hasOverlap=false;
+        for(var a=0;a<pTasks.length&&!hasOverlap;a++){
+          for(var b=a+1;b<pTasks.length&&!hasOverlap;b++){
+            var aS=pTasks[a].start_date,aE=pTasks[a].end_date;
+            var bS=pTasks[b].start_date,bE=pTasks[b].end_date;
+            if(aS&&aE&&bS&&bE&&aS<=bE&&bS<=aE) hasOverlap=true;
+          }
+        }
+        if(hasOverlap) overloadedPeople.push(name);
+
+        var bars=pTasks.map(function(t){
+          var l=pct(t.start_date), w=pctW(t.start_date,t.end_date);
+          var isLate=t.end_date&&new Date(t.end_date)<now;
+          var isValidation=t.status==='Validation';
+          var barColor=isValidation?'#f59e0b':(isLate?'#ef4444':'#22c55e');
+          var reqId=t.roadmap&&t.roadmap.id;
+          var reqTitle=t.roadmap&&t.roadmap.requirement
+            ?(t.roadmap.requirement.split('\n')[0].substring(0,35)+'…')
+            :'Task #'+t.id;
+          var pctDone=t.percent_completed!=null?(' · '+t.percent_completed+'%'):'';
+          var tooltip=reqTitle+pctDone+' | '+App.fd(t.start_date)+' → '+App.fd(t.end_date)+(isValidation?' [Validation]':'');
+          var progress=t.percent_completed>0
+            ?'<div style="position:absolute;left:0;top:0;height:100%;width:'+t.percent_completed+'%;background:rgba(255,255,255,.22);border-radius:4px 0 0 4px;pointer-events:none"></div>'
+            :'';
+          var todayLine='<div style="position:absolute;left:'+todayPct+'%;top:0;bottom:0;width:2px;background:rgba(239,68,68,.55);z-index:2;pointer-events:none"></div>';
+          // Click navigates to backlog
+          var clickFn=reqId?'App.goToReq('+reqId+')':"''";
+          return '<div style="position:relative;height:24px;margin-bottom:2px">'+
+            todayLine+
+            '<div class="gantt-bar" style="left:'+l+'%;width:'+w+'%;background:'+barColor+';top:2px;height:20px;cursor:pointer" title="'+tooltip+'" onclick="'+clickFn+'">'+
+              progress+
+              '<span style="position:relative;z-index:1">'+reqTitle+'</span>'+
+            '</div>'+
+          '</div>';
+        }).join('');
+
+        var labelStyle='cursor:pointer;width:140px;flex-shrink:0;font-size:11px;'+(hasOverlap?'color:var(--red);font-weight:700':'color:var(--text)');
+        var labelClick=devId?'onclick="App.goToDevTasks('+devId+')"':'';
+        return '<div class="gantt-row" style="align-items:flex-start">'+
+          '<div class="gantt-label" style="'+labelStyle+'" '+labelClick+' title="Click to filter">'+
+            (hasOverlap?'⚠️ ':'')+name+
+          '</div>'+
+          '<div class="gantt-bars" style="padding:3px 0">'+bars+'</div>'+
+        '</div>';
+      }).join('');
+
+      return {rows:rows, overloaded:overloadedPeople, count:Object.keys(byPerson).length, tasks:groupTasks.length};
+    }
+
+    var headerHtml='<div class="gantt-header"><div class="gantt-header-label"></div>'+
+      '<div class="gantt-header-dates" style="position:relative;height:18px">'+buildHeader()+'</div></div>';
+
+    // Render developers
+    if(devTasks.length){
+      var dr=buildRows(devTasks);
+      document.getElementById('tl-dev-stats').textContent=dr.count+' developers · '+dr.tasks+' tasks'+(dr.overloaded.length?' · ⚠️ '+dr.overloaded.length+' overloaded':'');
+      devWrap.innerHTML='<div style="min-width:900px">'+headerHtml+'<div>'+dr.rows+'</div></div>';
+    } else {
+      devWrap.innerHTML='<div class="empty"><div class="empty-ico">👨‍💻</div><p>No active developer tasks.</p></div>';
+    }
+
+    // Render product owners
+    if(poTasks.length){
+      var pr=buildRows(poTasks);
+      document.getElementById('tl-po-stats').textContent=pr.count+' product owners · '+pr.tasks+' tasks'+(pr.overloaded.length?' · ⚠️ '+pr.overloaded.length+' overloaded':'');
+      poWrap.innerHTML='<div style="min-width:900px">'+headerHtml+'<div>'+pr.rows+'</div></div>';
+    } else {
+      poWrap.innerHTML='<div class="empty"><div class="empty-ico">🎯</div><p>No active Product Owner tasks.</p></div>';
+    }
+  },
+
+  // Navigate to requirement in Backlog tab and scroll to it
+  goToReq(reqId){
+    var self = this;
+    this.tab('backlog');
+    // Wait for table to render, then find and scroll to the row
+    var attempts = 0;
+    function tryScroll(){
+      attempts++;
+      // Check if row is visible (current page) or need to navigate pages
+      var row = document.querySelector('tr[data-id="'+reqId+'"]');
+      if(row){
+        // Found on current page — scroll and highlight
+        row.scrollIntoView({behavior:'smooth', block:'center'});
+        row.style.background = 'rgba(0,115,230,0.12)';
+        row.style.transition = 'background 1s';
+        setTimeout(function(){
+          row.style.background = '';
+          row.style.transition = '';
+        }, 2500);
+      } else {
+        // Row not visible — might be on a different page or filtered out
+        // Clear all filters and search, then reload
+        if(attempts === 1){
+          // Clear search
+          var search = document.getElementById('search');
+          if(search) search.value = '';
+          // Reset all multiselects
+          self.clearFilters && self.clearFilters();
+          self.filter();
+          setTimeout(tryScroll, 400);
+          return;
+        }
+        if(attempts <= 5){
+          setTimeout(tryScroll, 300);
+          return;
+        }
+        // Last resort: show notification
+        self.notify('Requirement #'+reqId+' not found in current view — check filters','warn');
+      }
+    }
+    setTimeout(tryScroll, 350);
+  },
+
+  // Go to development tab filtered by developer
+  goToDevTasks(devId){
+    this.tab('development');
+  },
+
   async renderTimeline(){
     var wrap=document.getElementById('timelineWrap'); if(!wrap) return;
     // Load all dev_tasks with developer info
@@ -1807,7 +2502,7 @@ var App = {
           ?'<div style="position:absolute;left:0;top:0;height:100%;width:'+t.percent_completed+'%;background:rgba(255,255,255,.25);border-radius:4px 0 0 4px;pointer-events:none"></div>'
           :'';
         var todayLine='<div style="position:absolute;left:'+todayPct+'%;top:0;bottom:0;width:2px;background:rgba(239,68,68,.5);z-index:2;pointer-events:none"></div>';
-        return '<div style="position:relative;height:32px;margin-bottom:3px">'+
+        return '<div style="position:relative;height:24px;margin-bottom:2px">'+
           todayLine+
           '<div class="gantt-bar" style="left:'+l+'%;width:'+w+'%;background:'+barColor+';top:2px;height:28px" title="'+tooltip+'">'+
             progressBar+
@@ -2080,12 +2775,23 @@ var App = {
   },
 
   // ── CONFIRM / DELETE ─────────────────────────────────────────────────────────
-  openConfirm(id, type){
+  openConfirm(id, type, customMsg){
     this.deletingId=id; this.deletingType=type||'req';
     var msg='';
-    if(type==='req'){ var r=this.data.find(function(x){return x.id===id;}); msg='Delete requirement #'+id+': "'+(r?r.requirement.split('\n')[0].substring(0,60):'')+'"?'; }
-    else if(type==='devtask'){ msg='Delete this developer task assignment?'; }
-    else if(type==='developer'){ var d=this.developers.find(function(x){return x.id===id;}); msg='Delete developer "'+(d?d.name:id)+'"?'; }
+    if(customMsg){
+      msg = customMsg;
+    } else if(type==='req'){
+      var r=this.data.find(function(x){return x.id===id;});
+      msg='Delete requirement #'+id+': "'+(r?r.requirement.split('\n')[0].substring(0,60):'')+'"?';
+    } else if(type==='devtask'){
+      msg='Delete this developer task assignment?';
+    } else if(type==='developer'){
+      var d=this.developers.find(function(x){return x.id===id;});
+      msg='Delete developer "'+(d?d.name:id)+'"?';
+    } else if(type==='dashboard'){
+      var db=this.dashboards.find(function(x){return x.id===id;});
+      msg='Delete dashboard "'+(db?db.name:id)+'"?';
+    }
     document.getElementById('confirmMsg').textContent=msg+' This cannot be undone.';
     document.getElementById('confirmOverlay').classList.add('open');
   },
@@ -2109,9 +2815,73 @@ var App = {
       } else if(type==='developer'){
         await supaFetch('developers','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
         this.notify('Developer deleted.','ok'); this.closeConfirm(); await this.loadDevelopers();
+      } else if(type==='dashboard'){
+        await supaFetch('dashboards','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
+        this.notify('Dashboard deleted.','ok'); this.closeConfirm(); await this.loadDashboards();
       }
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='Delete';btn.disabled=false;}
+  },
+
+  // ── RELATED REQUIREMENT LOOKUP ──────────────────────────────────────────────
+  relReqId: null,
+
+  searchRelReq(q){
+    var drop = document.getElementById('relReqDropdown'); if(!drop) return;
+    q = (q||'').trim();
+    var editingId = this.editingId;
+    var results = this.data.filter(function(r){
+      if(editingId && r.id === editingId) return false; // exclude self
+      if(!q) return true;
+      if(String(r.id) === q) return true;
+      if(/^\d+$/.test(q) && String(r.id).startsWith(q)) return true;
+      return (r.requirement||'').toLowerCase().includes(q.toLowerCase());
+    }).slice(0, 10);
+
+    if(!results.length){
+      drop.innerHTML = '<div class="req-lookup-option" style="color:var(--dim);cursor:default">No results</div>';
+      drop.classList.add('open');
+      return;
+    }
+    drop.innerHTML = results.map(function(r){
+      var title = (r.requirement||'').split('\n')[0].substring(0,60);
+      var meta = [r.area, r.dashboard, r.status].filter(Boolean).join(' · ');
+      return '<div class="req-lookup-option" data-rid="'+r.id+'" data-rtitle="'+title.replace(/"/g,'&quot;')+'">'+
+        '<span class="req-lookup-opt-id">#'+r.id+'</span>'+
+        '<div><div class="req-lookup-opt-title">'+title+'</div>'+
+          (meta?'<div class="req-lookup-opt-meta">'+meta+'</div>':'')+
+        '</div>'+
+      '</div>';
+    }).join('');
+    drop.querySelectorAll('.req-lookup-option[data-rid]').forEach(function(el){
+      el.addEventListener('click', function(){
+        App.selectRelReq(parseInt(el.dataset.rid), el.dataset.rtitle);
+      });
+    });
+    drop.classList.add('open');
+  },
+
+  selectRelReq(id, title){
+    this.relReqId = id;
+    document.getElementById('relReqSelected').style.display = 'flex';
+    document.getElementById('relReqInputWrap').style.display = 'none';
+    document.getElementById('relReqSelId').textContent = '#'+id;
+    document.getElementById('relReqSelTitle').textContent = title;
+    document.getElementById('relReqDropdown').classList.remove('open');
+    document.getElementById('relReqSearch').value = '';
+  },
+
+  clearRelReq(){
+    this.relReqId = null;
+    document.getElementById('relReqSelected').style.display = 'none';
+    document.getElementById('relReqInputWrap').style.display = '';
+    document.getElementById('relReqSearch').value = '';
+    document.getElementById('relReqDropdown').classList.remove('open');
+  },
+
+  clearRelReqSearch(){
+    document.getElementById('relReqSearch').value = '';
+    document.getElementById('relReqDropdown').classList.remove('open');
   },
 
   badge(s){
