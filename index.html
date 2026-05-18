@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-13 19:31 -->
+<!-- v2026-05-15 00:56 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -115,6 +115,27 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .td-mono{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .td-clip{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .td-actions{display:flex;gap:4px}
+.sh-opt:hover{background:var(--accentlight)}
+.sh-opt input{margin:0;cursor:pointer;flex-shrink:0}
+.sh-kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--dim)}
+.sh-kpi-val{font-size:24px;font-weight:700;color:var(--text);line-height:1}
+.sh-kpi-sub{font-size:11px;color:var(--dim)}
+.sh-ms-trigger.active{border-color:var(--accent);color:var(--accent)}
+.sh-ms-dropdown.open{display:block}
+.sh-ms-opt:hover{background:var(--accentlight)}
+.sh-ms-opt input{margin:0;cursor:pointer}
+.attach-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;cursor:pointer;transition:background .15s}
+.attach-item:hover{background:var(--accentlight)}
+.attach-item .attach-icon{font-size:16px;flex-shrink:0}
+.attach-item .attach-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.attach-item .attach-size{font-size:10px;color:var(--dim);flex-shrink:0}
+.attach-item .attach-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0;flex-shrink:0;opacity:.6}
+.attach-item .attach-del:hover{opacity:1}
+.attach-item.uploading{opacity:.6}
+.sh-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;border-left:4px solid var(--kc,var(--accent))}
+.sh-kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);margin-bottom:4px}
+.sh-kpi-val{font-size:26px;font-weight:700;color:var(--text);line-height:1.1}
+.sh-kpi-sub{font-size:11px;color:var(--dim);margin-top:3px}
 .req-lookup{position:relative}
 .req-lookup-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 32px 8px 11px;border-radius:var(--radius-sm);outline:none;transition:border-color .15s}
 .req-lookup-input:focus{border-color:var(--accent)}
@@ -283,7 +304,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <button class="ntab active" id="tab-backlog"     onclick="App.tab('backlog')">📋 Backlog</button>
   <button class="ntab"        id="tab-development" onclick="App.tab('development')">⚡ Development</button>
   <button class="ntab"        id="tab-dashboard"   onclick="App.tab('dashboard')">📈 Dashboard</button>
-  <button class="ntab"        id="tab-timeline"    onclick="App.tab('timeline')">🗓️ Timeline</button>
+  <button class="ntab"        id="tab-timeline"    onclick="App.tab('timeline')">🗓️ Dev Timeline</button>
+  <button class="ntab" id="tab-stakeholder" onclick="App.tab('stakeholder')">👥 Stakeholder</button>
   <div class="nav-dropdown" id="nav-dropdown-cadastros">
     <button class="nav-dropdown-btn" id="tab-cadastros" onclick="App.toggleSetupMenu()">
       ⚙️ Setup <span class="arrow">▼</span>
@@ -291,6 +313,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
     <div class="nav-dropdown-menu" id="cadastros-menu">
       <button class="nav-dropdown-item" id="tab-developers" onclick="App.tab('developers')">👥 Developers</button>
       <button class="nav-dropdown-item" id="tab-dashboards" onclick="App.tab('dashboards')">📊 Dashboards</button>
+      <button class="nav-dropdown-item" id="tab-settings"   onclick="App.tab('settings')">⚙️ Settings</button>
     </div>
   </div>
 </div>
@@ -308,7 +331,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
       <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Complexity</span><div class="ms-wrap" id="ms-complexity"></div></div>
       <div style="display:flex;align-items:center;gap:5px"><span class="flabel">BP</span><div class="ms-wrap" id="ms-business_partner"></div></div>
       <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Requester</span><div class="ms-wrap" id="ms-requester"></div></div>
-      <button class="freset" onclick="App.resetFilters()">✕ Clear</button>
+      <button class="freset" onclick="App.resetFilters()">✕ Clear All</button>
       <div style="flex:1"></div>
       <button class="btn btn-ghost btn-sm" onclick="App.refreshData()">↻ Refresh</button>
     </div>
@@ -424,56 +447,143 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 
 </div>
 
-  <!-- TIMELINE PAGE -->
-  <div class="page" id="page-timeline" style="margin:-16px -20px 0;padding:12px 20px 0">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:15px;font-weight:700">🗓️ Development Timeline</div>
-        <div style="font-size:11px;color:var(--dim)">Click any bar or name to open in Backlog</div>
+  <!-- STAKEHOLDER PAGE -->
+  <div class="page" id="page-stakeholder">
+
+    <!-- FILTERS -->
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
+      <span style="font-size:12px;font-weight:600;color:var(--dim)">Filter:</span>
+      <div style="position:relative">
+        <button id="sh-req-btn" onclick="App.shToggle(event)"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-size:12px;cursor:pointer;font-family:var(--font);color:var(--text)">
+          👤 Requester: <span id="sh-req-lbl">All</span> ▾</button>
+        <div id="sh-req-dd" onclick="event.stopPropagation()"
+          style="display:none;position:absolute;top:calc(100% + 2px);left:0;z-index:600;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-width:200px;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.25)">
+          <div style="padding:5px 10px;border-bottom:1px solid var(--border);display:flex;gap:8px">
+            <button onclick="App.shSelAll()" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer">All</button>
+            <button onclick="App.shSelNone()" style="font-size:11px;color:var(--dim);background:none;border:none;cursor:pointer">None</button>
+          </div>
+          <div id="sh-req-opts"></div>
+        </div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <label style="font-size:11px;color:var(--dim)">Show:</label>
-        <select class="fctrl" id="tl-filter" onchange="App.renderTimelinePage()" style="font-size:11px;padding:4px 8px">
-          <option value="all">All active tasks</option>
-          <option value="dev">Developers only</option>
-          <option value="po">Product Owners only</option>
+      <span style="font-size:11px;color:var(--dim)">|</span>
+      <span style="font-size:12px;font-weight:600;color:var(--dim)">Status:</span>
+      <label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="sh-cb-develop"    checked onchange="App.shApply()"> Develop</label>
+      <label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="sh-cb-validation" checked onchange="App.shApply()"> Validation</label>
+      <label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="sh-cb-close"      checked onchange="App.shApply()"> Close</label>
+      <button class="btn btn-ghost btn-sm" onclick="App.shClear()">✕ Clear</button>
+      <button class="btn btn-ghost btn-sm" onclick="App.shApply()">↻ Refresh</button>
+    </div>
+
+    <!-- KPIs -->
+    <div id="sh-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px"></div>
+
+    <!-- TIMELINE — fixed 280px, always scrollable -->
+    <div style="margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);overflow:hidden">
+      <div style="padding:7px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:12px;font-weight:700">📅 Requirements Timeline by Requester</span>
+        <span id="sh-stats" style="font-size:11px;color:var(--dim)"></span>
+      </div>
+      <div id="sh-tl" style="height:260px;overflow-y:scroll;overflow-x:auto;padding:8px 14px"></div>
+    </div>
+
+    <!-- OTHER REQUIREMENTS TABLE — fixed 280px, always scrollable -->
+    <div style="border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);overflow:hidden">
+      <div style="padding:7px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <span id="sh-q-title" style="font-size:12px;font-weight:700">📋 Other Requirements <span id="sh-q-cnt" style="font-size:11px;font-weight:400;color:var(--dim)"></span></span>
+        <span style="font-size:11px;color:var(--dim)">Stage → Priority → Expected Date</span>
+      </div>
+      <div style="height:260px;overflow-y:scroll;overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead style="position:sticky;top:0;z-index:2;background:var(--surface)">
+            <tr>
+              <th style="padding:5px 10px;text-align:center;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:40px">Pos</th>
+              <th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:55px">#</th>
+              <th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:280px;max-width:280px">Requirement</th>
+              <th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:85px">Status</th>
+              <th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:75px">Priority</th>
+              <th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:90px">Expected</th>
+              <th style="padding:5px 10px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:100px">Requester</th>
+            </tr>
+          </thead>
+          <tbody id="sh-q-body">
+            <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dim)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- TIMELINE PAGE -->
+  <div class="page" id="page-timeline">
+
+    <!-- Sub-tab bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0">
+      <div style="display:flex;gap:2px">
+        <button id="tl-tab-dev" onclick="App.tlSubTab('dev')"
+          style="padding:6px 16px;border:none;border-radius:6px 6px 0 0;font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);color:#fff;font-family:var(--font)">
+          👨‍💻 Developers
+        </button>
+        <button id="tl-tab-po" onclick="App.tlSubTab('po')"
+          style="padding:6px 16px;border:none;border-radius:6px 6px 0 0;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:var(--dim);font-family:var(--font)">
+          🎯 Product Owners
+        </button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div id="tl-active-stats" style="font-size:11px;color:var(--dim)"></div>
+        <select class="fctrl" id="tl-filter" onchange="App.renderTimelinePage()" style="font-size:11px;padding:4px 8px;width:140px">
+          <option value="all">All active</option>
           <option value="overdue">Overdue only</option>
         </select>
-        <button class="btn btn-ghost btn-sm" onclick="App.renderTimelinePage()" style="padding:4px 10px;font-size:11px">↻</button>
+        <button class="btn btn-ghost btn-sm" onclick="App.renderTimelinePage()" style="font-size:11px">↻ Refresh</button>
       </div>
     </div>
 
-    <!-- DEVELOPERS TIMELINE -->
-    <div class="ccard" style="margin-bottom:8px;padding:10px 14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="ctitle" style="margin-bottom:0;font-size:12px">👨‍💻 Developers</div>
-        <div id="tl-dev-stats" style="font-size:11px;color:var(--dim)"></div>
+    <!-- Chart area -->
+      <!-- DEVELOPERS panel -->
+      <div id="tl-dev-panel" style="margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)">
+      <div style="padding:6px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700">👨‍💻 Developers <span id="tl-dev-stats" style="font-size:11px;font-weight:400;color:var(--dim)"></span></div>
+        <div id="tl-dev-wrap" style="height:420px;overflow-y:scroll;overflow-x:auto;padding:4px 0">
+          <div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>
+        </div>
       </div>
-      <div id="tl-dev-wrap" style="overflow-x:auto;overflow-y:auto;max-height:calc(40vh - 60px);min-height:160px">
-        <div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>
-      </div>
-    </div>
 
-    <!-- PRODUCT OWNERS TIMELINE -->
-    <div class="ccard" style="padding:10px 14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="ctitle" style="margin-bottom:0;font-size:12px">🎯 Product Owners</div>
-        <div id="tl-po-stats" style="font-size:11px;color:var(--dim)"></div>
+      <!-- PRODUCT OWNERS panel -->
+      <div id="tl-po-panel" style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface);display:none">
+      <div style="padding:6px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700">🎯 Product Owners <span id="tl-po-stats" style="font-size:11px;font-weight:400;color:var(--dim)"></span></div>
+        <div id="tl-po-wrap" style="height:420px;overflow-y:scroll;overflow-x:auto;padding:4px 0">
+          <div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>
+        </div>
       </div>
-      <div id="tl-po-wrap" style="overflow-x:auto;overflow-y:auto;max-height:calc(40vh - 60px);min-height:160px">
-        <div class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></div>
-      </div>
-    </div>
 
-    <!-- LEGEND -->
-    <div style="margin-top:10px;font-size:11px;color:var(--dim);display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <!-- Legend -->
+    <div style="padding:6px 20px;border-top:1px solid var(--border);background:var(--surface);font-size:11px;color:var(--dim);display:flex;gap:14px;align-items:center;flex-wrap:wrap;flex-shrink:0">
       <span>🟢 On track</span>
       <span>🔴 Overdue</span>
       <span>🟡 Validation</span>
-      <span style="display:flex;align-items:center;gap:4px">
-        <span style="display:inline-block;width:2px;height:12px;background:var(--red);opacity:.7;border-radius:1px"></span> Today
-      </span>
-      <span>· Lighter overlay = % completed · ⚠️ = overlapping tasks</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:2px;height:11px;background:var(--red);opacity:.7;border-radius:1px"></span>Today</span>
+      <span>· Overlay = % done · ⚠️ = overlapping</span>
+    </div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <div style="max-width:560px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">⚙️ Settings</div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:20px">Configure integrations and preferences.</div>
+
+      <div class="ccard" style="padding:16px 20px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">🤖 AI Prioritization (OpenAI)</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">Used for the ✨ AI Prioritize button in the Stakeholder tab. Key is stored only in your browser.</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="password" id="openai-key-input" class="fctrl" placeholder="sk-proj-..." style="flex:1;font-family:monospace;font-size:12px">
+          <button class="btn btn-primary" onclick="App.saveOpenAIKey()">💾 Save</button>
+          <button class="btn btn-ghost" onclick="App.clearOpenAIKey()">✕</button>
+        </div>
+        <div id="openai-key-status" style="margin-top:8px;font-size:12px;color:var(--dim)"></div>
+      </div>
     </div>
   </div>
 
@@ -568,8 +678,13 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         <div class="fg">
           <label class="flbl">Status *</label>
           <select class="fctrl" id="f-status">
-            <option value="Idea">Idea</option>
+            <option value="Idea" selected>Idea</option>
             <option value="Defect">Defect</option>
+            <option value="Backlog">Backlog</option>
+            <option value="Develop">Develop</option>
+            <option value="Validation">Validation</option>
+            <option value="Close">Close</option>
+            <option value="Removed">Removed</option>
           </select>
         </div>
         <div class="fg">
@@ -636,6 +751,24 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
             </div>
             <div class="req-lookup-dropdown" id="relReqDropdown"></div>
           </div>
+        </div>
+
+        <!-- ATTACHMENTS -->
+        <div class="fg full">
+          <label class="flbl">Attachments</label>
+          <div id="attach-zone" style="border:2px dashed var(--border);border-radius:var(--radius);padding:12px;cursor:pointer;transition:border-color .2s;background:var(--surface2)"
+            onclick="document.getElementById('attach-input').click()"
+            ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+            ondragleave="this.style.borderColor='var(--border)'"
+            ondrop="App.handleAttachDrop(event)">
+            <div style="text-align:center;color:var(--dim);font-size:12px;pointer-events:none">
+              📎 Click to attach files or drag & drop<br>
+              <span style="font-size:11px;opacity:.7">PDF, Word, Excel, Images, ZIP...</span>
+            </div>
+          </div>
+          <input type="file" id="attach-input" multiple accept="*/*" style="display:none"
+            onchange="App.handleAttachSelect(this.files)">
+          <div id="attach-list" style="margin-top:8px;display:flex;flex-direction:column;gap:4px"></div>
         </div>
 
         <div class="fg full">
@@ -936,7 +1069,11 @@ var App = {
       document.querySelectorAll('.ms-dropdown.open').forEach(function(d){d.classList.remove('open');});
       document.querySelectorAll('.ms-trigger.open').forEach(function(t){t.classList.remove('open');});
       if(!e.target.closest('.req-lookup')){var dd=document.getElementById('relReqDropdown');if(dd)dd.classList.remove('open');}
+      if(!e.target.closest('#sh-req-btn')&&!e.target.closest('#sh-req-dd')){var shd=document.getElementById('sh-req-dd');if(shd)shd.style.display='none';}
+      // Stakeholder requester dropdown
+      if(!e.target.closest('#sh-req-btn')&&!e.target.closest('#sh-req-dd')){var shd=document.getElementById('sh-req-dd');if(shd)shd.style.display='none';}
       // Close cadastros dropdown if click outside
+
       if(!e.target.closest('#nav-dropdown-cadastros')){
         var cm=document.getElementById('cadastros-menu');
         var cb=document.getElementById('tab-cadastros');
@@ -1016,17 +1153,28 @@ var App = {
     rows.forEach(function(r){ EFFORT_MATRIX[r.complexity+'|'+r.size]=r.hours; });
   },
 
+  devDateMap: {}, // {reqId: {start, end}} from dev_tasks
+
   async loadDevEffortMap(){
     try{
-      var rows = await supaFetch('dev_tasks','?select=roadmap_id,effort&effort=not.is.null');
+      var rows = await supaFetch('dev_tasks','?select=roadmap_id,effort,start_date,end_date');
       this.devEffortMap={};
+      this.devDateMap={};
       var self=this;
       rows.forEach(function(r){
-        if(r.roadmap_id&&r.effort!=null){
+        if(!r.roadmap_id) return;
+        // Effort
+        if(r.effort!=null)
           self.devEffortMap[r.roadmap_id]=(self.devEffortMap[r.roadmap_id]||0)+parseFloat(r.effort);
+        // Dates: take earliest start and latest end across all dev tasks for this req
+        if(r.start_date||r.end_date){
+          if(!self.devDateMap[r.roadmap_id]) self.devDateMap[r.roadmap_id]={start:null,end:null};
+          var dm=self.devDateMap[r.roadmap_id];
+          if(r.start_date && (!dm.start||r.start_date<dm.start)) dm.start=r.start_date;
+          if(r.end_date   && (!dm.end  ||r.end_date  >dm.end  )) dm.end  =r.end_date;
         }
       });
-    }catch(e){ this.devEffortMap={}; }
+    }catch(e){ this.devEffortMap={}; this.devDateMap={}; }
   },
 
   async loadDevelopers(){
@@ -1077,6 +1225,13 @@ var App = {
   },
 
   tab(name){
+
+    // Reset scroll to top on every tab switch
+    var appEl=document.querySelector('.app');
+    if(appEl) appEl.scrollTop=0;
+    // Reset timeline page style when leaving
+    var tlPage=document.getElementById('page-timeline');
+    if(tlPage&&name!=='timeline'){ tlPage.style.display=''; tlPage.style.flexDirection=''; tlPage.style.height=''; }
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
     document.querySelectorAll('.ntab,.nav-dropdown-item').forEach(function(b){b.classList.remove('active');});
     document.getElementById('page-'+name).classList.add('active');
@@ -1094,7 +1249,17 @@ var App = {
     if(name==='developers') this.renderDeveloperGrid();
     if(name==='development') this.loadDevTasks();
     if(name==='dashboards') this.loadDashboards();
-    if(name==='timeline') this.renderTimelinePage();
+    if(name==='settings') App.loadSettings();
+    if(name==='stakeholder'){
+      App._shInited=false;
+      App.shApply();
+    }
+
+    if(name==='timeline'){
+      var tlPage=document.getElementById('page-timeline');
+      if(tlPage){ tlPage.style.display='flex'; tlPage.style.flexDirection='column'; tlPage.style.height='calc(100vh - 95px)'; }
+      this.renderTimelinePage();
+    }
   },
 
   toggleSetupMenu(){
@@ -1119,7 +1284,13 @@ var App = {
   },
 
   filter(){
-    var q=(document.getElementById('fSearch').value||'').toLowerCase();
+    var rawQ=(document.getElementById('fSearch').value||'');
+    var q=rawQ.toLowerCase();
+    // Support #ID or plain number search
+    var idSearch=null;
+    var trimQ=rawQ.trim();
+    if(/^#\d+$/.test(trimQ)) idSearch=parseInt(trimQ.substring(1));
+    else if(/^\d+$/.test(trimQ)) idSearch=parseInt(trimQ);
     var MAP={'ms-status':'status','ms-area':'area','ms-dashboard':'dashboard',
       'ms-developer':'developer','ms-complexity':'complexity',
       'ms-business_partner':'business_partner','ms-requester':'requester'};
@@ -1131,6 +1302,9 @@ var App = {
       if(sel.length) active[key]=new Set(sel);
     });
     this.filtered=this.data.filter(function(r){
+      if(idSearch!==null){
+        return parseInt(r.id)===idSearch;
+      }
       if(q){
         var txt=[r.requirement,r.requester,r.dashboard,r.comments,r.business_partner,r.impacts]
           .map(function(v){return(v||'').toLowerCase();}).join(' ');
@@ -1142,7 +1316,7 @@ var App = {
     this.page=1; this.renderTable();
   },
 
-  resetFilters(){ document.getElementById('fSearch').value=''; Object.values(this.ms).forEach(function(m){m.clear();}); this.filter(); },
+  resetFilters(silent){ document.getElementById('fSearch').value=''; Object.values(this.ms).forEach(function(m){m.clear();}); if(!silent) this.filter(); },
 
   sort(key){
     if(this.sortKey===key) this.sortDir*=-1; else{this.sortKey=key;this.sortDir=1;}
@@ -1278,6 +1452,11 @@ var App = {
       }
       var dOther=document.getElementById('f-dashboard-other');
       if(dOther) dOther.style.display='none';
+      // Load attachments for this req
+      this.pendingAttachments=[];
+      this.savedAttachments=[];
+      this.renderAttachList();
+      this.loadAttachments(id);
       // Set related requirement lookup
       this.clearRelReq();
       if(r.related_requirement_id){
@@ -1327,6 +1506,7 @@ var App = {
       if(this.editingId){
         await supaFetch('roadmap','?id=eq.'+this.editingId,{method:'PATCH',body:rec,prefer:'return=minimal'});
         this.notify('Requirement #'+this.editingId+' updated! ✓','ok');
+        await this.uploadPendingAttachments(this.editingId);
       } else {
         var c=await supaFetch('roadmap','',{method:'POST',body:rec});
         var created=Array.isArray(c)?c[0]:c;
@@ -1346,25 +1526,44 @@ var App = {
     var btn=document.getElementById('ai'+(field==='requirement'?'Req':'Imp')+'Btn');
     var text=el.value.trim();
     if(!text){this.notify('Please enter some text first.','warn');return;}
+
+    var oaiKey=localStorage.getItem('bizops_openai_key')||'';
+    if(!oaiKey){
+      this.notify('OpenAI key not set. Go to Setup → Settings.','err');
+      return;
+    }
+
     btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
     try{
       var sysPrompt=field==='requirement'
-        ?"You are a business analyst at Philips. Improve the following software requirement to be clearer, more specific, and follow SMART criteria. Return only the improved text, no preamble."
-        :"You are a business analyst at Philips. Given this requirement context, write a clear and compelling impact description explaining the business value. Return only the improved text, no preamble.";
-      var resp=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:500,
-          system:sysPrompt,
-          messages:[{role:'user',content:text}]
-        })
-      });
+        ?"You are a business analyst at Philips EI Commercial. Improve the following software requirement to be clearer, more specific, and follow SMART criteria. Return only the improved text, no explanation."
+        :"You are a business analyst at Philips EI Commercial. Given this requirement, write a clear and compelling business impact description explaining value, benefits and risks of not doing it. Return only the impact text, no explanation.";
+
+      var resp;
+      try{
+        resp=await fetch('https://api.openai.com/v1/chat/completions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+          body:JSON.stringify({
+            model:'gpt-4o-mini',max_tokens:600,temperature:0.4,
+            messages:[{role:'system',content:sysPrompt},{role:'user',content:text}]
+          })
+        });
+      }catch(e2){
+        resp=await fetch('https://corsproxy.io/?'+encodeURIComponent('https://api.openai.com/v1/chat/completions'),{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey,'x-requested-with':'XMLHttpRequest'},
+          body:JSON.stringify({
+            model:'gpt-4o-mini',max_tokens:600,temperature:0.4,
+            messages:[{role:'system',content:sysPrompt},{role:'user',content:text}]
+          })
+        });
+      }
       var data=await resp.json();
-      var improved=(data.content&&data.content[0]&&data.content[0].text)||text;
+      if(data.error) throw new Error(data.error.message);
+      var improved=(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||text;
       el.value=improved;
-      this.notify('Text improved by AI ✓','ok');
+      this.notify('✨ Text improved by AI ✓','ok');
     }catch(e){this.notify('AI error: '+e.message,'err');}
     finally{btn.innerHTML='✨ AI Improve';btn.disabled=false;}
   },
@@ -1372,7 +1571,14 @@ var App = {
   // ── DEVELOPMENT TAB ─────────────────────────────────────────────────────────
   goToDev(reqId){
     this.tab('development');
-    document.getElementById('devReqSelect').value=reqId;
+    // Ensure select is populated and value is set
+    var sel = document.getElementById('devReqSelect');
+    if(!sel) return;
+    // Repopulate select if needed
+    this.populateDevReqSelect();
+    sel.value = reqId;
+    // Force load
+    this.currentReqId = reqId;
     this.loadDevTasks();
   },
 
@@ -1727,10 +1933,18 @@ var App = {
   editingDashId: null,
 
   async loadDashboards(){
+    var tbody = document.getElementById('dashTbody');
+    if(tbody) tbody.innerHTML='<tr><td colspan="5" class="empty"><div class="empty-ico">⏳</div><p>Loading...</p></td></tr>';
     try{
       this.dashboards = await supaFetch('dashboards',
         '?select=id,name,area,product_owner_id,developers(id,name)&order=name.asc');
-    }catch(e){ this.dashboards=[]; console.warn('loadDashboards:',e.message); }
+      if(!Array.isArray(this.dashboards)) this.dashboards=[];
+    }catch(e){
+      this.dashboards=[];
+      console.warn('loadDashboards:',e.message);
+      if(tbody) tbody.innerHTML='<tr><td colspan="5" style="color:var(--red);padding:16px;text-align:center">Error loading dashboards: '+e.message+'</td></tr>';
+      return;
+    }
     this.renderDashTable();
     this.populateDashPO();
   },
@@ -1748,7 +1962,10 @@ var App = {
   renderDashTable(){
     var tbody = document.getElementById('dashTbody'); if(!tbody) return;
     var self = this;
-    var q = this.dashFilter.toLowerCase();
+    var q = (this.dashFilter||'').toLowerCase();
+
+    // Ensure dashboards is always an array
+    if(!Array.isArray(this.dashboards)) this.dashboards=[];
 
     var filtered = this.dashboards.filter(function(d){
       if(!q) return true;
@@ -1770,9 +1987,9 @@ var App = {
     if(!page.length){
       tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="empty-ico">📊</div><p>'+(q?'No dashboards match your search.':'No dashboards yet.')+'</p></div></td></tr>';
     } else {
-      tbody.innerHTML = page.map(function(d){
+      try{ tbody.innerHTML = page.map(function(d){
         var po = d.developers;
-        return '<tr data-id="'+r.id+'">'+
+        return '<tr data-id="'+d.id+'">'+
           '<td><div class="td-actions">'+
             '<button class="bico edit" onclick="App.openDashModal('+d.id+')">✏️</button>'+
             '<button class="bico del" onclick="App.confirmDelDash('+d.id+')">🗑️</button>'+
@@ -1788,7 +2005,7 @@ var App = {
             : '<span style="color:var(--muted)">—</span>')+
           '</td>'+
         '</tr>';
-      }).join('');
+      }).join(''); }catch(renderErr){ console.error('renderDashTable row error:',renderErr); tbody.innerHTML='<tr><td colspan="5" style="color:var(--red);padding:12px">Render error: '+renderErr.message+'</td></tr>'; return; }
     }
 
     // Pagination
@@ -2227,9 +2444,11 @@ var App = {
     var tasks = [];
     try{
       tasks = await supaFetch('dev_tasks',
-        '?status=in.(Idea,Develop,Validation,Blocked)&select=*,developers(id,name,skill,hours_per_day,role),roadmap(id,requirement,dashboard_id)&order=start_date.asc');
+        '?status=in.(Idea,Develop,Validation,Blocked)&select=*,developers(id,name,skill,hours_per_day,role),roadmap(id,requirement)&order=start_date.asc');
     }catch(e){
-      devWrap.innerHTML='<div style="color:var(--red);padding:12px">Error: '+e.message+'</div>';
+      console.error('Timeline error:', e);
+      devWrap.innerHTML='<div style="color:var(--red);padding:16px;text-align:center"><div style="font-size:24px">⚠️</div><div style="margin-top:8px;font-size:13px;font-weight:600">Failed to load timeline</div><div style="font-size:12px;color:var(--dim);margin-top:4px">'+e.message+'</div></div>';
+      poWrap.innerHTML=devWrap.innerHTML;
       return;
     }
 
@@ -2315,7 +2534,7 @@ var App = {
           var isLate=t.end_date&&new Date(t.end_date)<now;
           var isValidation=t.status==='Validation';
           var barColor=isValidation?'#f59e0b':(isLate?'#ef4444':'#22c55e');
-          var reqId=t.roadmap&&t.roadmap.id;
+          var reqId=t.roadmap&&t.roadmap.id; var reqDashId=null;
           var reqTitle=t.roadmap&&t.roadmap.requirement
             ?(t.roadmap.requirement.split('\n')[0].substring(0,35)+'…')
             :'Task #'+t.id;
@@ -2353,70 +2572,111 @@ var App = {
       '<div class="gantt-header-dates" style="position:relative;height:18px">'+buildHeader()+'</div></div>';
 
     // Render developers
+    var devStatsEl = document.getElementById('tl-dev-stats');
     if(devTasks.length){
       var dr=buildRows(devTasks);
-      document.getElementById('tl-dev-stats').textContent=dr.count+' developers · '+dr.tasks+' tasks'+(dr.overloaded.length?' · ⚠️ '+dr.overloaded.length+' overloaded':'');
+      if(devStatsEl) devStatsEl.textContent=dr.count+' developers · '+dr.tasks+' tasks'+(dr.overloaded.length?' · ⚠️ '+dr.overloaded.length+' overloaded':'');
       devWrap.innerHTML='<div style="min-width:900px">'+headerHtml+'<div>'+dr.rows+'</div></div>';
     } else {
+      if(devStatsEl) devStatsEl.textContent='No active tasks';
       devWrap.innerHTML='<div class="empty"><div class="empty-ico">👨‍💻</div><p>No active developer tasks.</p></div>';
     }
 
     // Render product owners
+    var poStatsEl = document.getElementById('tl-po-stats');
     if(poTasks.length){
       var pr=buildRows(poTasks);
-      document.getElementById('tl-po-stats').textContent=pr.count+' product owners · '+pr.tasks+' tasks'+(pr.overloaded.length?' · ⚠️ '+pr.overloaded.length+' overloaded':'');
+      if(poStatsEl) poStatsEl.textContent=pr.count+' product owners · '+pr.tasks+' tasks'+(pr.overloaded.length?' · ⚠️ '+pr.overloaded.length+' overloaded':'');
       poWrap.innerHTML='<div style="min-width:900px">'+headerHtml+'<div>'+pr.rows+'</div></div>';
     } else {
+      if(poStatsEl) poStatsEl.textContent='No active tasks';
       poWrap.innerHTML='<div class="empty"><div class="empty-ico">🎯</div><p>No active Product Owner tasks.</p></div>';
     }
+
+    // Restore active sub-tab
+    var activeTlTab = document.getElementById('tl-po-panel')&&document.getElementById('tl-po-panel').style.display!=='none'?'po':'dev';
+    this.tlSubTab(activeTlTab);
   },
 
-  // Navigate to requirement in Backlog tab and scroll to it
+  // Navigate to requirement in Backlog — filter to show only that req
   goToReq(reqId){
     var self = this;
     this.tab('backlog');
-    // Wait for table to render, then find and scroll to the row
-    var attempts = 0;
-    function tryScroll(){
-      attempts++;
-      // Check if row is visible (current page) or need to navigate pages
-      var row = document.querySelector('tr[data-id="'+reqId+'"]');
-      if(row){
-        // Found on current page — scroll and highlight
-        row.scrollIntoView({behavior:'smooth', block:'center'});
-        row.style.background = 'rgba(0,115,230,0.12)';
-        row.style.transition = 'background 1s';
-        setTimeout(function(){
-          row.style.background = '';
-          row.style.transition = '';
-        }, 2500);
-      } else {
-        // Row not visible — might be on a different page or filtered out
-        // Clear all filters and search, then reload
-        if(attempts === 1){
-          // Clear search
-          var search = document.getElementById('search');
-          if(search) search.value = '';
-          // Reset all multiselects
-          self.clearFilters && self.clearFilters();
-          self.filter();
-          setTimeout(tryScroll, 400);
-          return;
-        }
-        if(attempts <= 5){
-          setTimeout(tryScroll, 300);
-          return;
-        }
-        // Last resort: show notification
-        self.notify('Requirement #'+reqId+' not found in current view — check filters','warn');
+    setTimeout(function(){
+      // 1. Clear all filters first
+      self.resetFilters(true); // silent reset
+
+      // 2. Set search box to "#ID" to filter to just this req
+      var searchEl = document.getElementById('fSearch');
+      if(searchEl){
+        searchEl.value = '#'+reqId;
+        // Trigger filter
+        self.filter();
       }
-    }
-    setTimeout(tryScroll, 350);
+
+      // 3. Scroll to and highlight the row
+      setTimeout(function(){
+        var row = document.querySelector('tr[data-id="'+reqId+'"]');
+        if(row){
+          row.scrollIntoView({behavior:'smooth', block:'center'});
+          row.style.outline = '3px solid var(--accent)';
+          row.style.outlineOffset = '-2px';
+          row.style.background = 'rgba(0,115,230,0.15)';
+          // Pulse 3 times
+          var count=0;
+          var pulse=setInterval(function(){
+            count++;
+            row.style.background = count%2===0?'rgba(0,115,230,0.15)':'rgba(0,115,230,0.04)';
+            if(count>=6){
+              clearInterval(pulse);
+              row.style.background='rgba(0,115,230,0.08)';
+              setTimeout(function(){
+                row.style.outline='';
+                row.style.outlineOffset='';
+                row.style.background='';
+              },3000);
+            }
+          },300);
+        } else {
+          self.notify('Requirement #'+reqId+' not found','warn');
+        }
+      },200);
+    },200);
   },
 
   // Go to development tab filtered by developer
   goToDevTasks(devId){
     this.tab('development');
+  },
+
+  // Switch sub-tab in Timeline
+  tlSubTab(which){
+    var devPanel = document.getElementById('tl-dev-panel');
+    var poPanel  = document.getElementById('tl-po-panel');
+    var devBtn   = document.getElementById('tl-tab-dev');
+    var poBtn    = document.getElementById('tl-tab-po');
+    if(!devPanel||!poPanel) return;
+
+    var accent = 'background:var(--accent);color:#fff';
+    var inactive = 'background:transparent;color:var(--dim)';
+
+    if(which === 'dev'){
+      devPanel.style.display = '';
+      poPanel.style.display  = 'none';
+      devBtn.style.cssText   = devBtn.style.cssText.replace(/background:[^;]+;color:[^;]+/, accent);
+      poBtn.style.cssText    = poBtn.style.cssText.replace(/background:[^;]+;color:[^;]+/, inactive);
+      var stats = document.getElementById('tl-dev-stats');
+      var active = document.getElementById('tl-active-stats');
+      if(stats && active) active.textContent = stats.textContent;
+    } else {
+      devPanel.style.display = 'none';
+      poPanel.style.display  = '';
+      poBtn.style.cssText    = poBtn.style.cssText.replace(/background:[^;]+;color:[^;]+/, accent);
+      devBtn.style.cssText   = devBtn.style.cssText.replace(/background:[^;]+;color:[^;]+/, inactive);
+      var stats2 = document.getElementById('tl-po-stats');
+      var active2 = document.getElementById('tl-active-stats');
+      if(stats2 && active2) active2.textContent = stats2.textContent;
+    }
   },
 
   async renderTimeline(){
@@ -2883,6 +3143,527 @@ var App = {
     document.getElementById('relReqSearch').value = '';
     document.getElementById('relReqDropdown').classList.remove('open');
   },
+
+  // ── ATTACHMENTS ──────────────────────────────────────────────────────────────
+  pendingAttachments: [],  // files staged before save
+  savedAttachments:   [],  // files already saved for editing req
+
+  getFileIcon(name){
+    var ext=(name||'').split('.').pop().toLowerCase();
+    var icons={pdf:'📄',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',ppt:'📋',pptx:'📋',
+      jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🖼️',webp:'🖼️',svg:'🖼️',
+      zip:'🗜️',rar:'🗜️',mp4:'🎥',mp3:'🎵',txt:'📃',csv:'📊'};
+    return icons[ext]||'📎';
+  },
+
+  formatBytes(b){
+    if(!b) return '';
+    if(b<1024) return b+'B';
+    if(b<1048576) return (b/1024).toFixed(1)+'KB';
+    return (b/1048576).toFixed(1)+'MB';
+  },
+
+  handleAttachDrop(e){
+    e.preventDefault();
+    document.getElementById('attach-zone').style.borderColor='var(--border)';
+    this.handleAttachSelect(e.dataTransfer.files);
+  },
+
+  handleAttachSelect(files){
+    for(var i=0;i<files.length;i++){
+      this.pendingAttachments.push(files[i]);
+    }
+    this.renderAttachList();
+  },
+
+  renderAttachList(){
+    var list=document.getElementById('attach-list'); if(!list) return;
+    var self=this;
+    var items=[];
+
+    // Saved attachments (existing)
+    this.savedAttachments.forEach(function(a){
+      items.push(
+        '<div class="attach-item" data-path="'+a.file_path+'" data-name="'+a.file_name+'" ondblclick="App.openAttachment(this.dataset.path,this.dataset.name)">'+
+          '<span class="attach-icon">'+self.getFileIcon(a.file_name)+'</span>'+
+          '<span class="attach-name" title="'+a.file_name+'">'+a.file_name+'</span>'+
+          '<span class="attach-size">'+self.formatBytes(a.file_size)+'</span>'+
+          '<button class="attach-del" onclick="App.deleteAttachment('+a.id+',event)" title="Delete">✕</button>'+
+        '</div>'
+      );
+    });
+
+    // Pending (new, not yet uploaded)
+    this.pendingAttachments.forEach(function(f,i){
+      items.push(
+        '<div class="attach-item" id="pending-'+i+'">'+
+          '<span class="attach-icon">'+self.getFileIcon(f.name)+'</span>'+
+          '<span class="attach-name" title="'+f.name+'">'+f.name+'</span>'+
+          '<span class="attach-size">'+self.formatBytes(f.size)+'</span>'+
+          '<button class="attach-del" onclick="App.removePending('+i+',event)" title="Remove">✕</button>'+
+        '</div>'
+      );
+    });
+
+    list.innerHTML=items.join('')||'<div style="font-size:11px;color:var(--dim);padding:4px 0">No attachments yet.</div>';
+  },
+
+  removePending(idx, e){
+    e.stopPropagation();
+    this.pendingAttachments.splice(idx,1);
+    this.renderAttachList();
+  },
+
+  async deleteAttachment(id, e){
+    e.stopPropagation();
+    try{
+      var att=this.savedAttachments.find(function(a){return a.id===id;});
+      if(att){
+        // Extract just the path after 'attachments/'
+        var storagePath = att.file_path.replace(/^attachments\//,'');
+
+        // Delete from Supabase Storage using direct fetch (not supaFetch)
+        var delUrl = SUPA_URL+'/storage/v1/object/attachments/'+storagePath;
+        var delResp = await fetch(delUrl,{
+          method:'DELETE',
+          headers:{
+            'apikey': SUPA_KEY,
+            'Authorization': 'Bearer '+SUPA_KEY
+          }
+        });
+        if(!delResp.ok){
+          var errTxt = await delResp.text();
+          console.warn('Storage delete error:', delResp.status, errTxt);
+          // Still try to delete the DB record even if storage fails
+        }
+
+        // Delete record from attachments table
+        await supaFetch('attachments','?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
+        this.savedAttachments=this.savedAttachments.filter(function(a){return a.id!==id;});
+        this.renderAttachList();
+        this.notify('Attachment deleted. ✓','ok');
+      }
+    }catch(e2){
+      console.warn('deleteAttachment error:',e2);
+      this.notify('Error deleting: '+e2.message,'err');
+    }
+  },
+
+  openAttachment(path, name){
+    // Open the file in a new tab
+    var url=SUPA_URL+'/storage/v1/object/public/'+path;
+    window.open(url,'_blank');
+  },
+
+  async uploadPendingAttachments(reqId){
+    if(!this.pendingAttachments.length) return;
+    var uploaded=0, failed=0;
+    for(var i=0;i<this.pendingAttachments.length;i++){
+      var file=this.pendingAttachments[i];
+      try{
+        // Sanitize filename
+        var safeName=file.name.replace(/[^a-zA-Z0-9._\-() ]/g,'_');
+        var filePath='req-'+reqId+'/'+Date.now()+'-'+safeName;
+
+        // Upload to Supabase Storage
+        var uploadUrl=SUPA_URL+'/storage/v1/object/attachments/'+filePath;
+        var uploadResp=await fetch(uploadUrl,{
+          method:'POST',
+          headers:{
+            'apikey':SUPA_KEY,
+            'Authorization':'Bearer '+SUPA_KEY,
+            'Content-Type':file.type||'application/octet-stream',
+            'x-upsert':'true',
+            'cache-control':'3600'
+          },
+          body:file
+        });
+
+        if(!uploadResp.ok){
+          var errBody=await uploadResp.text();
+          console.warn('Storage upload error:',uploadResp.status, errBody);
+          // If 400/401/403 — storage not configured yet, skip silently
+          if(uploadResp.status===400||uploadResp.status===401||uploadResp.status===403){
+            this.notify('⚠️ Attachment storage not configured yet. Run fix_storage.sql in Supabase.','warn');
+            break;
+          }
+          throw new Error('HTTP '+uploadResp.status+': '+errBody.substring(0,100));
+        }
+
+        // Save record in attachments table
+        await supaFetch('attachments','',{method:'POST',body:{
+          roadmap_id: reqId,
+          file_name:  file.name,
+          file_path:  'attachments/'+filePath,
+          file_type:  file.type||'',
+          file_size:  file.size
+        }});
+        uploaded++;
+      }catch(e2){
+        failed++;
+        console.warn('Upload error:', e2.message);
+        this.notify('Error uploading '+file.name+': '+e2.message,'err');
+      }
+    }
+    this.pendingAttachments=[];
+    if(uploaded>0) this.notify(uploaded+' file'+(uploaded>1?'s':'')+' uploaded! ✓','ok');
+  },
+
+  async loadAttachments(reqId){
+    try{
+      this.savedAttachments=await supaFetch('attachments','?roadmap_id=eq.'+reqId+'&order=created_at.asc')||[];
+    }catch(e){ this.savedAttachments=[]; }
+    this.renderAttachList();
+  },
+
+
+  // ── STAKEHOLDER ─────────────────────────────────────────────────────────────
+  _shInited: false,
+  _shReqSel: [],
+
+  shToggle(e){
+    if(e) e.stopPropagation();
+    var dd=document.getElementById('sh-req-dd');
+    if(dd) dd.style.display = dd.style.display==='none'?'block':'none';
+  },
+
+  shSelAll(){
+    document.querySelectorAll('.sh-req-cb').forEach(function(c){c.checked=true;});
+    App._shReqSel=[];
+    App._shUpdateReqLbl();
+    App.shApply();
+  },
+
+  shSelNone(){
+    document.querySelectorAll('.sh-req-cb').forEach(function(c){c.checked=false;});
+    App._shReqSel=[];
+    App._shUpdateReqLbl();
+    App.shApply();
+  },
+
+  shClear(){
+    App.shSelAll();
+    ['sh-cb-develop','sh-cb-validation','sh-cb-close'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.checked=true;
+    });
+    App.shApply();
+  },
+
+  _shUpdateReqLbl(){
+    var all=document.querySelectorAll('.sh-req-cb').length;
+    var chk=document.querySelectorAll('.sh-req-cb:checked').length;
+    var lbl=document.getElementById('sh-req-lbl');
+    if(lbl) lbl.textContent=chk===all?'All':chk===0?'None':chk+' sel.';
+    var btn=document.getElementById('sh-req-btn');
+    if(btn) btn.style.borderColor=chk<all&&chk>0?'var(--accent)':'var(--border)';
+  },
+
+  _shBuildReqList(){
+    if(this._shInited) return;
+    var vals=[];
+    this.data.forEach(function(r){ if(r.requester&&vals.indexOf(r.requester)<0) vals.push(r.requester); });
+    vals.sort();
+    var opts=document.getElementById('sh-req-opts'); if(!opts) return;
+    opts.innerHTML=vals.map(function(v){
+      return '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border)">'+
+        '<input type="checkbox" class="sh-req-cb" value="'+v+'" checked onchange="App._shReqCb()"> '+v+'</label>';
+    }).join('');
+    this._shInited=true;
+  },
+
+  _shReqCb(){
+    var chk=Array.prototype.slice.call(document.querySelectorAll('.sh-req-cb:checked')).map(function(c){return c.value;});
+    var all=document.querySelectorAll('.sh-req-cb').length;
+    App._shReqSel = chk.length===all?[]:chk;
+    App._shUpdateReqLbl();
+    App.shApply();
+  },
+
+  shApply(){
+    // Close dropdown
+    var dd=document.getElementById('sh-req-dd'); if(dd) dd.style.display='none';
+
+    this._shBuildReqList();
+
+    var self=this;
+    function reqOk(r){ return self._shReqSel.length===0||self._shReqSel.indexOf(r.requester||'')>=0; }
+
+    var show=[];
+    if(document.getElementById('sh-cb-develop')&&document.getElementById('sh-cb-develop').checked)    show.push('Develop');
+    if(document.getElementById('sh-cb-validation')&&document.getElementById('sh-cb-validation').checked) show.push('Validation');
+    if(document.getElementById('sh-cb-close')&&document.getElementById('sh-cb-close').checked)        show.push('Close');
+
+    var active=this.data.filter(function(r){ return r.status!=='Removed'&&reqOk(r); });
+    var tlReqs=active.filter(function(r){ return show.indexOf(r.status)>=0; });
+    var otherReqs=active.filter(function(r){ return ['Develop','Validation','Close'].indexOf(r.status)<0; });
+
+    // ── KPIs (filtered) ──────────────────────────────────────────────────────
+    var total=active.length;
+    var closed=active.filter(function(r){return r.status==='Close';}).length;
+    var inDev=active.filter(function(r){return r.status==='Develop'||r.status==='Validation';}).length;
+    var open=total-closed-inDev;
+    var hrs=0; active.forEach(function(r){if(App.devEffortMap&&App.devEffortMap[r.id])hrs+=App.devEffortMap[r.id];});
+    var pctCl=total?Math.round(closed/total*100):0;
+    var pctOp=total?Math.round(open/total*100):0;
+    var kDiv=document.getElementById('sh-kpis');
+    if(kDiv) kDiv.innerHTML=[
+      {l:'Total',    v:total,              s:'Requirements',      c:'#0073e6'},
+      {l:'Delivered',v:closed,             s:pctCl+'% of total',  c:'#22c55e'},
+      {l:'In Progress',v:inDev,            s:'Dev+Validation',    c:'#f59e0b'},
+      {l:'Open',     v:open,               s:pctOp+'% open',      c:'#a855f7'},
+      {l:'Dev Hours',v:Math.round(hrs)+'h',s:'Logged',            c:'#06b6d4'},
+    ].map(function(k){
+      return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;border-left:3px solid '+k.c+'">'+
+        '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);margin-bottom:3px">'+k.l+'</div>'+
+        '<div style="font-size:22px;font-weight:700;color:var(--text);line-height:1.1">'+k.v+'</div>'+
+        '<div style="font-size:11px;color:var(--dim);margin-top:2px">'+k.s+'</div>'+
+      '</div>';
+    }).join('');
+
+    // ── Timeline ──────────────────────────────────────────────────────────────
+    var tl=document.getElementById('sh-tl');
+    var statsEl=document.getElementById('sh-stats');
+    if(!tl) return;
+    if(!tlReqs.length){
+      tl.innerHTML='<div class="empty"><div class="empty-ico">📅</div><p>No requirements match selected filters.</p></div>';
+      if(statsEl) statsEl.textContent='';
+    } else {
+      var now=new Date(); now.setHours(0,0,0,0);
+      var mn=new Date(now); mn.setDate(mn.getDate()-30);
+      var mx=new Date(now); mx.setDate(mx.getDate()+120);
+      tlReqs.forEach(function(r){
+        var s=r.start_date||r.request_date, e=r.expected_end_date||r.expected_date;
+        if(s){var d=new Date(s);if(d<mn)mn=d;} if(e){var d=new Date(e);if(d>mx)mx=d;}
+      });
+      var tot=Math.max(1,mx-mn);
+      var todP=Math.min(100,Math.max(0,(now-mn)/tot*100));
+      function pct(d){return d?Math.max(0,Math.min(99.5,(new Date(d)-mn)/tot*100)):0;}
+      function wid(s,e){var sd=s?new Date(s):mn,ed=e?new Date(e):new Date(now.getTime()+14*864e5);return Math.max(0.5,(ed-sd)/tot*100);}
+      var hdr='',c2=new Date(mn);
+      while(c2<=mx){
+        var lp=(c2-mn)/tot*100;
+        hdr+='<div style="position:absolute;left:'+lp.toFixed(1)+'%;font-size:10px;color:var(--dim);white-space:nowrap">'+(c2.getMonth()+1)+'/'+c2.getDate()+'</div>';
+        c2.setDate(c2.getDate()+7);
+      }
+      var byReq={};
+      tlReqs.forEach(function(r){var k=r.requester||'(no requester)';if(!byReq[k])byReq[k]=[];byReq[k].push(r);});
+      var rows=Object.keys(byReq).sort().map(function(name){
+        var rList=byReq[name];
+        var bars=rList.map(function(r){
+          var isCl=r.status==='Close',isVal=r.status==='Validation';
+          var col=isCl?'#22c55e':isVal?'#f59e0b':'#0073e6';
+          var dm2=App.devDateMap&&App.devDateMap[r.id];
+          var s=dm2&&dm2.start?dm2.start:(r.start_date||r.request_date);
+          var e=dm2&&dm2.end?dm2.end:(r.expected_end_date||r.expected_date);
+          var l=pct(s),w=wid(s,e);
+          var t=(r.requirement||'').split('\n')[0].substring(0,38)+'...';
+          var prog=(r.percent_completed>0&&!isCl)?'<div style="position:absolute;left:0;top:0;height:100%;width:'+r.percent_completed+'%;background:rgba(255,255,255,.25);border-radius:4px 0 0 4px;pointer-events:none"></div>':'';
+          return '<div style="position:relative;height:22px;margin-bottom:3px">'+
+            '<div style="position:absolute;left:'+todP.toFixed(1)+'%;top:0;bottom:0;width:2px;background:rgba(239,68,68,.5);z-index:2;pointer-events:none"></div>'+
+            '<div class="gantt-bar" onclick="App.goToReq('+r.id+')" title="#'+r.id+': '+t+'" style="left:'+l.toFixed(1)+'%;width:'+w.toFixed(1)+'%;background:'+col+';top:1px;height:20px;font-size:9px;cursor:pointer">'+
+              prog+'<span style="position:relative;z-index:1">#'+r.id+' '+t+'</span></div></div>';
+        }).join('');
+        return '<div class="gantt-row" style="align-items:flex-start">'+
+          '<div class="gantt-label" style="font-size:12px;font-weight:600;color:var(--text)">'+name+
+            '<div style="font-size:10px;color:var(--dim);font-weight:400">'+rList.length+' req'+(rList.length!==1?'s':'')+'</div></div>'+
+          '<div class="gantt-bars" style="padding:2px 0">'+bars+'</div></div>';
+      }).join('');
+      if(statsEl) statsEl.textContent=tlReqs.length+' reqs · '+Object.keys(byReq).length+' requesters';
+      tl.innerHTML='<div style="min-width:900px">'+
+        '<div class="gantt-header"><div class="gantt-header-label"></div><div class="gantt-header-dates" style="position:relative;height:18px">'+hdr+'</div></div>'+
+        '<div>'+rows+'</div>'+
+        '<div style="display:flex;gap:12px;margin-top:8px;font-size:11px;color:var(--dim)">'+
+          '<span><span style="display:inline-block;width:10px;height:10px;background:#0073e6;border-radius:2px;margin-right:3px"></span>Develop</span>'+
+          '<span><span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:2px;margin-right:3px"></span>Validation</span>'+
+          '<span><span style="display:inline-block;width:10px;height:10px;background:#22c55e;border-radius:2px;margin-right:3px"></span>Delivered</span>'+
+          '<span><span style="display:inline-block;width:2px;height:10px;background:rgba(239,68,68,.5);margin-right:3px"></span>Today</span>'+
+        '</div></div>';
+    }
+
+    // ── Other requirements table ─────────────────────────────────────────────
+    var body=document.getElementById('sh-q-body');
+    var cnt=document.getElementById('sh-q-cnt');
+    if(!body) return;
+    if(cnt) cnt.textContent='('+otherReqs.length+')';
+
+    // Show header with AI button
+    var qTitle=document.getElementById('sh-q-title');
+    if(qTitle){
+      qTitle.innerHTML='📋 Other Requirements <span id="sh-q-cnt2" style="font-size:11px;font-weight:400;color:var(--dim)">('+otherReqs.length+')</span>'+
+        (otherReqs.length?'&nbsp;&nbsp;<button onclick="App.shAIPrioritize()" class="btn btn-primary btn-sm" style="font-size:11px;padding:3px 10px">✨ AI Prioritize</button>':'');
+    }
+
+    if(!otherReqs.length){
+      body.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dim)">No other requirements for the selected filters.</td></tr>';
+      return;
+    }
+
+    // Default sort: Defect → status → priority → date
+    var so={'Defect':0,'Idea':1,'Backlog':2,'Plan':3};
+    var po={'High':1,'Medium':2,'Low':3};
+    var sorted=otherReqs.slice().sort(function(a,b){
+      var as=so[a.status]!=null?so[a.status]:9,bs=so[b.status]!=null?so[b.status]:9; if(as!==bs) return as-bs;
+      var ap=po[a.requester_priority]||9,bp=po[b.requester_priority]||9; if(ap!==bp) return ap-bp;
+      return(a.expected_date||'9999')>(b.expected_date||'9999')?1:-1;
+    });
+    App._shRenderQueueRows(sorted, false);
+  },
+
+  _shRenderQueueRows(sorted, aiMode){
+    var body=document.getElementById('sh-q-body'); if(!body) return;
+    body.innerHTML=sorted.map(function(r,i){
+      var t=(r.requirement||'').split('\n')[0].substring(0,65);
+      var pc2=r.requester_priority==='High'?'var(--red)':r.requester_priority==='Medium'?'var(--yellow)':'var(--dim)';
+      var isDef=r.status==='Defect';
+      var aiScore=r._aiScore?'<span style="background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:4px">'+r._aiScore+'/10</span>':'';
+      var aiReason=r._aiReason?'<div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic">'+r._aiReason+'</div>':'';
+      return '<tr style="border-bottom:1px solid var(--border);'+(isDef?'background:rgba(239,68,68,.04)':'')+'">'+
+        '<td style="padding:6px 12px;font-size:11px;font-weight:700;color:var(--dim);text-align:center">'+(aiMode?'#'+(i+1):i+1)+'</td>'+
+        '<td style="padding:6px 8px;cursor:pointer;color:var(--accent);font-family:var(--mono);font-size:11px" onclick="App.goToReq('+r.id+')">#'+r.id+'</td>'+
+        '<td style="padding:6px 8px;cursor:pointer;max-width:260px;width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" onclick="App.goToReq('+r.id+')" title="'+(r.requirement||'').split('\n')[0]+'">'+(isDef?'🚨 ':'')+t+aiScore+aiReason+'</td>'+
+        '<td style="padding:6px 8px">'+App.badge(r.status)+'</td>'+
+        '<td style="padding:6px 8px;font-size:12px;font-weight:600;color:'+pc2+'">'+(r.requester_priority||'—')+'</td>'+
+        '<td style="padding:6px 8px;font-size:12px">'+(r.expected_date?App.fd(r.expected_date):'—')+'</td>'+
+        '<td style="padding:6px 12px;font-size:12px;color:var(--dim)">'+(r.requester||'—')+'</td></tr>';
+    }).join('');
+  },
+
+  async shAIPrioritize(){
+    var body=document.getElementById('sh-q-body'); if(!body) return;
+
+    // Get current other reqs (re-filter)
+    var self=this;
+    function reqOk(r){ return self._shReqSel.length===0||self._shReqSel.indexOf(r.requester||'')>=0; }
+    var otherReqs=this.data.filter(function(r){
+      return r.status!=='Removed' && ['Develop','Validation','Close'].indexOf(r.status)<0 && reqOk(r);
+    });
+    if(!otherReqs.length) return;
+
+    // Show loading
+    var btn=document.querySelector('button[onclick="App.shAIPrioritize()"]');
+    if(btn){ btn.innerHTML='⏳ Analyzing...'; btn.disabled=true; }
+    body.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dim)"><span class="spinner"></span> AI is analyzing '+otherReqs.length+' requirements...</td></tr>';
+
+    // Build prompt
+    // Limit to 30 to avoid token limits
+    var reqsToAnalyze = otherReqs.slice(0, 30);
+    if(otherReqs.length>30) App.notify('Analyzing top 30 of '+otherReqs.length+' requirements.','ok');
+    var reqList=reqsToAnalyze.map(function(r){
+      return 'ID:'+r.id+
+        ' | Status:'+r.status+
+        ' | Priority:'+r.requester_priority+
+        ' | Req:'+((r.requirement||'').split('\n')[0].substring(0,80))+
+        ' | BusinessCase:'+(r.business_case?'Yes':'No')+
+        ' | CostReduction:'+(r.cost_reduction?'Yes':'No')+
+        ' | MarginIncrease:'+(r.margin_increasing?'Yes':'No')+
+        ' | Impacts:'+((r.impacts||'').substring(0,60))+
+        ' | Expected:'+r.expected_date;
+    }).join('\n');
+
+    // Use reqsToAnalyze in prompt instead of otherReqs
+    var prompt='You are a product management expert. Analyze and prioritize these software requirements based on business value. '+
+      'Consider: defects first, financial impact (cost reduction, margin increase), business case, requester priority, and strategic value.\n\n'+
+      'Requirements to prioritize:\n'+reqList+'\n\n'+
+      'Return ONLY a JSON array, no explanation, no markdown. Format: '+
+      '[{"id":123,"score":9,"reason":"short reason max 60 chars"},...]  '+
+      'Score 1-10 (10=highest priority). Order by score descending.';
+
+    try{
+      var oaiKey=localStorage.getItem('bizops_openai_key')||'';
+      if(!oaiKey){ throw new Error('OpenAI key not configured. Go to Setup → Settings to add your key.'); }
+
+      // Use direct fetch - works from GitHub Pages (HTTPS)
+      // If running locally (file://), will get CORS error
+      var apiUrl='https://api.openai.com/v1/chat/completions';
+      var bodyObj={
+        model:'gpt-4o-mini',
+        max_tokens:2000,
+        temperature:0.3,
+        messages:[{role:'user',content:prompt}]
+      };
+
+      var resp;
+      try{
+        resp=await fetch(apiUrl,{
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer '+oaiKey
+          },
+          body:JSON.stringify(bodyObj)
+        });
+      }catch(corsErr){
+        // Fallback: try via corsproxy.io for local file:// usage
+        resp=await fetch('https://corsproxy.io/?'+encodeURIComponent(apiUrl),{
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer '+oaiKey,
+            'x-requested-with':'XMLHttpRequest'
+          },
+          body:JSON.stringify(bodyObj)
+        });
+      }
+
+      var data=await resp.json();
+      if(data.error) throw new Error(data.error.message);
+      var text=data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content||'[]';
+      // Clean JSON
+      text=text.replace(/```json|```/g,'').trim();
+      var ranked=JSON.parse(text);
+
+      // Map scores back to reqs
+      var scoreMap={};
+      ranked.forEach(function(x){ scoreMap[x.id]={score:x.score,reason:x.reason}; });
+
+      var scoredReqs=(reqsToAnalyze||otherReqs).map(function(r){
+        var s=scoreMap[r.id]||{score:1,reason:''};
+        return Object.assign({},r,{_aiScore:s.score,_aiReason:s.reason});
+      }).sort(function(a,b){ return (b._aiScore||0)-(a._aiScore||0); });
+
+      App._shRenderQueueRows(scoredReqs, true);
+
+      // Update header
+      var qTitle=document.getElementById('sh-q-title');
+      if(qTitle) qTitle.innerHTML='📋 Other Requirements <span style="font-size:11px;font-weight:400;color:var(--dim)">('+otherReqs.length+' · ✨ AI Prioritized)</span>'+
+        '&nbsp;&nbsp;<button onclick="App.shApply()" class="btn btn-ghost btn-sm" style="font-size:11px;padding:3px 10px">↩ Reset</button>';
+
+    }catch(e){
+      body.innerHTML='<tr><td colspan="7" style="color:var(--red);padding:16px;text-align:center">AI error: '+e.message+'</td></tr>';
+    }
+    if(btn){ btn.innerHTML='✨ AI Prioritize'; btn.disabled=false; }
+  },
+
+  shRender(){ this.shApply(); },
+
+  loadSettings(){
+    var inp=document.getElementById('openai-key-input');
+    var sts=document.getElementById('openai-key-status');
+    var key=localStorage.getItem('bizops_openai_key')||'';
+    if(inp) inp.value=key?'sk-...'+key.slice(-6):'';
+    if(sts) sts.textContent=key?'✅ Key saved ('+key.slice(0,8)+'...)':'No key configured yet.';
+  },
+
+  saveOpenAIKey(){
+    var inp=document.getElementById('openai-key-input');
+    var sts=document.getElementById('openai-key-status');
+    var val=(inp&&inp.value||'').trim();
+    if(!val||val.startsWith('sk-...')){ this.notify('Paste your full OpenAI key first.','err'); return; }
+    localStorage.setItem('bizops_openai_key', val);
+    if(inp) inp.value='sk-...'+val.slice(-6);
+    if(sts) sts.textContent='✅ Key saved ('+val.slice(0,8)+'...)';
+    this.notify('OpenAI key saved! ✓','ok');
+  },
+
+  clearOpenAIKey(){
+    localStorage.removeItem('bizops_openai_key');
+    var inp=document.getElementById('openai-key-input');
+    var sts=document.getElementById('openai-key-status');
+    if(inp) inp.value='';
+    if(sts) sts.textContent='Key removed.';
+    this.notify('OpenAI key removed.','ok');
+  },
+
 
   badge(s){
     if(!s) return '';
