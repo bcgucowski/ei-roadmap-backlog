@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-18 11:23 -->
+<!-- v2026-05-19 11:59 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -124,6 +124,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .sh-ms-dropdown.open{display:block}
 .sh-ms-opt:hover{background:var(--accentlight)}
 .sh-ms-opt input{margin:0;cursor:pointer}
+.badge-new{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px;text-transform:uppercase;letter-spacing:.4px;animation:pulse-new 2s infinite}
+@keyframes pulse-new{0%,100%{opacity:1;}50%{opacity:.7;}}
 .attach-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;cursor:pointer;transition:background .15s}
 .attach-item:hover{background:var(--accentlight)}
 .attach-item .attach-icon{font-size:16px;flex-shrink:0}
@@ -277,6 +279,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .dev-card-meta{display:flex;align-items:center;gap:8px}
 .dev-card-actions{position:absolute;top:14px;right:14px;display:flex;gap:4px}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body class="dark">
 
@@ -306,6 +310,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <button class="ntab"        id="tab-dashboard"   onclick="App.tab('dashboard')">📈 Dashboard</button>
   <button class="ntab"        id="tab-timeline"    onclick="App.tab('timeline')">🗓️ Dev Timeline</button>
   <button class="ntab" id="tab-stakeholder" onclick="App.tab('stakeholder')">👥 Stakeholder</button>
+  <button class="ntab" id="tab-analytics" onclick="App.tab('analytics')">🤖 Analytics</button>
   <div class="nav-dropdown" id="nav-dropdown-cadastros">
     <button class="nav-dropdown-btn" id="tab-cadastros" onclick="App.toggleSetupMenu()">
       ⚙️ Setup <span class="arrow">▼</span>
@@ -332,6 +337,9 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
       <div style="display:flex;align-items:center;gap:5px"><span class="flabel">BP</span><div class="ms-wrap" id="ms-business_partner"></div></div>
       <div style="display:flex;align-items:center;gap:5px"><span class="flabel">Requester</span><div class="ms-wrap" id="ms-requester"></div></div>
       <button class="freset" onclick="App.resetFilters()">✕ Clear All</button>
+      <label id="new-filter-wrap" style="display:none;align-items:center;gap:4px;font-size:12px;cursor:pointer;background:linear-gradient(135deg,#f59e0b22,#ef444422);border:1px solid #f59e0b55;border-radius:var(--radius-sm);padding:3px 10px">
+        <input type="checkbox" id="filter-new-only" onchange="App.filter()"> 🆕 New only
+      </label>
       <div style="flex:1"></div>
       <button class="btn btn-ghost btn-sm" onclick="App.refreshData()">↻ Refresh</button>
     </div>
@@ -516,6 +524,74 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   </div>
 
 
+  <!-- ANALYTICS PAGE -->
+  <div class="page" id="page-analytics">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:15px;font-weight:700">🤖 Analytics Agent</div>
+        <div style="font-size:12px;color:var(--dim)">Ask questions about CommOps data in Databricks</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="db-status" style="font-size:11px;color:var(--dim)">⚪ Not connected</span>
+        <button class="btn btn-ghost btn-sm" onclick="App.analyticsClearChat()">🗑️ Clear</button>
+        <button class="btn btn-ghost btn-sm" onclick="App.analyticsShowTables()">📋 Tables</button>
+      </div>
+    </div>
+
+    <!-- Chat area -->
+    <div style="display:flex;gap:12px;height:calc(100vh - 200px)">
+
+      <!-- Left: Chat -->
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+        <div id="analytics-chat" style="flex:1;overflow-y:auto;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px">
+          <div style="text-align:center;padding:40px 20px;color:var(--dim)">
+            <div style="font-size:32px;margin-bottom:8px">🤖</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">CommOps Analytics Agent</div>
+            <div style="font-size:12px;max-width:400px;margin:0 auto">Ask me anything about your CommOps data. I'll query Databricks and generate insights, charts and exports.</div>
+            <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center" id="analytics-suggestions"></div>
+          </div>
+        </div>
+        <!-- Input -->
+        <div style="display:flex;gap:8px">
+          <textarea id="analytics-input" rows="2"
+            style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:13px;padding:10px 14px;border-radius:var(--radius);resize:none;outline:none;transition:border-color .15s"
+            placeholder="Ask a question... e.g. 'Top 10 customers by revenue this quarter'"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();App.analyticsAsk();}"></textarea>
+          <button onclick="App.analyticsAsk()" id="analytics-send"
+            style="background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:0 20px;cursor:pointer;font-size:20px;flex-shrink:0">
+            ➤
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Results panel -->
+      <div id="analytics-result-panel" style="width:460px;flex-shrink:0;display:flex;flex-direction:column;gap:8px;overflow-y:auto">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+          <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:8px">QUICK QUESTIONS</div>
+          <div style="display:flex;flex-direction:column;gap:6px" id="analytics-quick-btns"></div>
+        </div>
+        <div id="analytics-chart-box" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:700">📊 Chart</span>
+            <div style="display:flex;gap:6px">
+              <button onclick="App.analyticsChartType('bar')"  class="btn btn-ghost btn-sm" style="font-size:10px;padding:2px 8px">Bar</button>
+              <button onclick="App.analyticsChartType('line')" class="btn btn-ghost btn-sm" style="font-size:10px;padding:2px 8px">Line</button>
+              <button onclick="App.analyticsChartType('pie')"  class="btn btn-ghost btn-sm" style="font-size:10px;padding:2px 8px">Pie</button>
+            </div>
+          </div>
+          <canvas id="analytics-chart" height="220"></canvas>
+        </div>
+        <div id="analytics-export-box" style="display:none">
+          <button onclick="App.analyticsExportExcel()" class="btn btn-primary" style="width:100%;font-size:12px">
+            📥 Export to Excel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TIMELINE PAGE -->
   <div class="page" id="page-timeline">
 
@@ -570,19 +646,59 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 
   <!-- SETTINGS PAGE -->
   <div class="page" id="page-settings">
-    <div style="max-width:560px">
+    <div style="max-width:580px">
       <div style="font-size:15px;font-weight:700;margin-bottom:4px">⚙️ Settings</div>
-      <div style="font-size:12px;color:var(--dim);margin-bottom:20px">Configure integrations and preferences.</div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:16px">Configure integrations and preferences.</div>
 
+      <!-- BizOps Password -->
+      <div class="ccard" style="padding:16px 20px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:13px;font-weight:700">🔐 BizOps Access</span>
+          <span id="bizops-badge" style="display:none;background:#22c55e;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">✓ BIZOPS</span>
+        </div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">Enter the BizOps password to unlock team features (mark requirements as seen, manage settings).</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="password" id="bizops-pwd-input" class="fctrl" placeholder="BizOps password..." style="flex:1;font-size:12px">
+          <button class="btn btn-primary" onclick="App.saveBizOpsPwd()">💾 Save</button>
+          <button class="btn btn-ghost" onclick="App.clearBizOpsPwd()">✕</button>
+        </div>
+        <div id="bizops-pwd-status" style="margin-top:8px;font-size:12px;color:var(--dim)"></div>
+      </div>
+
+      <!-- OpenAI Key (stored in Supabase, shared) -->
       <div class="ccard" style="padding:16px 20px;margin-bottom:12px">
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">🤖 AI Prioritization (OpenAI)</div>
-        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">Used for the ✨ AI Prioritize button in the Stakeholder tab. Key is stored only in your browser.</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">Used for ✨ AI Prioritize in Stakeholder tab. Key is stored in the database and shared across all users. <strong>BizOps access required.</strong></div>
         <div style="display:flex;gap:8px;align-items:center">
           <input type="password" id="openai-key-input" class="fctrl" placeholder="sk-proj-..." style="flex:1;font-family:monospace;font-size:12px">
           <button class="btn btn-primary" onclick="App.saveOpenAIKey()">💾 Save</button>
           <button class="btn btn-ghost" onclick="App.clearOpenAIKey()">✕</button>
         </div>
         <div id="openai-key-status" style="margin-top:8px;font-size:12px;color:var(--dim)"></div>
+      </div>
+      <!-- Databricks Connection -->
+      <div class="ccard" style="padding:16px 20px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">⚡ Databricks Connection</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">Stored securely in the database. <strong>BizOps access required.</strong></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">Server Hostname</label>
+            <input type="text" id="db-host-input" class="fctrl" placeholder="adb-XXXX.azuredatabricks.net" style="font-size:12px"></div>
+          <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">HTTP Path</label>
+            <input type="text" id="db-path-input" class="fctrl" placeholder="/sql/1.0/warehouses/XXXX" style="font-size:12px"></div>
+          <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">Personal Access Token</label>
+            <input type="password" id="db-token-input" class="fctrl" placeholder="dapi..." style="font-size:12px;font-family:monospace"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">Catalog</label>
+              <input type="text" id="db-cat-input" class="fctrl" placeholder="qa_wb" style="font-size:12px"></div>
+            <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">Schema</label>
+              <input type="text" id="db-sch-input" class="fctrl" placeholder="saasfactory" style="font-size:12px"></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-primary" onclick="App.saveDbConfig()">💾 Save</button>
+            <button class="btn btn-ghost" onclick="App.testDbConfig()">🔌 Test Connection</button>
+          </div>
+        </div>
+        <div id="db-config-status" style="margin-top:8px;font-size:12px;color:var(--dim)"></div>
       </div>
     </div>
   </div>
@@ -1091,6 +1207,8 @@ var App = {
       try{ await this.loadEffortMatrix(); }catch(e){ console.warn('loadEffortMatrix:',e.message); }
       try{ await this.loadDevelopers(); }catch(e){ console.warn('loadDevelopers:',e.message); }
       try{ await this.loadDashboards(); }catch(e){ console.warn('loadDashboards:',e.message); }
+      try{ await this.loadSeenReqs(); }catch(e){ console.warn('loadSeenReqs:',e.message); }
+      try{ await this.analyticsLoadConfig(); }catch(e){ console.warn('analyticsLoadConfig:',e.message); }
     }catch(e){
       this.setSp(false,'Error: '+e.message);
       this.notify('Connection error: '+e.message,'err');
@@ -1313,6 +1431,9 @@ var App = {
       if(idSearch!==null){
         return parseInt(r.id)===idSearch;
       }
+      // New only filter
+      var newOnly=document.getElementById('filter-new-only');
+      if(newOnly&&newOnly.checked&&!App.isNewReq(r.id)) return false;
       if(q){
         var txt=[r.requirement,r.requester,r.dashboard,r.comments,r.business_partner,r.impacts]
           .map(function(v){return(v||'').toLowerCase();}).join(' ');
@@ -1335,6 +1456,9 @@ var App = {
 
   renderTable(){
     var self=this;
+    // Show New filter only for BizOps users
+    var nfw=document.getElementById('new-filter-wrap');
+    if(nfw) nfw.style.display=this.isBizOps()?'flex':'none';
     var sorted=[...this.filtered].sort(function(a,b){
       var av=a[self.sortKey]!=null?a[self.sortKey]:'';
       var bv=b[self.sortKey]!=null?b[self.sortKey]:'';
@@ -1357,7 +1481,7 @@ var App = {
             '<button class="bico dev" onclick="App.goToDev('+r.id+')" title="Dev">⚡</button>'+
             '<button class="bico del" onclick="App.openConfirm('+r.id+',\'req\')" title="Delete">🗑️</button>'+
           '</div></td>'+
-          '<td class="td-mono">'+r.id+'</td>'+
+          '<td class="td-mono">'+r.id+(App.isNewReq(r.id)?'<span class="badge-new" style="margin-left:4px">New</span>':'')+'</td>'+
           '<td class="td-mono">'+(r.priority!=null?r.priority:'—')+'</td>'+
           '<td style="font-size:11px;white-space:nowrap">'+(r.business_partner||'—')+'</td>'+
           '<td class="td-mono">'+self.fd(r.request_date)+'</td>'+
@@ -1465,6 +1589,8 @@ var App = {
       this.savedAttachments=[];
       this.renderAttachList();
       this.loadAttachments(id);
+      // Mark as seen if BizOps user
+      if(this.isBizOps()) this.markReqSeen(id);
       // Set related requirement lookup
       this.clearRelReq();
       if(r.related_requirement_id){
@@ -1535,7 +1661,12 @@ var App = {
     var text=el.value.trim();
     if(!text){this.notify('Please enter some text first.','warn');return;}
 
-    var oaiKey=localStorage.getItem('bizops_openai_key')||'';
+    var oaiKey='';
+    try{
+      var kr=await supaFetch('app_settings','?key=eq.openai_key&select=value');
+      oaiKey=(kr&&kr[0]&&kr[0].value)||'';
+    }catch(e2){}
+    if(!oaiKey) oaiKey=localStorage.getItem('bizops_openai_key')||'';
     if(!oaiKey){
       this.notify('OpenAI key not set. Go to Setup → Settings.','err');
       return;
@@ -3587,7 +3718,13 @@ var App = {
       'Score 1-10 (10=highest priority). Order by score descending.';
 
     try{
-      var oaiKey=localStorage.getItem('bizops_openai_key')||'';
+      // Load key from Supabase (shared) or localStorage (fallback)
+      var oaiKey='';
+      try{
+        var keyRow=await supaFetch('app_settings','?key=eq.openai_key&select=value');
+        oaiKey=(keyRow&&keyRow[0]&&keyRow[0].value)||'';
+      }catch(e2){}
+      if(!oaiKey) oaiKey=localStorage.getItem('bizops_openai_key')||'';
       if(!oaiKey){ throw new Error('OpenAI key not configured. Go to Setup → Settings to add your key.'); }
 
       // Use direct fetch - works from GitHub Pages (HTTPS)
@@ -3654,34 +3791,487 @@ var App = {
 
   shRender(){ this.shApply(); },
 
-  loadSettings(){
-    var inp=document.getElementById('openai-key-input');
-    var sts=document.getElementById('openai-key-status');
-    var key=localStorage.getItem('bizops_openai_key')||'';
-    if(inp) inp.value=key?'sk-...'+key.slice(-6):'';
-    if(sts) sts.textContent=key?'✅ Key saved ('+key.slice(0,8)+'...)':'No key configured yet.';
+  // ── BIZOPS AUTH ──────────────────────────────────────────────────────────────
+  BIZOPS_PWD_HASH: 'bizops2024ei', // simple shared secret — change as needed
+  _seenReqs: new Set(), // req IDs already seen by BizOps
+
+  isBizOps(){
+    return localStorage.getItem('bizops_auth')==='1';
   },
 
-  saveOpenAIKey(){
+  saveBizOpsPwd(){
+    var inp=document.getElementById('bizops-pwd-input');
+    var sts=document.getElementById('bizops-pwd-status');
+    var badge=document.getElementById('bizops-badge');
+    var val=(inp&&inp.value||'').trim();
+    if(val===this.BIZOPS_PWD_HASH){
+      localStorage.setItem('bizops_auth','1');
+      if(sts) sts.textContent='✅ BizOps access granted!';
+      if(inp) inp.value='';
+      if(badge) badge.style.display='inline-flex';
+      this.notify('✅ BizOps access granted!','ok');
+      this.renderTable(); // re-render to update badges
+    } else {
+      if(sts) sts.textContent='❌ Wrong password.';
+      this.notify('Wrong password.','err');
+    }
+  },
+
+  clearBizOpsPwd(){
+    localStorage.removeItem('bizops_auth');
+    var sts=document.getElementById('bizops-pwd-status');
+    var badge=document.getElementById('bizops-badge');
+    var inp=document.getElementById('bizops-pwd-input');
+    if(sts) sts.textContent='BizOps access removed.';
+    if(badge) badge.style.display='none';
+    if(inp) inp.value='';
+    this.notify('BizOps access removed.','ok');
+    this.renderTable();
+  },
+
+  async loadSeenReqs(){
+    try{
+      var rows=await supaFetch('req_seen','?select=roadmap_id');
+      this._seenReqs=new Set((rows||[]).map(function(r){return r.roadmap_id;}));
+      this._seenReqsLoaded=true;
+    }catch(e){
+      // Table might not exist yet - treat all as seen
+      this._seenReqs=new Set();
+      this._seenReqsLoaded=false;
+      console.warn('req_seen table not found - run new_features.sql');
+    }
+  },
+
+  async markReqSeen(reqId){
+    if(this._seenReqs.has(reqId)) return;
+    try{
+      await supaFetch('req_seen','',{method:'POST',body:{roadmap_id:reqId,seen_by:'bizops'}});
+      this._seenReqs.add(reqId);
+    }catch(e){ console.warn('markReqSeen error:',e.message); }
+  },
+
+  _seenReqsLoaded: false,
+
+  isNewReq(reqId){
+    // Only show NEW badge to BizOps users
+    if(!this.isBizOps()) return false;
+    // Don't show if not loaded yet
+    if(!this._seenReqsLoaded) return false;
+    // A req is NEW if not in seen set
+    return !this._seenReqs.has(reqId);
+  },
+
+  // ── SETTINGS ─────────────────────────────────────────────────────────────────
+  async loadSettings(){
+    // BizOps status
+    var badge=document.getElementById('bizops-badge');
+    var pwdSts=document.getElementById('bizops-pwd-status');
+    if(badge) badge.style.display=this.isBizOps()?'inline-flex':'none';
+    if(pwdSts) pwdSts.textContent=this.isBizOps()?'✅ BizOps access active.':'No BizOps access.';
+
+    // Databricks config from Supabase
+    try{
+      var dbRow=await supaFetch('app_settings','?key=like.db_%&select=key,value');
+      var dbMap={}; (dbRow||[]).forEach(function(r){dbMap[r.key]=r.value;});
+      var dh=document.getElementById('db-host-input');  if(dh) dh.value=dbMap['db_host']?'••••configured':'';
+      var dp=document.getElementById('db-path-input');  if(dp) dp.value=dbMap['db_path']?'••••configured':'';
+      var dt=document.getElementById('db-token-input'); if(dt) dt.value=dbMap['db_token']?'dapi••••••••':'';
+      var dc=document.getElementById('db-cat-input');   if(dc) dc.value=dbMap['db_cat']||'';
+      var ds=document.getElementById('db-sch-input');   if(ds) ds.value=dbMap['db_sch']||'';
+      var dbSts=document.getElementById('db-config-status');
+      if(dbSts) dbSts.textContent=dbMap['db_host']?'✅ Databricks configured':'Not configured yet.';
+      // Load into app vars
+      this.DB_HOST=dbMap['db_host']||''; this.DB_PATH=dbMap['db_path']||'';
+      this.DB_TOKEN=dbMap['db_token']||''; this.DB_CAT=dbMap['db_cat']||''; this.DB_SCH=dbMap['db_sch']||'';
+    }catch(e2){ console.warn('DB config load:',e2.message); }
+
+    // OpenAI key from Supabase
+    var inp=document.getElementById('openai-key-input');
+    var sts=document.getElementById('openai-key-status');
+    try{
+      var row=await supaFetch('app_settings','?key=eq.openai_key&select=value');
+      var key=(row&&row[0]&&row[0].value)||'';
+      if(inp) inp.value=key?'sk-...'+key.slice(-6):'';
+      if(sts) sts.textContent=key?'✅ Key configured (shared across users)':'No key configured yet.';
+    }catch(e){
+      if(sts) sts.textContent='Could not load key from database.';
+    }
+  },
+
+  async saveDbConfig(){
+    if(!this.isBizOps()){ this.notify('BizOps access required.','err'); return; }
+    var fields={
+      db_host: document.getElementById('db-host-input'),
+      db_path: document.getElementById('db-path-input'),
+      db_token: document.getElementById('db-token-input'),
+      db_cat:  document.getElementById('db-cat-input'),
+      db_sch:  document.getElementById('db-sch-input'),
+    };
+    var sts=document.getElementById('db-config-status');
+    try{
+      for(var key in fields){
+        var val=(fields[key]&&fields[key].value||'').trim();
+        if(!val||val.includes('•')) continue; // skip masked values
+        var existing=await supaFetch('app_settings','?key=eq.'+key+'&select=key');
+        if(existing&&existing.length){
+          await supaFetch('app_settings','?key=eq.'+key,{method:'PATCH',body:{value:val},prefer:'return=minimal'});
+        } else {
+          await supaFetch('app_settings','',{method:'POST',body:{key:key,value:val},prefer:'return=minimal'});
+        }
+        // Update app vars
+        if(key==='db_host') this.DB_HOST=val;
+        if(key==='db_path') this.DB_PATH=val;
+        if(key==='db_token') this.DB_TOKEN=val;
+        if(key==='db_cat') this.DB_CAT=val;
+        if(key==='db_sch') this.DB_SCH=val;
+      }
+      if(sts) sts.textContent='✅ Databricks config saved!';
+      this.notify('Databricks config saved! ✓','ok');
+    }catch(e){ this.notify('Error: '+e.message,'err'); }
+  },
+
+  async testDbConfig(){
+    var sts=document.getElementById('db-config-status');
+    if(sts) sts.textContent='🔌 Testing connection...';
+    try{
+      await this.dbQuery('SELECT 1 AS ok');
+      if(sts) sts.textContent='✅ Connection successful!';
+      this.notify('Databricks connected! ✓','ok');
+    }catch(e){
+      if(sts) sts.textContent='❌ Error: '+e.message;
+      this.notify('Connection failed: '+e.message,'err');
+    }
+  },
+
+  async saveOpenAIKey(){
+    if(!this.isBizOps()){ this.notify('BizOps access required to change this setting.','err'); return; }
     var inp=document.getElementById('openai-key-input');
     var sts=document.getElementById('openai-key-status');
     var val=(inp&&inp.value||'').trim();
     if(!val||val.startsWith('sk-...')){ this.notify('Paste your full OpenAI key first.','err'); return; }
-    localStorage.setItem('bizops_openai_key', val);
-    if(inp) inp.value='sk-...'+val.slice(-6);
-    if(sts) sts.textContent='✅ Key saved ('+val.slice(0,8)+'...)';
-    this.notify('OpenAI key saved! ✓','ok');
+    try{
+      // Try PATCH first (update), fallback to POST (insert)
+      var existing=await supaFetch('app_settings','?key=eq.openai_key&select=key');
+      if(existing&&existing.length){
+        await supaFetch('app_settings','?key=eq.openai_key',{method:'PATCH',body:{value:val,updated_at:new Date().toISOString()},prefer:'return=minimal'});
+      } else {
+        await supaFetch('app_settings','',{method:'POST',body:{key:'openai_key',value:val},prefer:'return=minimal'});
+      }
+      if(inp) inp.value='sk-...'+val.slice(-6);
+      if(sts) sts.textContent='✅ Key saved to database (shared).';
+      this.notify('OpenAI key saved! ✓','ok');
+    }catch(e){ this.notify('Error saving key: '+e.message,'err'); }
   },
 
-  clearOpenAIKey(){
-    localStorage.removeItem('bizops_openai_key');
-    var inp=document.getElementById('openai-key-input');
-    var sts=document.getElementById('openai-key-status');
-    if(inp) inp.value='';
-    if(sts) sts.textContent='Key removed.';
-    this.notify('OpenAI key removed.','ok');
+  async clearOpenAIKey(){
+    if(!this.isBizOps()){ this.notify('BizOps access required.','err'); return; }
+    try{
+      await supaFetch('app_settings','?key=eq.openai_key',{method:'DELETE',prefer:'return=minimal'});
+      var inp=document.getElementById('openai-key-input');
+      var sts=document.getElementById('openai-key-status');
+      if(inp) inp.value='';
+      if(sts) sts.textContent='Key removed.';
+      this.notify('OpenAI key removed.','ok');
+    }catch(e){ this.notify('Error: '+e.message,'err'); }
   },
 
+
+  // ── ANALYTICS AGENT ──────────────────────────────────────────────────────────
+  DB_HOST:  '',
+  DB_PATH:  '',
+  DB_TOKEN: '',
+  DB_CAT:   '',
+  DB_SCH:   '',
+  _chartInst: null,
+  _lastData:  [],
+  _lastCols:  [],
+  _chatHistory: [],
+
+  QUICK_QUESTIONS: [
+    'What tables are available?',
+    'Show top 10 opportunities by amount',
+    'Revenue by region this year',
+    'Show funnel conversion rates',
+    'Top KAMs by opportunity count',
+    'Orders by business org',
+  ],
+
+  async analyticsLoadConfig(){
+    try{
+      var rows=await supaFetch('app_settings','?key=like.db_%&select=key,value');
+      var m={}; (rows||[]).forEach(function(r){m[r.key]=r.value;});
+      if(m.db_host) this.DB_HOST=m.db_host;
+      if(m.db_path) this.DB_PATH=m.db_path;
+      if(m.db_token) this.DB_TOKEN=m.db_token;
+      if(m.db_cat) this.DB_CAT=m.db_cat;
+      if(m.db_sch) this.DB_SCH=m.db_sch;
+    }catch(e){ console.warn('analyticsLoadConfig:',e.message); }
+  },
+
+  async analyticsInit(){
+    await this.analyticsLoadConfig();
+    // Render quick questions
+    var qb = document.getElementById('analytics-quick-btns');
+    if(qb) qb.innerHTML = this.QUICK_QUESTIONS.map(function(q){
+      var btn=document.createElement('button');
+      btn.textContent=q;
+      btn.dataset.q=q;
+      btn.style.cssText='text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:11px;cursor:pointer;color:var(--text);font-family:var(--font);transition:background .15s;width:100%';
+      btn.onmouseover=function(){this.style.background='var(--accentlight)';};
+      btn.onmouseout=function(){this.style.background='var(--surface2)';};
+      btn.onclick=function(){App.analyticsAskQ(this.dataset.q);};
+      return btn.outerHTML;
+    }).join('');
+    // Test connection
+    var sts = document.getElementById('db-status');
+    if(sts) sts.textContent = '🟡 Connecting...';
+    try{
+      await this.dbQuery('SELECT 1 AS ok');
+      if(sts) sts.textContent = '🟢 Connected to Databricks';
+    }catch(e){
+      if(sts) sts.textContent = '🔴 Connection error: '+e.message;
+    }
+  },
+
+  async dbQuery(sql){
+    // Databricks SQL Statement API
+    var url = 'https://'+this.DB_HOST+'/api/2.0/sql/statements';
+    var resp = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer '+this.DB_TOKEN,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        statement: sql,
+        warehouse_id: this.DB_PATH.split('/').pop(),
+        catalog: this.DB_CAT,
+        schema: this.DB_SCH,
+        wait_timeout: '30s',
+        on_wait_timeout: 'CANCEL'
+      })
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    var data = await resp.json();
+    if(data.status && data.status.state === 'FAILED'){
+      throw new Error(data.status.error&&data.status.error.message||'Query failed');
+    }
+    // Extract columns and rows
+    var cols = (data.manifest&&data.manifest.schema&&data.manifest.schema.columns||[]).map(function(c){return c.name;});
+    var rows = (data.result&&data.result.data_array||[]).map(function(row){
+      var obj = {};
+      cols.forEach(function(c,i){ obj[c] = row[i]; });
+      return obj;
+    });
+    return {cols: cols, rows: rows};
+  },
+
+  async analyticsShowTables(){
+    var sql = 'SHOW TABLES IN '+this.DB_CAT+'.'+this.DB_SCH;
+    this.analyticsAddMsg('user', 'Show all available tables');
+    try{
+      var res = await this.dbQuery(sql);
+      var names = res.rows.map(function(r){ return r.tableName||r.table_name||Object.values(r)[1]||''; });
+      var msg = '📋 Available tables ('+names.length+'):<br><br>'+names.map(function(n,i){ return (i+1)+'. '+n; }).join('<br>');
+      this.analyticsAddMsg('agent', msg);
+    }catch(e){
+      this.analyticsAddMsg('agent', '❌ Error: '+e.message);
+    }
+  },
+
+  analyticsAskQ(q){
+    var inp = document.getElementById('analytics-input');
+    if(inp) inp.value = q;
+    this.analyticsAsk();
+  },
+
+  async analyticsAsk(){
+    var inp = document.getElementById('analytics-input');
+    var q = (inp&&inp.value||'').trim();
+    if(!q) return;
+    if(inp) inp.value = '';
+
+    // Get OpenAI key
+    var oaiKey = '';
+    try{
+      var kr = await supaFetch('app_settings','?key=eq.openai_key&select=value');
+      oaiKey = (kr&&kr[0]&&kr[0].value)||'';
+    }catch(e2){}
+    if(!oaiKey) oaiKey = localStorage.getItem('bizops_openai_key')||'';
+    if(!oaiKey){
+      this.analyticsAddMsg('agent','⚠️ OpenAI key not configured. Go to Setup → Settings.');
+      return;
+    }
+
+    this.analyticsAddMsg('user', q);
+    var thinkId = this.analyticsAddMsg('agent', '⏳ Thinking...', true);
+
+    try{
+      // Step 1: Ask GPT to generate SQL
+      var tables2='ei_general_funnel,ei_region_level,ei_business_org,opportunity_order_booking,ei_salesteam_opportunity,ei_new_logo,ei_bg_new_logo,ei_potential_new_logo,opportunity_by_kam,book_and_bill_product,ei_bm_new_logo,cloud_funnel_out_ei,winrate_customer_year,ei_mag_bu_sap_sfdc';
+      var systemPrompt='You are a SQL expert for Databricks. Catalog: '+this.DB_CAT+', Schema: '+this.DB_SCH+'. Available commops_ tables: '+tables2+'. Rules: 1) Full name qa_wb.saasfactory.commops_TABLE 2) Max 50 rows 3) Return ONLY SQL no markdown 4) Non-data questions: reply NOT_SQL: answer';
+
+      var msgs = [
+        {role:'system', content: systemPrompt},
+        {role:'user', content: q}
+      ];
+
+      var gptResp = await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+        body: JSON.stringify({model:'gpt-4o-mini', max_tokens:500, temperature:0.1, messages:msgs})
+      });
+      var gptData = await gptResp.json();
+      if(gptData.error) throw new Error(gptData.error.message);
+      var sql = gptData.choices[0].message.content.trim();
+
+      // Not a data question
+      if(sql.startsWith('NOT_SQL:')){
+        this.analyticsUpdateMsg(thinkId, sql.replace('NOT_SQL:','').trim());
+        return;
+      }
+
+      // Clean SQL
+      sql = sql.replace(/```sql|```/gi,'').trim();
+
+      // Step 2: Execute SQL on Databricks
+      this.analyticsUpdateMsg(thinkId, '🔍 Running query...');
+      var res = await this.dbQuery(sql);
+      this._lastData = res.rows;
+      this._lastCols = res.cols;
+
+      // Step 3: Ask GPT to interpret results
+      var dataPreview = JSON.stringify(res.rows.slice(0,10));
+      var interpResp = await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+        body: JSON.stringify({
+          model:'gpt-4o-mini', max_tokens:400, temperature:0.3,
+          messages:[
+            {role:'system', content:'You are a business analyst. Interpret query results concisely in 2-4 sentences. Use numbers and percentages. Be direct.'},
+            {role:'user', content:'Question: '+q+' SQL: '+sql+' Results sample: '+dataPreview+' Total: '+res.rows.length}
+          ]
+        })
+      });
+      var interpData = await interpResp.json();
+      var insight = interpData.choices[0].message.content.trim();
+
+      // Display
+      var resultHtml = insight + '<br><br>📊 <strong>'+res.rows.length+' rows returned</strong>';
+      this.analyticsUpdateMsg(thinkId, resultHtml);
+
+      // Show chart and export if data available
+      if(res.rows.length > 0){
+        this.analyticsRenderChart(res.cols, res.rows, 'bar');
+        var eb = document.getElementById('analytics-export-box');
+        if(eb) eb.style.display = '';
+      }
+
+    }catch(e){
+      this.analyticsUpdateMsg(thinkId, '❌ Error: '+e.message);
+    }
+  },
+
+  analyticsAddMsg(role, text, returnId){
+    var chat = document.getElementById('analytics-chat');
+    if(!chat) return;
+    var id = 'msg-'+Date.now();
+    var isUser = role==='user';
+    var div = document.createElement('div');
+    div.id = id;
+    div.style.cssText = 'display:flex;gap:10px;margin-bottom:14px;'+(isUser?'flex-direction:row-reverse':'');
+    var avatar = isUser ? '👤' : '🤖';
+    var bubbleStyle = isUser
+      ? 'background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px 12px 4px 12px;font-size:13px;max-width:80%'
+      : 'background:var(--surface2);border:1px solid var(--border);padding:10px 14px;border-radius:12px 12px 12px 4px;font-size:13px;max-width:85%;white-space:pre-wrap';
+    div.innerHTML =
+      '<div style="font-size:20px;flex-shrink:0;margin-top:4px">'+avatar+'</div>'+
+      '<div style="'+bubbleStyle+'">'+this.analyticsFormatMsg(text)+'</div>';
+    // Remove welcome screen if present
+    var welcome = chat.querySelector('[style*="text-align:center"]');
+    if(welcome) welcome.remove();
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    if(returnId) return id;
+  },
+
+  analyticsUpdateMsg(id, text){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var bubble = el.querySelector('div:last-child');
+    if(bubble) bubble.innerHTML = this.analyticsFormatMsg(text);
+    var chat = document.getElementById('analytics-chat');
+    if(chat) chat.scrollTop = chat.scrollHeight;
+  },
+
+  analyticsFormatMsg(text){
+    return text
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/`(.+?)`/g,'<code style="background:rgba(0,0,0,.1);padding:1px 4px;border-radius:3px;font-size:11px">$1</code>')
+      .replace(/\n/g,'<br>');
+  },
+
+  analyticsRenderChart(cols, rows, type){
+    var box = document.getElementById('analytics-chart-box');
+    if(box) box.style.display = '';
+    var canvas = document.getElementById('analytics-chart');
+    if(!canvas) return;
+    if(this._chartInst){ this._chartInst.destroy(); this._chartInst=null; }
+
+    // Auto-detect label col (first string col) and value col (first number col)
+    var labelCol = cols[0];
+    var valCol = cols.find(function(c,i){ return i>0; }) || cols[1];
+
+    var labels = rows.map(function(r){ return String(r[labelCol]||'').substring(0,20); });
+    var values = rows.map(function(r){ return parseFloat(r[valCol])||0; });
+
+    var colors = labels.map(function(_,i){
+      var hue = (i*47)%360;
+      return 'hsl('+hue+',65%,55%)';
+    });
+
+    this._chartInst = new Chart(canvas, {
+      type: type||'bar',
+      data: {
+        labels: labels,
+        datasets:[{label: valCol, data: values, backgroundColor: colors, borderColor: colors, borderWidth:1}]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:type==='pie'}, tooltip:{callbacks:{
+          label: function(ctx){ return ctx.dataset.label+': '+Number(ctx.parsed.y||ctx.parsed||0).toLocaleString(); }
+        }}},
+        scales: type!=='pie' ? {y:{beginAtZero:true, ticks:{callback:function(v){return Number(v).toLocaleString();}}}} : {}
+      }
+    });
+  },
+
+  analyticsChartType(type){
+    if(this._lastData.length) this.analyticsRenderChart(this._lastCols, this._lastData, type);
+  },
+
+  analyticsExportExcel(){
+    if(!this._lastData.length){ this.notify('No data to export.','warn'); return; }
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.json_to_sheet(this._lastData);
+    XLSX.utils.book_append_sheet(wb, ws, 'Analytics');
+    XLSX.writeFile(wb, 'bizops_analytics_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    this.notify('Excel exported! ✓','ok');
+  },
+
+  analyticsClearChat(){
+    var chat = document.getElementById('analytics-chat');
+    if(chat) chat.innerHTML =
+      '<div style="text-align:center;padding:40px 20px;color:var(--dim)">'+
+        '<div style="font-size:32px;margin-bottom:8px">🤖</div>'+
+        '<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">CommOps Analytics Agent</div>'+
+        '<div style="font-size:12px">Ask me anything about your CommOps data.</div>'+
+      '</div>';
+    var eb=document.getElementById('analytics-export-box'); if(eb) eb.style.display='none';
+    var cb=document.getElementById('analytics-chart-box'); if(cb) cb.style.display='none';
+    if(this._chartInst){ this._chartInst.destroy(); this._chartInst=null; }
+    this._lastData=[]; this._lastCols=[];
+  },
 
   badge(s){
     if(!s) return '';
