@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-15 00:56 -->
+<!-- v2026-05-18 11:23 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1247,7 +1247,15 @@ var App = {
     }
     if(name==='dashboard') this.renderDash();
     if(name==='developers') this.renderDeveloperGrid();
-    if(name==='development') this.loadDevTasks();
+    if(name==='development'){
+      var self2=this;
+      setTimeout(function(){
+        self2.populateDevReqSelect();
+        var sel=document.getElementById('devReqSelect');
+        if(sel&&self2.currentReqId) sel.value=self2.currentReqId;
+        self2.loadDevTasks();
+      },50);
+    }
     if(name==='dashboards') this.loadDashboards();
     if(name==='settings') App.loadSettings();
     if(name==='stakeholder'){
@@ -1570,22 +1578,27 @@ var App = {
 
   // ── DEVELOPMENT TAB ─────────────────────────────────────────────────────────
   goToDev(reqId){
+    this.currentReqId = reqId; // set BEFORE tab switch
     this.tab('development');
-    // Ensure select is populated and value is set
-    var sel = document.getElementById('devReqSelect');
-    if(!sel) return;
-    // Repopulate select if needed
-    this.populateDevReqSelect();
-    sel.value = reqId;
-    // Force load
-    this.currentReqId = reqId;
-    this.loadDevTasks();
+    var self = this;
+    // Populate select and set value after tab renders
+    setTimeout(function(){
+      self.populateDevReqSelect();
+      var sel = document.getElementById('devReqSelect');
+      if(sel) sel.value = reqId;
+      self.loadDevTasks(reqId);
+    }, 50);
   },
 
-  async loadDevTasks(){
+  async loadDevTasks(forceReqId){
     var sel=document.getElementById('devReqSelect');
-    var reqId=sel&&sel.value?parseInt(sel.value):null;
+    // Use forceReqId if provided, otherwise read from select
+    var reqId=forceReqId||( sel&&sel.value?parseInt(sel.value):null );
+    // Keep currentReqId if already set and select is empty (tab switch race condition)
+    if(!reqId && this.currentReqId) reqId=this.currentReqId;
     this.currentReqId=reqId||null;
+    // Sync select to match
+    if(sel && reqId && sel.value!=String(reqId)) sel.value=reqId;
     var addBtn=document.getElementById('addDevTaskBtn');
     var infoDiv=document.getElementById('devReqInfo');
     var container=document.getElementById('devTasksContainer');
@@ -1659,7 +1672,7 @@ var App = {
 
   // DEV TASK MODAL
   openDevTaskModal(id){
-    this.editingDevTaskId=id;
+    this.editingDevTaskId=id?parseInt(id):null;
     document.getElementById('devTaskTitle').textContent=id?'Edit Developer Task':'Add Developer Task';
     if(!id){
       document.getElementById('dt-developer_id').value='';
@@ -1779,7 +1792,10 @@ var App = {
     btn.innerHTML='<span class="spinner"></span> Saving...'; btn.disabled=true;
     try{
       if(this.editingDevTaskId){
-        await supaFetch('dev_tasks','?id=eq.'+this.editingDevTaskId,{method:'PATCH',body:rec,prefer:'return=minimal'});
+        // Don't send roadmap_id in PATCH (it's the key, not updatable)
+        var patchRec=Object.assign({},rec);
+        delete patchRec.roadmap_id;
+        await supaFetch('dev_tasks','?id=eq.'+this.editingDevTaskId,{method:'PATCH',body:patchRec,prefer:'return=minimal'});
         this.notify('Task updated! ✓','ok');
       } else {
         await supaFetch('dev_tasks','',{method:'POST',body:rec});
@@ -1793,9 +1809,11 @@ var App = {
         await this.checkValidationTask(this.currentReqId, closedDate);
       }
 
-      await this.loadDevTasks();
+      var savedReqId = this.currentReqId; // preserve before load()
       await this.loadDevEffortMap();
       await this.load();
+      this.currentReqId = savedReqId; // restore after load()
+      await this.loadDevTasks(savedReqId);
     }catch(e){this.notify('Error: '+e.message,'err');}
     finally{btn.innerHTML='💾 Save';btn.disabled=false;}
   },
