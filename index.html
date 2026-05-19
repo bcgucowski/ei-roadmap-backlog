@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-19 12:07 -->
+<!-- v2026-05-19 13:13 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -3873,17 +3873,23 @@ var App = {
 
     // Databricks config from Supabase
     try{
-      var dbRow=await supaFetch('app_settings','?key=like.db_%&select=key,value');
+      var dbRow=await supaFetch('app_settings','?select=key,value');
       var dbMap={}; (dbRow||[]).forEach(function(r){dbMap[r.key]=r.value;});
+      // Show real values in fields (so Test Connection works without re-typing)
       var dp2=document.getElementById('db-proxy-input'); if(dp2) dp2.value=dbMap['db_proxy']||'';
-      var dh=document.getElementById('db-host-input');  if(dh) dh.value=dbMap['db_host']?'••••configured':'';
-      var dp=document.getElementById('db-path-input');  if(dp) dp.value=dbMap['db_path']?'••••configured':'';
-      var dt=document.getElementById('db-token-input'); if(dt) dt.value=dbMap['db_token']?'dapi••••••••':'';
-      var dc=document.getElementById('db-cat-input');   if(dc) dc.value=dbMap['db_cat']||'';
-      var ds=document.getElementById('db-sch-input');   if(ds) ds.value=dbMap['db_sch']||'';
+      var dh=document.getElementById('db-host-input');   if(dh) dh.value=dbMap['db_host']||'';
+      var dp=document.getElementById('db-path-input');   if(dp) dp.value=dbMap['db_path']||'';
+      var dc=document.getElementById('db-cat-input');    if(dc) dc.value=dbMap['db_cat']||'';
+      var ds=document.getElementById('db-sch-input');    if(ds) ds.value=dbMap['db_sch']||'';
+      // Token: show masked but store real value in data attribute
+      var dt=document.getElementById('db-token-input');
+      if(dt){
+        dt.value=dbMap['db_token']?'dapi••••••••••••••••':'';
+        dt.dataset.real=dbMap['db_token']||'';
+      }
       var dbSts=document.getElementById('db-config-status');
       if(dbSts) dbSts.textContent=dbMap['db_host']?'✅ Databricks configured':'Not configured yet.';
-      // Load into app vars
+      // Load into app vars immediately
       this.DB_PROXY=dbMap['db_proxy']||''; this.DB_HOST=dbMap['db_host']||''; this.DB_PATH=dbMap['db_path']||'';
       this.DB_TOKEN=dbMap['db_token']||''; this.DB_CAT=dbMap['db_cat']||''; this.DB_SCH=dbMap['db_sch']||'';
     }catch(e2){ console.warn('DB config load:',e2.message); }
@@ -3925,7 +3931,7 @@ var App = {
         // Update app vars
         if(key==='db_host') this.DB_HOST=val;
         if(key==='db_path') this.DB_PATH=val;
-        if(key==='db_token') this.DB_TOKEN=val;
+        if(key==='db_token'){ this.DB_TOKEN=val; var ti=document.getElementById('db-token-input'); if(ti) ti.dataset.real=val; }
         if(key==='db_cat') this.DB_CAT=val;
         if(key==='db_sch') this.DB_SCH=val;
       }
@@ -3936,13 +3942,22 @@ var App = {
 
   async testDbConfig(){
     var sts=document.getElementById('db-config-status');
-    if(sts) sts.textContent='🔌 Testing connection...';
+    // Read directly from inputs (don't rely on DB_PROXY being loaded)
+    var pv=document.getElementById('db-proxy-input'); if(pv&&pv.value&&!pv.value.includes('•')) this.DB_PROXY=pv.value.trim();
+    var hv=document.getElementById('db-host-input');  if(hv&&hv.value&&!hv.value.includes('•')) this.DB_HOST=hv.value.trim();
+    var pth=document.getElementById('db-path-input'); if(pth&&pth.value&&!pth.value.includes('•')) this.DB_PATH=pth.value.trim();
+    var tv=document.getElementById('db-token-input'); if(tv){ var tok=tv.value.includes('•')?(tv.dataset.real||this.DB_TOKEN):tv.value.trim(); if(tok) this.DB_TOKEN=tok; }
+    var cv=document.getElementById('db-cat-input');   if(cv&&cv.value) this.DB_CAT=cv.value.trim();
+    var sv=document.getElementById('db-sch-input');   if(sv&&sv.value) this.DB_SCH=sv.value.trim();
+    // If still empty, load from DB
+    if(!this.DB_PROXY) await this.analyticsLoadConfig();
+    if(sts) sts.textContent='🔌 Testing...';
     try{
       await this.dbQuery('SELECT 1 AS ok');
-      if(sts) sts.textContent='✅ Connection successful!';
+      if(sts) sts.textContent='✅ Connected!';
       this.notify('Databricks connected! ✓','ok');
     }catch(e){
-      if(sts) sts.textContent='❌ Error: '+e.message;
+      if(sts) sts.textContent='❌ '+e.message;
       this.notify('Connection failed: '+e.message,'err');
     }
   },
@@ -4002,7 +4017,7 @@ var App = {
 
   async analyticsLoadConfig(){
     try{
-      var rows=await supaFetch('app_settings','?key=like.db_%&select=key,value');
+      var rows=await supaFetch('app_settings','?select=key,value');
       var m={}; (rows||[]).forEach(function(r){m[r.key]=r.value;});
       if(m.db_proxy) this.DB_PROXY=m.db_proxy;
       if(m.db_host) this.DB_HOST=m.db_host;
