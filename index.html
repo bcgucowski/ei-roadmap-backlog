@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-19 11:59 -->
+<!-- v2026-05-19 12:07 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -681,6 +681,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">⚡ Databricks Connection</div>
         <div style="font-size:12px;color:var(--dim);margin-bottom:12px">Stored securely in the database. <strong>BizOps access required.</strong></div>
         <div style="display:flex;flex-direction:column;gap:8px">
+          <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">Proxy URL (Cloudflare Worker)</label>
+            <input type="text" id="db-proxy-input" class="fctrl" placeholder="https://your-worker.workers.dev" style="font-size:12px"></div>
           <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">Server Hostname</label>
             <input type="text" id="db-host-input" class="fctrl" placeholder="adb-XXXX.azuredatabricks.net" style="font-size:12px"></div>
           <div><label style="font-size:11px;color:var(--dim);display:block;margin-bottom:3px">HTTP Path</label>
@@ -3873,6 +3875,7 @@ var App = {
     try{
       var dbRow=await supaFetch('app_settings','?key=like.db_%&select=key,value');
       var dbMap={}; (dbRow||[]).forEach(function(r){dbMap[r.key]=r.value;});
+      var dp2=document.getElementById('db-proxy-input'); if(dp2) dp2.value=dbMap['db_proxy']||'';
       var dh=document.getElementById('db-host-input');  if(dh) dh.value=dbMap['db_host']?'••••configured':'';
       var dp=document.getElementById('db-path-input');  if(dp) dp.value=dbMap['db_path']?'••••configured':'';
       var dt=document.getElementById('db-token-input'); if(dt) dt.value=dbMap['db_token']?'dapi••••••••':'';
@@ -3881,7 +3884,7 @@ var App = {
       var dbSts=document.getElementById('db-config-status');
       if(dbSts) dbSts.textContent=dbMap['db_host']?'✅ Databricks configured':'Not configured yet.';
       // Load into app vars
-      this.DB_HOST=dbMap['db_host']||''; this.DB_PATH=dbMap['db_path']||'';
+      this.DB_PROXY=dbMap['db_proxy']||''; this.DB_HOST=dbMap['db_host']||''; this.DB_PATH=dbMap['db_path']||'';
       this.DB_TOKEN=dbMap['db_token']||''; this.DB_CAT=dbMap['db_cat']||''; this.DB_SCH=dbMap['db_sch']||'';
     }catch(e2){ console.warn('DB config load:',e2.message); }
 
@@ -3901,6 +3904,7 @@ var App = {
   async saveDbConfig(){
     if(!this.isBizOps()){ this.notify('BizOps access required.','err'); return; }
     var fields={
+      db_proxy: document.getElementById('db-proxy-input'),
       db_host: document.getElementById('db-host-input'),
       db_path: document.getElementById('db-path-input'),
       db_token: document.getElementById('db-token-input'),
@@ -4000,6 +4004,7 @@ var App = {
     try{
       var rows=await supaFetch('app_settings','?key=like.db_%&select=key,value');
       var m={}; (rows||[]).forEach(function(r){m[r.key]=r.value;});
+      if(m.db_proxy) this.DB_PROXY=m.db_proxy;
       if(m.db_host) this.DB_HOST=m.db_host;
       if(m.db_path) this.DB_PATH=m.db_path;
       if(m.db_token) this.DB_TOKEN=m.db_token;
@@ -4033,35 +4038,34 @@ var App = {
     }
   },
 
+  DB_PROXY: '', // Cloudflare Worker URL
+
   async dbQuery(sql){
-    // Databricks SQL Statement API
-    var url = 'https://'+this.DB_HOST+'/api/2.0/sql/statements';
-    var resp = await fetch(url, {
+    var proxyUrl = this.DB_PROXY;
+    if(!proxyUrl){ throw new Error('Proxy URL not configured. Go to Setup → Settings.'); }
+    if(!this.DB_TOKEN){ throw new Error('Databricks token not configured. Go to Setup → Settings.'); }
+
+    var resp = await fetch(proxyUrl, {
       method: 'POST',
-      headers: {
-        'Authorization': 'Bearer '+this.DB_TOKEN,
-        'Content-Type': 'application/json'
-      },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        statement: sql,
+        host:         this.DB_HOST,
+        token:        this.DB_TOKEN,
+        sql:          sql,
         warehouse_id: this.DB_PATH.split('/').pop(),
-        catalog: this.DB_CAT,
-        schema: this.DB_SCH,
-        wait_timeout: '30s',
-        on_wait_timeout: 'CANCEL'
+        catalog:      this.DB_CAT,
+        schema:       this.DB_SCH,
       })
     });
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    if(!resp.ok) throw new Error('Proxy HTTP '+resp.status);
     var data = await resp.json();
+    if(data.error) throw new Error(data.error);
     if(data.status && data.status.state === 'FAILED'){
       throw new Error(data.status.error&&data.status.error.message||'Query failed');
     }
-    // Extract columns and rows
     var cols = (data.manifest&&data.manifest.schema&&data.manifest.schema.columns||[]).map(function(c){return c.name;});
     var rows = (data.result&&data.result.data_array||[]).map(function(row){
-      var obj = {};
-      cols.forEach(function(c,i){ obj[c] = row[i]; });
-      return obj;
+      var obj = {}; cols.forEach(function(c,i){ obj[c]=row[i]; }); return obj;
     });
     return {cols: cols, rows: rows};
   },
