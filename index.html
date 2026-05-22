@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-19 13:13 -->
+<!-- v2026-05-22 00:34 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -61,8 +61,8 @@ body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
 .nav-dropdown-item.active{color:var(--accent);background:var(--accentlight)}
 .ntab{background:none;border:none;color:var(--dim);font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
 .ntab:hover{color:var(--text)}.ntab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.app{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 20px 20px}
-.page{display:none}.page.active{display:block}
+.app{flex:1;overflow-y:auto;overflow-x:hidden;padding:0}
+.page{display:none}.page.active{display:block;padding:16px 20px 20px}#page-analysis.active{display:flex;padding:0}#page-analysis.active{display:flex}
 .btn{border:none;font-family:var(--font);font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--radius-sm);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover:not(:disabled){opacity:.88}
@@ -311,14 +311,16 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <button class="ntab"        id="tab-timeline"    onclick="App.tab('timeline')">🗓️ Dev Timeline</button>
   <button class="ntab" id="tab-stakeholder" onclick="App.tab('stakeholder')">👥 Stakeholder</button>
   <button class="ntab" id="tab-analytics" onclick="App.tab('analytics')">🤖 Analytics</button>
+  <button class="ntab" id="tab-analysis"  onclick="App.tab('analysis')">📊 Analysis</button>
   <div class="nav-dropdown" id="nav-dropdown-cadastros">
     <button class="nav-dropdown-btn" id="tab-cadastros" onclick="App.toggleSetupMenu()">
       ⚙️ Setup <span class="arrow">▼</span>
     </button>
     <div class="nav-dropdown-menu" id="cadastros-menu">
-      <button class="nav-dropdown-item" id="tab-developers" onclick="App.tab('developers')">👥 Developers</button>
-      <button class="nav-dropdown-item" id="tab-dashboards" onclick="App.tab('dashboards')">📊 Dashboards</button>
-      <button class="nav-dropdown-item" id="tab-settings"   onclick="App.tab('settings')">⚙️ Settings</button>
+      <button class="nav-dropdown-item" id="tab-developers"   onclick="App.tab('developers')">👥 Developers</button>
+      <button class="nav-dropdown-item" id="tab-dashboards"   onclick="App.tab('dashboards')">📊 Dashboards</button>
+      <button class="nav-dropdown-item" id="tab-savedqueries" onclick="App.tab('savedqueries')">🗄️ Saved Queries</button>
+      <button class="nav-dropdown-item" id="tab-settings"     onclick="App.tab('settings')">⚙️ Settings</button>
     </div>
   </div>
 </div>
@@ -340,6 +342,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
       <label id="new-filter-wrap" style="display:none;align-items:center;gap:4px;font-size:12px;cursor:pointer;background:linear-gradient(135deg,#f59e0b22,#ef444422);border:1px solid #f59e0b55;border-radius:var(--radius-sm);padding:3px 10px">
         <input type="checkbox" id="filter-new-only" onchange="App.filter()"> 🆕 New only
       </label>
+      <label id="filter-priority-wrap" style="display:none;font-size:12px;cursor:pointer;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);border-radius:var(--radius-sm);padding:3px 10px;align-items:center;gap:4px"><input type="checkbox" id="filter-priority" onchange="App.filter()"> 🚩 Priority requests</label>
       <div style="flex:1"></div>
       <button class="btn btn-ghost btn-sm" onclick="App.refreshData()">↻ Refresh</button>
     </div>
@@ -461,19 +464,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
     <!-- FILTERS -->
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
       <span style="font-size:12px;font-weight:600;color:var(--dim)">Filter:</span>
-      <div style="position:relative">
-        <button id="sh-req-btn" onclick="App.shToggle(event)"
-          style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-size:12px;cursor:pointer;font-family:var(--font);color:var(--text)">
-          👤 Requester: <span id="sh-req-lbl">All</span> ▾</button>
-        <div id="sh-req-dd" onclick="event.stopPropagation()"
-          style="display:none;position:absolute;top:calc(100% + 2px);left:0;z-index:600;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-width:200px;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.25)">
-          <div style="padding:5px 10px;border-bottom:1px solid var(--border);display:flex;gap:8px">
-            <button onclick="App.shSelAll()" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer">All</button>
-            <button onclick="App.shSelNone()" style="font-size:11px;color:var(--dim);background:none;border:none;cursor:pointer">None</button>
-          </div>
-          <div id="sh-req-opts"></div>
-        </div>
-      </div>
+      <div class="ms-wrap" id="ms-sh-requester"></div>
       <span style="font-size:11px;color:var(--dim)">|</span>
       <span style="font-size:12px;font-weight:600;color:var(--dim)">Status:</span>
       <label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="sh-cb-develop"    checked onchange="App.shApply()"> Develop</label>
@@ -495,14 +486,14 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
       <div id="sh-tl" style="height:260px;overflow-y:scroll;overflow-x:auto;padding:8px 14px"></div>
     </div>
 
-    <!-- OTHER REQUIREMENTS TABLE — fixed 280px, always scrollable -->
+    <!-- OTHER REQUIREMENTS TABLE -->
     <div style="border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);overflow:hidden">
       <div style="padding:7px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
         <span id="sh-q-title" style="font-size:12px;font-weight:700">📋 Other Requirements <span id="sh-q-cnt" style="font-size:11px;font-weight:400;color:var(--dim)"></span></span>
         <span style="font-size:11px;color:var(--dim)">Stage → Priority → Expected Date</span>
       </div>
-      <div style="height:260px;overflow-y:scroll;overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <div style="max-height:420px;overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:700px">
           <thead style="position:sticky;top:0;z-index:2;background:var(--surface)">
             <tr>
               <th style="padding:5px 10px;text-align:center;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:40px">Pos</th>
@@ -512,10 +503,11 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
               <th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:75px">Priority</th>
               <th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:90px">Expected</th>
               <th style="padding:5px 10px;text-align:left;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:100px">Requester</th>
+              <th style="padding:5px 10px;text-align:center;font-size:11px;color:var(--dim);border-bottom:1px solid var(--border);width:120px;position:sticky;right:0;background:var(--surface);z-index:2;box-shadow:-2px 0 4px rgba(0,0,0,.06)">Priority Flag</th>
             </tr>
           </thead>
           <tbody id="sh-q-body">
-            <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dim)">Loading...</td></tr>
+            <tr><td colspan="8" style="text-align:center;padding:20px;color:var(--dim)">Loading...</td></tr>
           </tbody>
         </table>
       </div>
@@ -527,18 +519,23 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <!-- ANALYTICS PAGE -->
   <div class="page" id="page-analytics">
 
-    <!-- Header -->
+    <!-- Header with sub-tabs -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div>
-        <div style="font-size:15px;font-weight:700">🤖 Analytics Agent</div>
-        <div style="font-size:12px;color:var(--dim)">Ask questions about CommOps data in Databricks</div>
+      <div style="display:flex;gap:4px">
+        <button id="atab-agent" onclick="App.analyticsSubTab('agent')"
+          style="padding:6px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:var(--font);background:var(--accent);color:#fff">
+          🤖 Agent
+        </button>
+        
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <span id="db-status" style="font-size:11px;color:var(--dim)">⚪ Not connected</span>
         <button class="btn btn-ghost btn-sm" onclick="App.analyticsClearChat()">🗑️ Clear</button>
         <button class="btn btn-ghost btn-sm" onclick="App.analyticsShowTables()">📋 Tables</button>
+        <button class="btn btn-ghost btn-sm" onclick="App.analyticsDiscoverSchema()">🔍 Schema</button>
       </div>
     </div>
+
 
     <!-- Chat area -->
     <div style="display:flex;gap:12px;height:calc(100vh - 200px)">
@@ -591,6 +588,143 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
       </div>
     </div>
   </div>
+
+  <!-- ── SAVED QUERIES PAGE (in Setup) ── -->
+  <div class="page" id="page-savedqueries" style="padding-bottom:40px">
+    <div style="margin:-16px -20px 16px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:15px;font-weight:700">🗄️ Query Manager</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:2px">Create and manage SQL queries — run them in the Analysis tab</div>
+      </div>
+    </div>
+
+    <!-- Top: list + form side by side -->
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-start;max-height:none">
+
+      <!-- Left: list -->
+      <div style="flex:1;min-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:12px;font-weight:700">📋 Queries</span>
+          <button onclick="App.sqNew()" class="btn btn-primary" style="padding:4px 12px;font-size:11px">+ New</button>
+        </div>
+        <div id="sq-list" style="max-height:280px;overflow-y:auto">
+          <div style="padding:12px;font-size:12px;color:var(--dim)">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div style="flex:2;min-width:320px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:12px" id="sq-form-title">✏️ New Query</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div>
+            <label style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px">Title *</label>
+            <input id="sq-title" placeholder="e.g. Sales Team by Region"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:var(--font);outline:none">
+          </div>
+          <div>
+            <label style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px">Owner</label>
+            <input id="sq-owner" placeholder="e.g. Mahriban"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:var(--font);outline:none">
+          </div>
+        </div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px">Description</label>
+          <input id="sq-desc" placeholder="What does this query show?"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:var(--font);outline:none">
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px">SQL Query *</label>
+          <textarea id="sq-sql" rows="6" placeholder="SELECT ..."
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--text);font-family:var(--mono,monospace);outline:none;resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="App.sqSave()" class="btn btn-primary" style="font-size:12px">💾 Save Query</button>
+          <button onclick="App.sqNew()" class="btn btn-ghost" style="font-size:12px">✕ Clear</button>
+          <button onclick="App.sqDelete()" id="sq-delete-btn" class="btn btn-ghost" style="font-size:12px;display:none;color:var(--red)">🗑 Delete</button>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+  <!-- ── ANALYSIS PAGE ── -->
+  <div class="page" id="page-analysis" style="flex-direction:column;margin:-16px -20px -20px;height:calc(100vh - 98px);gap:0;padding:0;overflow:hidden">
+
+    <!-- TOP BAR: query selector -->
+    <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;flex-shrink:0">
+      <div style="flex:1;min-width:200px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);display:block;margin-bottom:4px">SELECT QUERY</label>
+        <select id="an-select" onchange="App.anOnSelect()"
+          style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text);font-family:var(--font);outline:none">
+          <option value="">-- Choose a saved query --</option>
+        </select>
+      </div>
+      <button onclick="App.anRun()" class="btn btn-primary" id="an-run-btn" disabled style="white-space:nowrap">&#9654; Run Query</button>
+      <button onclick="App.sqExport()" class="btn btn-ghost" id="an-export-btn" style="display:none;white-space:nowrap">&#128229; Export Excel</button>
+      <button onclick="App.sqAnalyzeModal()" class="btn btn-ghost" id="an-chart-btn" style="display:none;white-space:nowrap">&#128202; Chart</button>
+      <span id="an-status" style="font-size:11px;color:var(--green);align-self:center;white-space:nowrap"></span>
+    </div>
+
+    <!-- MIDDLE: results table (scrollable, takes remaining space) -->
+    <div id="an-results" style="display:none;flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0">
+      <!-- Table header bar -->
+      <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:13px;font-weight:700" id="sq-result-title">Results</span>
+          <span id="sq-row-count" style="font-size:11px;color:var(--dim)"></span>
+        </div>
+        <input id="sq-search" placeholder="&#128269; Filter rows..." oninput="App.sqFilterTable(this.value)"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;width:200px">
+      </div>
+      <!-- Table scroll area -->
+      <div style="flex:1;overflow-x:auto;overflow-y:auto;min-height:0" id="sq-table-wrap"></div>
+    </div>
+
+    <!-- Chart output (collapsible, above agent) -->
+    <div id="sq-analytics" style="display:none;flex-shrink:0;border-top:1px solid var(--border);background:var(--surface);max-height:260px;overflow-y:auto">
+      <div style="padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)">
+        <span style="font-size:12px;font-weight:700">&#128202; Chart</span>
+        <button onclick="document.getElementById('sq-analytics').style.display='none'" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:18px;line-height:1">&#215;</button>
+      </div>
+      <div style="padding:12px 16px">
+        <div id="sq-charts" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:10px"></div>
+        <div id="sq-ai-insight" style="display:none;background:var(--surface2);border-radius:var(--radius);padding:12px;font-size:12px;line-height:1.7"></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM: AI Agent panel (fixed height, always visible after run) -->
+    <div id="an-agent-panel" style="display:none;flex-shrink:0;border-top:2px solid var(--border);background:var(--surface);height:280px;flex-direction:column">
+      <!-- Agent header -->
+      <div style="padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span style="font-size:16px">&#129302;</span>
+        <div>
+          <div style="font-size:12px;font-weight:700">Data Analysis Agent</div>
+          <div style="font-size:10px;color:var(--dim)">Ask anything about the data — analysis, charts, summaries</div>
+        </div>
+      </div>
+      <!-- Chat messages (scrollable) -->
+      <div id="an-chat" style="flex:1;overflow-y:auto;padding:10px 16px;display:flex;flex-direction:column;gap:8px;min-height:0"></div>
+      <!-- Input bar -->
+      <div style="padding:8px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
+        <input id="an-input" placeholder="e.g. Which region has the highest pipeline? Show a chart by forecast category..."
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();App.anAsk();}"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text);font-family:var(--font);outline:none">
+        <button onclick="App.anAsk()" class="btn btn-primary" style="padding:7px 18px;white-space:nowrap">Send &#9654;</button>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="an-empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--dim)">
+      <div style="font-size:48px">&#128202;</div>
+      <div style="font-size:14px;font-weight:600">Select a query and click Run</div>
+      <div style="font-size:12px">Results, export and AI analysis will appear here</div>
+    </div>
+
+  </div>
+
+
 
   <!-- TIMELINE PAGE -->
   <div class="page" id="page-timeline">
@@ -1243,7 +1377,7 @@ var App = {
   async load(){
     // loader managed by caller (init or explicit refresh)
     try{
-      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,dashboard_id,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id&order=id.asc&limit=2000');
+      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,dashboard_id,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id,priority_requested,priority_requested_at&order=id.asc&limit=2000');
       this.setSp(true,'Supabase · '+this.data.length+' requirements');
       this.populateMS();
       await this.loadDevEffortMap();
@@ -1378,8 +1512,12 @@ var App = {
     }
     if(name==='dashboards') this.loadDashboards();
     if(name==='settings') App.loadSettings();
+    if(name==='savedqueries'){ App.sqLoadList(); }
+    if(name==='analysis'){ App.anInit(); }
+    if(name==='analytics'){ if(!this._analyticsReady){ this._analyticsReady=true; var _as=this; setTimeout(function(){ _as.analyticsInit(); },80); } }
     if(name==='stakeholder'){
       App._shInited=false;
+      App.ms['ms-sh-requester']=null; // force MS rebuild on tab show
       App.shApply();
     }
 
@@ -1436,6 +1574,9 @@ var App = {
       // New only filter
       var newOnly=document.getElementById('filter-new-only');
       if(newOnly&&newOnly.checked&&!App.isNewReq(r.id)) return false;
+      // Priority filter
+      var priorityOnly=document.getElementById('filter-priority');
+      if(priorityOnly&&priorityOnly.checked&&!r.priority_requested) return false;
       if(q){
         var txt=[r.requirement,r.requester,r.dashboard,r.comments,r.business_partner,r.impacts]
           .map(function(v){return(v||'').toLowerCase();}).join(' ');
@@ -1447,7 +1588,13 @@ var App = {
     this.page=1; this.renderTable();
   },
 
-  resetFilters(silent){ document.getElementById('fSearch').value=''; Object.values(this.ms).forEach(function(m){m.clear();}); if(!silent) this.filter(); },
+  resetFilters(silent){
+    document.getElementById('fSearch').value='';
+    Object.values(this.ms).forEach(function(m){m.clear();});
+    var pf=document.getElementById('filter-priority'); if(pf) pf.checked=false;
+    var nf=document.getElementById('filter-new-only'); if(nf) nf.checked=false;
+    if(!silent) this.filter();
+  },
 
   sort(key){
     if(this.sortKey===key) this.sortDir*=-1; else{this.sortKey=key;this.sortDir=1;}
@@ -1461,6 +1608,8 @@ var App = {
     // Show New filter only for BizOps users
     var nfw=document.getElementById('new-filter-wrap');
     if(nfw) nfw.style.display=this.isBizOps()?'flex':'none';
+    var pfw=document.getElementById('filter-priority-wrap');
+    if(pfw) pfw.style.display=this.isBizOps()?'flex':'none';
     var sorted=[...this.filtered].sort(function(a,b){
       var av=a[self.sortKey]!=null?a[self.sortKey]:'';
       var bv=b[self.sortKey]!=null?b[self.sortKey]:'';
@@ -1487,7 +1636,7 @@ var App = {
           '<td class="td-mono">'+(r.priority!=null?r.priority:'—')+'</td>'+
           '<td style="font-size:11px;white-space:nowrap">'+(r.business_partner||'—')+'</td>'+
           '<td class="td-mono">'+self.fd(r.request_date)+'</td>'+
-          '<td><span class="td-clip" title="'+self.esc(r.requirement||'')+'">'+(r.requirement?r.requirement.split('\n')[0]:'—')+'</span></td>'+
+          '<td><span class="td-clip" title="'+self.esc(r.requirement||'')+'">'+(r.priority_requested?'<span title="Priority requested" style="color:#f59e0b;font-size:11px;margin-right:3px">🚩</span>':'')+(r.requirement?r.requirement.split('\n')[0]:'—')+'</span></td>'+
           '<td><span class="td-clip" title="'+self.esc(r.impacts||'')+'">'+(r.impacts||'—')+'</span></td>'+
           '<td style="font-size:11px">'+(r.requester||'—')+'</td>'+
           '<td style="font-size:11px">'+(r.area||'—')+'</td>'+
@@ -3472,72 +3621,36 @@ var App = {
   _shInited: false,
   _shReqSel: [],
 
-  shToggle(e){
-    if(e) e.stopPropagation();
-    var dd=document.getElementById('sh-req-dd');
-    if(dd) dd.style.display = dd.style.display==='none'?'block':'none';
-  },
+  shToggle(e){ if(this.ms&&this.ms['ms-sh-requester']) this.ms['ms-sh-requester'].open(); },
+  shSelAll(){ if(this.ms&&this.ms['ms-sh-requester']){ this.ms['ms-sh-requester'].all(); } },
+  shSelNone(){ if(this.ms&&this.ms['ms-sh-requester']){ this.ms['ms-sh-requester'].clear(); } },
+  _shReqCb(){ this.shApply(); },
+  _shUpdateReqLbl(){},
+  shFilterReqSearch(v){ if(this.ms&&this.ms['ms-sh-requester']) this.ms['ms-sh-requester'].search(v||''); },
 
-  shSelAll(){
-    document.querySelectorAll('.sh-req-cb').forEach(function(c){c.checked=true;});
-    App._shReqSel=[];
-    App._shUpdateReqLbl();
-    App.shApply();
-  },
-
-  shSelNone(){
-    document.querySelectorAll('.sh-req-cb').forEach(function(c){c.checked=false;});
-    App._shReqSel=[];
-    App._shUpdateReqLbl();
-    App.shApply();
-  },
-
-  shClear(){
-    App.shSelAll();
-    ['sh-cb-develop','sh-cb-validation','sh-cb-close'].forEach(function(id){
-      var el=document.getElementById(id); if(el) el.checked=true;
-    });
-    App.shApply();
-  },
-
-  _shUpdateReqLbl(){
-    var all=document.querySelectorAll('.sh-req-cb').length;
-    var chk=document.querySelectorAll('.sh-req-cb:checked').length;
-    var lbl=document.getElementById('sh-req-lbl');
-    if(lbl) lbl.textContent=chk===all?'All':chk===0?'None':chk+' sel.';
-    var btn=document.getElementById('sh-req-btn');
-    if(btn) btn.style.borderColor=chk<all&&chk>0?'var(--accent)':'var(--border)';
-  },
 
   _shBuildReqList(){
-    if(this._shInited) return;
-    var vals=[];
-    this.data.forEach(function(r){ if(r.requester&&vals.indexOf(r.requester)<0) vals.push(r.requester); });
+    // Always rebuild MS when element is visible (it may have been recreated by tab switch)
+    var el = document.getElementById('ms-sh-requester');
+    if(!el) return;
+    // Rebuild if DOM element is empty (tab was just shown)
+    if(!el.innerHTML || !this.ms['ms-sh-requester']){
+      this.ms['ms-sh-requester'] = new MS('ms-sh-requester', '👤 Requester', function(){ App.shApply(); });
+    }
+    var ms = this.ms['ms-sh-requester'];
+    var vals = [];
+    this.data.forEach(function(r){ if(r.requester && vals.indexOf(r.requester)<0) vals.push(r.requester); });
     vals.sort();
-    var opts=document.getElementById('sh-req-opts'); if(!opts) return;
-    opts.innerHTML=vals.map(function(v){
-      return '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border)">'+
-        '<input type="checkbox" class="sh-req-cb" value="'+v+'" checked onchange="App._shReqCb()"> '+v+'</label>';
-    }).join('');
-    this._shInited=true;
-  },
-
-  _shReqCb(){
-    var chk=Array.prototype.slice.call(document.querySelectorAll('.sh-req-cb:checked')).map(function(c){return c.value;});
-    var all=document.querySelectorAll('.sh-req-cb').length;
-    App._shReqSel = chk.length===all?[]:chk;
-    App._shUpdateReqLbl();
-    App.shApply();
+    if(ms.opts.length !== vals.length) ms.setOpts(vals);
   },
 
   shApply(){
-    // Close dropdown
-    var dd=document.getElementById('sh-req-dd'); if(dd) dd.style.display='none';
-
     this._shBuildReqList();
 
     var self=this;
-    function reqOk(r){ return self._shReqSel.length===0||self._shReqSel.indexOf(r.requester||'')>=0; }
+    var msSh = self.ms && self.ms['ms-sh-requester'];
+    var shSel = msSh ? Array.from(msSh.sel) : [];
+    function reqOk(r){ return shSel.length===0||shSel.indexOf(r.requester||'')>=0; }
 
     var show=[];
     if(document.getElementById('sh-cb-develop')&&document.getElementById('sh-cb-develop').checked)    show.push('Develop');
@@ -3645,7 +3758,7 @@ var App = {
     }
 
     if(!otherReqs.length){
-      body.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dim)">No other requirements for the selected filters.</td></tr>';
+      body.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--dim)">No other requirements for the selected filters.</td></tr>';
       return;
     }
 
@@ -3660,6 +3773,180 @@ var App = {
     App._shRenderQueueRows(sorted, false);
   },
 
+  shReviewPriority(){
+    // Switch to stakeholder tab
+    this.tab('stakeholder');
+    // After render, filter to show only priority-requested items using MS
+    var self = this;
+    setTimeout(function(){
+      // Clear requester filter to show all
+      var ms = self.ms && self.ms['ms-sh-requester'];
+      if(ms) ms.clear();
+      // Scroll to the Other Requirements table
+      var tbl = document.getElementById('sh-q-body');
+      if(tbl) tbl.closest('div[style*="border"]') && tbl.closest('div[style*="border"]').scrollIntoView({behavior:'smooth', block:'start'});
+      // Highlight priority-requested rows
+      setTimeout(function(){
+        var rows = document.querySelectorAll('#sh-q-body tr');
+        rows.forEach(function(row){
+          var flagCell = row.querySelector('[title*="Priority requested"]');
+          if(flagCell){
+            row.style.background = 'rgba(245,158,11,.08)';
+            row.style.outline = '1px solid #f59e0b';
+          }
+        });
+      }, 300);
+    }, 200);
+  },
+
+  async shRequestPriority(reqId, evt){
+    if(evt){ evt.stopPropagation(); }
+    var req = this.data.find(function(r){ return r.id===reqId; });
+    if(!req) return;
+
+    // Disable button immediately
+    var btn = evt && evt.target;
+    if(btn){ btn.innerHTML='⏳'; btn.disabled=true; }
+
+    try{
+      // Save flag to Supabase
+      var now = new Date().toISOString();
+      await supaFetch('roadmap',
+        '?id=eq.'+reqId,
+        { method: 'PATCH', body: { priority_requested: true, priority_requested_at: now }, prefer: 'return=minimal' }
+      );
+
+      // Update local data
+      req.priority_requested = true;
+      req.priority_requested_at = now;
+
+      // Re-render via shApply to keep item visible with updated flag
+      this.shApply();
+
+      // ── Show success toast ──────────────────────────────────────────────
+      this._shPriorityToast(req);
+
+      // ── Update badge on main Backlog tab ───────────────────────────────
+      this._updatePriorityBadge();
+
+    }catch(e){
+      if(btn){ btn.innerHTML='🚩 Request Priority'; btn.disabled=false; }
+      this.toast('Error saving priority request: '+e.message, 'error');
+    }
+  },
+
+  _shPriorityToast(req){
+    // Remove existing toast
+    var existing = document.getElementById('priority-toast');
+    if(existing) existing.remove();
+
+    var title = (req.requirement||'').split('\n')[0].substring(0,60);
+    var toast = document.createElement('div');
+    toast.id = 'priority-toast';
+    toast.innerHTML =
+      '<div style="display:flex;align-items:flex-start;gap:12px">'
+      +'<div style="font-size:28px;flex-shrink:0">✅</div>'
+      +'<div>'
+      +'<div style="font-weight:700;font-size:14px;margin-bottom:4px">Priority Request Sent!</div>'
+      +'<div style="font-size:12px;color:rgba(255,255,255,.85);line-height:1.5">'
+      +'Requirement <strong>#'+req.id+'</strong> — "'+title+(title.length>=60?'…':'')+'"'
+      +'<br>has been flagged for the BizOps team.</div>'
+      +'<div style="margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.12);'
+      +'border-radius:8px;font-size:11px;color:rgba(255,255,255,.9);line-height:1.6">'
+      +'📋 <strong>Next steps:</strong> The BizOps team will review your priority request '
+      +'and evaluate inclusion in the development roadmap. You will be notified when a '
+      +'decision is made.</div>'
+      +'</div>'
+      +'<button onclick="document.getElementById(\'priority-toast\').remove()" '
+      +'style="background:none;border:none;color:rgba(255,255,255,.6);font-size:18px;'
+      +'cursor:pointer;flex-shrink:0;margin-left:auto;line-height:1">✕</button>'
+      +'</div>';
+
+    Object.assign(toast.style, {
+      position:'fixed', bottom:'24px', right:'24px',
+      background:'linear-gradient(135deg,#1d4ed8,#2563eb)',
+      color:'#fff', padding:'18px 20px',
+      borderRadius:'14px', boxShadow:'0 8px 32px rgba(37,99,235,.35)',
+      zIndex:'9999', maxWidth:'420px', width:'calc(100% - 48px)',
+      animation:'slideInUp .3s ease', fontFamily:'var(--font)'
+    });
+
+    // Add animation keyframes if not present
+    if(!document.getElementById('priority-toast-style')){
+      var style = document.createElement('style');
+      style.id = 'priority-toast-style';
+      style.textContent = '@keyframes slideInUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}';
+      document.head.appendChild(style);
+    }
+
+    document.body.appendChild(toast);
+    // Auto-dismiss after 8 seconds
+    setTimeout(function(){ var t=document.getElementById('priority-toast'); if(t) t.remove(); }, 8000);
+  },
+
+  _updatePriorityBadge(){
+    // Count pending priority requests
+    var count = this.data.filter(function(r){ return r.priority_requested && !r.priority_reviewed; }).length;
+    // Update badge on Stakeholder tab and Backlog tab
+    var badge = document.getElementById('priority-badge');
+    if(!badge){
+      // Create badge on the tab button
+      var tabBtn = document.getElementById('tab-backlog') || document.querySelector('[onclick*="backlog"]');
+      if(tabBtn){
+        badge = document.createElement('span');
+        badge.id = 'priority-badge';
+        Object.assign(badge.style, {
+          background:'#ef4444', color:'#fff',
+          borderRadius:'10px', padding:'1px 6px',
+          fontSize:'10px', fontWeight:'700',
+          marginLeft:'5px', display:'inline-block'
+        });
+        tabBtn.appendChild(badge);
+      }
+    }
+    if(badge) badge.textContent = count > 0 ? count : '';
+    if(badge) badge.style.display = count > 0 ? 'inline-block' : 'none';
+
+    // Also show banner in backlog if there are pending requests
+    this._showPriorityBanner(count);
+  },
+
+  _showPriorityBanner(count){
+    var existing = document.getElementById('priority-banner');
+    if(count === 0){ if(existing) existing.remove(); return; }
+
+    if(!existing){
+      existing = document.createElement('div');
+      existing.id = 'priority-banner';
+      // Insert at top of backlog page
+      var backlogPage = document.getElementById('page-backlog');
+      if(!backlogPage) return;
+      backlogPage.insertBefore(existing, backlogPage.firstChild);
+    }
+
+    var reqs = this.data.filter(function(r){ return r.priority_requested && !r.priority_reviewed; });
+    existing.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'
+      +'<div style="display:flex;align-items:center;gap:10px">'
+      +'<span style="font-size:20px">🚩</span>'
+      +'<div><strong style="font-size:13px">'+count+' Priority Request'+(count>1?'s':'')+' from Stakeholders</strong>'
+      +'<div style="font-size:11px;color:rgba(0,0,0,.6);margin-top:2px">'
+      +reqs.slice(0,3).map(function(r){ return '#'+r.id+' '+((r.requirement||'').split('\n')[0].substring(0,40))+'…'; }).join(' &nbsp;·&nbsp; ')
+      +(reqs.length>3?' and '+(reqs.length-3)+' more':'')
+      +'</div></div></div>'
+      +'<button onclick="App.tab(\'stakeholder\')" style="background:#92400e;color:#fff;border:none;'
+      +'border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">'
+      +'Review Requests →</button>'
+      +'</div>';
+
+    Object.assign(existing.style, {
+      background:'linear-gradient(135deg,#fef3c7,#fde68a)',
+      border:'1px solid #f59e0b', borderRadius:'10px',
+      padding:'12px 16px', marginBottom:'14px',
+      boxShadow:'0 2px 8px rgba(245,158,11,.2)'
+    });
+  },
+
   _shRenderQueueRows(sorted, aiMode){
     var body=document.getElementById('sh-q-body'); if(!body) return;
     body.innerHTML=sorted.map(function(r,i){
@@ -3671,11 +3958,11 @@ var App = {
       return '<tr style="border-bottom:1px solid var(--border);'+(isDef?'background:rgba(239,68,68,.04)':'')+'">'+
         '<td style="padding:6px 12px;font-size:11px;font-weight:700;color:var(--dim);text-align:center">'+(aiMode?'#'+(i+1):i+1)+'</td>'+
         '<td style="padding:6px 8px;cursor:pointer;color:var(--accent);font-family:var(--mono);font-size:11px" onclick="App.goToReq('+r.id+')">#'+r.id+'</td>'+
-        '<td style="padding:6px 8px;cursor:pointer;max-width:260px;width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" onclick="App.goToReq('+r.id+')" title="'+(r.requirement||'').split('\n')[0]+'">'+(isDef?'🚨 ':'')+t+aiScore+aiReason+'</td>'+
+        '<td style="padding:6px 8px;cursor:pointer;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" onclick="App.goToReq('+r.id+')" title="'+(r.requirement||'').split('\n')[0]+'">'+(isDef?'🚨 ':'')+t+aiScore+aiReason+'</td>'+
         '<td style="padding:6px 8px">'+App.badge(r.status)+'</td>'+
         '<td style="padding:6px 8px;font-size:12px;font-weight:600;color:'+pc2+'">'+(r.requester_priority||'—')+'</td>'+
         '<td style="padding:6px 8px;font-size:12px">'+(r.expected_date?App.fd(r.expected_date):'—')+'</td>'+
-        '<td style="padding:6px 12px;font-size:12px;color:var(--dim)">'+(r.requester||'—')+'</td></tr>';
+        '<td style="padding:6px 12px;font-size:12px;color:var(--dim)">'+(r.requester||'—')+'</td>'+'<td style="padding:6px 10px;text-align:center;position:sticky;right:0;background:var(--surface);box-shadow:-2px 0 4px rgba(0,0,0,.06)">'+( r.priority_requested  ? '<span title="Priority requested on '+( r.priority_requested_at ? new Date(r.priority_requested_at).toLocaleDateString() : '' )+'"      style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;            border:1px solid #f59e0b;border-radius:12px;padding:2px 8px;font-size:10px;font-weight:700">'  +'🚩 Requested</span>'  : '<button onclick="App.shRequestPriority('+r.id+',event)" '    +'style="background:transparent;border:1px solid var(--border);border-radius:6px;'    +'padding:3px 8px;font-size:10px;cursor:pointer;color:var(--dim);white-space:nowrap'    +'" onmouseover="this.style.borderColor=\'var(--accent)\';this.style.color=\'var(--accent)\'" '    +'onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--dim)\'">'    +'🚩 Request Priority</button>')+'</td></tr>';
     }).join('');
   },
 
@@ -3684,7 +3971,9 @@ var App = {
 
     // Get current other reqs (re-filter)
     var self=this;
-    function reqOk(r){ return self._shReqSel.length===0||self._shReqSel.indexOf(r.requester||'')>=0; }
+    var msSh = self.ms && self.ms['ms-sh-requester'];
+    var shSel = msSh ? Array.from(msSh.sel) : [];
+    function reqOk(r){ return shSel.length===0||shSel.indexOf(r.requester||'')>=0; }
     var otherReqs=this.data.filter(function(r){
       return r.status!=='Removed' && ['Develop','Validation','Close'].indexOf(r.status)<0 && reqOk(r);
     });
@@ -3693,7 +3982,7 @@ var App = {
     // Show loading
     var btn=document.querySelector('button[onclick="App.shAIPrioritize()"]');
     if(btn){ btn.innerHTML='⏳ Analyzing...'; btn.disabled=true; }
-    body.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--dim)"><span class="spinner"></span> AI is analyzing '+otherReqs.length+' requirements...</td></tr>';
+    body.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--dim)"><span class="spinner"></span> AI is analyzing '+otherReqs.length+' requirements...</td></tr>';
 
     // Build prompt
     // Limit to 30 to avoid token limits
@@ -3786,7 +4075,7 @@ var App = {
         '&nbsp;&nbsp;<button onclick="App.shApply()" class="btn btn-ghost btn-sm" style="font-size:11px;padding:3px 10px">↩ Reset</button>';
 
     }catch(e){
-      body.innerHTML='<tr><td colspan="7" style="color:var(--red);padding:16px;text-align:center">AI error: '+e.message+'</td></tr>';
+      body.innerHTML='<tr><td colspan="8" style="color:var(--red);padding:16px;text-align:center">AI error: '+e.message+'</td></tr>';
     }
     if(btn){ btn.innerHTML='✨ AI Prioritize'; btn.disabled=false; }
   },
@@ -3794,7 +4083,7 @@ var App = {
   shRender(){ this.shApply(); },
 
   // ── BIZOPS AUTH ──────────────────────────────────────────────────────────────
-  BIZOPS_PWD_HASH: 'bizops2024ei', // simple shared secret — change as needed
+  BIZOPS_PWD_HASH: 'Philips@2026', // simple shared secret — change as needed
   _seenReqs: new Set(), // req IDs already seen by BizOps
 
   isBizOps(){
@@ -3943,7 +4232,7 @@ var App = {
   async testDbConfig(){
     var sts=document.getElementById('db-config-status');
     // Read directly from inputs (don't rely on DB_PROXY being loaded)
-    var pv=document.getElementById('db-proxy-input'); if(pv&&pv.value&&!pv.value.includes('•')) this.DB_PROXY=pv.value.trim();
+    var pv=document.getElementById('db-proxy-input'); if(pv&&pv.value&&!pv.value.includes('•')){ var pu=pv.value.trim(); this.DB_PROXY=pu.startsWith('http')?pu:'https://'+pu; }
     var hv=document.getElementById('db-host-input');  if(hv&&hv.value&&!hv.value.includes('•')) this.DB_HOST=hv.value.trim();
     var pth=document.getElementById('db-path-input'); if(pth&&pth.value&&!pth.value.includes('•')) this.DB_PATH=pth.value.trim();
     var tv=document.getElementById('db-token-input'); if(tv){ var tok=tv.value.includes('•')?(tv.dataset.real||this.DB_TOKEN):tv.value.trim(); if(tok) this.DB_TOKEN=tok; }
@@ -4007,19 +4296,21 @@ var App = {
   _chatHistory: [],
 
   QUICK_QUESTIONS: [
-    'What tables are available?',
-    'Show top 10 opportunities by amount',
-    'Revenue by region this year',
-    'Show funnel conversion rates',
-    'Top KAMs by opportunity count',
-    'Orders by business org',
-  ],
+    'Build full EI Funnel dashboard by Business Unit',
+    'AOP vs Actuals attainment by region',
+    'Top 10 opportunities by pipeline value',
+    'Pipeline breakdown by Forecast Category',
+    'Analyze deal win probability for Ontario Health',
+    'Show funnel size and total funnel by Business Unit',
+    'Week over week OIT trend',
+    'Sales Team Dashboard — Opportunities by Owner & Team',
+    ],
 
   async analyticsLoadConfig(){
     try{
       var rows=await supaFetch('app_settings','?select=key,value');
       var m={}; (rows||[]).forEach(function(r){m[r.key]=r.value;});
-      if(m.db_proxy) this.DB_PROXY=m.db_proxy;
+      if(m.db_proxy){ var pu2=m.db_proxy; this.DB_PROXY=pu2.startsWith('http')?pu2:'https://'+pu2; }
       if(m.db_host) this.DB_HOST=m.db_host;
       if(m.db_path) this.DB_PATH=m.db_path;
       if(m.db_token) this.DB_TOKEN=m.db_token;
@@ -4032,16 +4323,23 @@ var App = {
     await this.analyticsLoadConfig();
     // Render quick questions
     var qb = document.getElementById('analytics-quick-btns');
-    if(qb) qb.innerHTML = this.QUICK_QUESTIONS.map(function(q){
-      var btn=document.createElement('button');
-      btn.textContent=q;
-      btn.dataset.q=q;
-      btn.style.cssText='text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:11px;cursor:pointer;color:var(--text);font-family:var(--font);transition:background .15s;width:100%';
-      btn.onmouseover=function(){this.style.background='var(--accentlight)';};
-      btn.onmouseout=function(){this.style.background='var(--surface2)';};
-      btn.onclick=function(){App.analyticsAskQ(this.dataset.q);};
-      return btn.outerHTML;
-    }).join('');
+    if(qb){
+      qb.innerHTML = this.QUICK_QUESTIONS.map(function(q,i){
+        return '<button data-qq="'+i+'" '
+          + 'style="text-align:left;background:var(--surface2);border:1px solid var(--border);'
+          + 'border-radius:var(--radius-sm);padding:6px 10px;font-size:11px;cursor:pointer;'
+          + 'color:var(--text);font-family:var(--font);width:100%;display:block;margin-bottom:2px">'
+          + q + '</button>';
+      }).join('');
+      // Use event delegation to avoid inline onclick quoting issues
+      qb.onclick = function(e){
+        var btn = e.target.closest('[data-qq]');
+        if(!btn) return;
+        var idx = parseInt(btn.getAttribute('data-qq'));
+        var question = App.QUICK_QUESTIONS[idx];
+        if(question) App.analyticsAskQ(question);
+      };
+    }
     // Test connection
     var sts = document.getElementById('db-status');
     if(sts) sts.textContent = '🟡 Connecting...';
@@ -4068,8 +4366,8 @@ var App = {
         token:        this.DB_TOKEN,
         sql:          sql,
         warehouse_id: this.DB_PATH.split('/').pop(),
-        catalog:      this.DB_CAT,
-        schema:       this.DB_SCH,
+        catalog:      this.DB_CAT||'qa_wb',
+        schema:       this.DB_SCH||'saasfactory',
       })
     });
     if(!resp.ok) throw new Error('Proxy HTTP '+resp.status);
@@ -4078,23 +4376,42 @@ var App = {
     if(data.status && data.status.state === 'FAILED'){
       throw new Error(data.status.error&&data.status.error.message||'Query failed');
     }
-    var cols = (data.manifest&&data.manifest.schema&&data.manifest.schema.columns||[]).map(function(c){return c.name;});
-    var rows = (data.result&&data.result.data_array||[]).map(function(row){
-      var obj = {}; cols.forEach(function(c,i){ obj[c]=row[i]; }); return obj;
-    });
+    var cols, rows;
+    if(Array.isArray(data.cols)){
+      cols = data.cols; rows = data.rows||[];
+    } else {
+      cols = (data.manifest&&data.manifest.schema&&data.manifest.schema.columns||[]).map(function(c){return c.name;});
+      rows = (data.result&&data.result.data_array||[]).map(function(row){
+        var obj={}; cols.forEach(function(c,i){obj[c]=row[i];}); return obj;
+      });
+    }
     return {cols: cols, rows: rows};
   },
 
   async analyticsShowTables(){
-    var sql = 'SHOW TABLES IN '+this.DB_CAT+'.'+this.DB_SCH;
+    var cat = this.DB_CAT||'qa_wb';
+    var sch = this.DB_SCH||'saasfactory';
+    var sql = 'SHOW TABLES IN '+cat+'.'+sch;
     this.analyticsAddMsg('user', 'Show all available tables');
     try{
       var res = await this.dbQuery(sql);
-      var names = res.rows.map(function(r){ return r.tableName||r.table_name||Object.values(r)[1]||''; });
-      var msg = '📋 Available tables ('+names.length+'):<br><br>'+names.map(function(n,i){ return (i+1)+'. '+n; }).join('<br>');
+      var names = res.rows.map(function(r){
+        return r.tableName||r.table_name||r.TABLE_NAME||Object.values(r)[0]||'';
+      }).filter(function(n){ return n && n.indexOf('commops')>=0; });
+      if(!names.length) names = res.rows.map(function(r){ return Object.values(r).join(' | '); });
+      var msg = '📋 Available tables ('+names.length+'):<br><br>'+names.map(function(n,i){ return (i+1)+'. <strong>'+n+'</strong>'; }).join('<br>');
       this.analyticsAddMsg('agent', msg);
     }catch(e){
-      this.analyticsAddMsg('agent', '❌ Error: '+e.message);
+      // Fallback: show hardcoded list
+      var hardcoded = ['commops_ei_general_funnel','commops_ei_region_level','commops_ei_business_org',
+        'commops_opportunity_order_booking','commops_ei_salesteam_opportunity','commops_ei_new_logo',
+        'commops_ei_general_funnel_snapshot','commops_ei_bg_new_logo','commops_ei_potential_new_logo',
+        'commops_opportunity_by_kam','commops_book_and_bill_product','commops_ei_bm_new_logo',
+        'commops_ei_newlogo_ib','commops_ei_potential_bm_new_logo','commops_ei_order_sale_snapshot',
+        'commops_ei_potential_bg_new_logo','commops_cloud_funnel_out_ei','commops_winrate_customer_year',
+        'commops_ei_mag_bu_sap_sfdc','commops_ei_general_funnel_drift_metrics'];
+      var msg2='📋 Available tables ('+hardcoded.length+'):<br><br>'+hardcoded.map(function(n,i){ return (i+1)+'. <strong>'+n+'</strong>'; }).join('<br>');
+      this.analyticsAddMsg('agent', msg2);
     }
   },
 
@@ -4104,92 +4421,1527 @@ var App = {
     this.analyticsAsk();
   },
 
-  async analyticsAsk(){
-    var inp = document.getElementById('analytics-input');
-    var q = (inp&&inp.value||'').trim();
-    if(!q) return;
-    if(inp) inp.value = '';
+  // ── Schema cache ──────────────────────────────────────────────────────────
 
-    // Get OpenAI key
-    var oaiKey = '';
+  analyticsSubTab(tab){
+    var isAgent = tab==='agent';
+    var qPanel  = document.getElementById('analytics-queries-panel');
+    var aChat   = document.getElementById('analytics-chat');
+    if(qPanel) qPanel.style.display = isAgent ? 'none' : 'block';
+    if(aChat){
+      var mainFlex = aChat.closest('[style*="gap:12px"]');
+      if(mainFlex) mainFlex.style.display = isAgent ? 'flex' : 'none';
+    }
+    ['agent','queries'].forEach(function(t){
+      var b=document.getElementById('atab-'+t);
+      if(!b) return;
+      b.style.background = t===tab?'var(--accent)':'var(--surface2)';
+      b.style.color      = t===tab?'#fff':'var(--dim)';
+    });
+    if(tab==='queries') App.qryLoadList();
+  },
+
+  async qryLoadList(){
     try{
-      var kr = await supaFetch('app_settings','?key=eq.openai_key&select=value');
-      oaiKey = (kr&&kr[0]&&kr[0].value)||'';
-    }catch(e2){}
-    if(!oaiKey) oaiKey = localStorage.getItem('bizops_openai_key')||'';
-    if(!oaiKey){
-      this.analyticsAddMsg('agent','⚠️ OpenAI key not configured. Go to Setup → Settings.');
+      var rows = await supaFetch('saved_queries','?order=title.asc&select=id,title,owner,description');
+      this._qryData = rows||[];
+    }catch(e){
+      this._qryData=[];
+      var el=document.getElementById('qry-list');
+      if(el) el.innerHTML='<div style="padding:12px;font-size:11px;color:var(--red)">Run this SQL in Supabase first:<br><code style=\"font-size:10px\">CREATE TABLE public.saved_queries (id bigint generated always as identity primary key, title text not null, owner text, description text, sql text not null, updated_at timestamptz default now());</code></div>';
+    }
+    this._qryRenderList();
+    this._qryRenderSelect();
+  },
+
+  _qryRenderList(){
+    var el=document.getElementById('qry-list'); if(!el) return;
+    if(!this._qryData.length){
+      el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--dim)">No saved queries yet. Click + New to create one.</div>';
       return;
     }
+    el.innerHTML=this._qryData.map(function(q){
+      return '<div onclick="App.qryEdit('+q.id+')" style="padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer" '
+        +'onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'
+        +'<div style="font-size:12px;font-weight:600">'+q.title+'</div>'
+        +(q.owner?'<div style="font-size:10px;color:var(--dim)">'+String.fromCodePoint(128100)+' '+q.owner+'</div>':'')
+        +(q.description?'<div style="font-size:10px;color:var(--dim)">'+q.description+'</div>':'')
+        +'</div>';
+    }).join('');
+  },
 
-    this.analyticsAddMsg('user', q);
-    var thinkId = this.analyticsAddMsg('agent', '⏳ Thinking...', true);
+  _qryRenderSelect(){
+    var sel=document.getElementById('qry-select'); if(!sel) return;
+    sel.innerHTML='<option value="">'+String.fromCodePoint(8212)+' Choose a saved query '+String.fromCodePoint(8212)+'</option>'
+      +this._qryData.map(function(q){
+        return '<option value="'+q.id+'">'+q.title+(q.owner?' ('+q.owner+')':'')+'</option>';
+      }).join('');
+  },
+
+  qryNew(){
+    this._qryEditId=null;
+    document.getElementById('qry-form-title').textContent='New Query';
+    ['qry-title','qry-owner','qry-desc','qry-sql'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.value='';
+    });
+    var db=document.getElementById('qry-delete-btn'); if(db) db.style.display='none';
+    var t=document.getElementById('qry-title'); if(t) t.focus();
+  },
+
+  async qryEdit(id){
+    try{
+      var rows=await supaFetch('saved_queries','?id=eq.'+id+'&select=*');
+      var q=rows&&rows[0]; if(!q) return;
+      this._qryEditId=id;
+      document.getElementById('qry-form-title').textContent='Edit: '+q.title;
+      document.getElementById('qry-title').value  = q.title||'';
+      document.getElementById('qry-owner').value  = q.owner||'';
+      document.getElementById('qry-desc').value   = q.description||'';
+      document.getElementById('qry-sql').value    = q.sql||'';
+      var db=document.getElementById('qry-delete-btn'); if(db) db.style.display='';
+    }catch(e){ this.toast('Error: '+e.message,'error'); }
+  },
+
+  async qrySave(){
+    var title=(document.getElementById('qry-title').value||'').trim();
+    var sql=(document.getElementById('qry-sql').value||'').trim();
+    if(!title||!sql){ this.toast('Title and SQL required','error'); return; }
+    var payload={title:title,owner:(document.getElementById('qry-owner').value||'').trim(),
+      description:(document.getElementById('qry-desc').value||'').trim(),sql:sql,updated_at:new Date().toISOString()};
+    try{
+      if(this._qryEditId){
+        await supaFetch('saved_queries','?id=eq.'+this._qryEditId,{method:'PATCH',body:payload});
+        this.toast('Updated!','success');
+      } else {
+        await supaFetch('saved_queries','',{method:'POST',body:payload,prefer:'return=minimal'});
+        this.toast('Saved!','success');
+      }
+      this.qryClear();
+      await this.qryLoadList();
+    }catch(e){ this.toast('Save failed: '+e.message,'error'); }
+  },
+
+  async qryDelete(){
+    if(!this._qryEditId) return;
+    if(!confirm('Delete this query?')) return;
+    try{
+      await supaFetch('saved_queries','?id=eq.'+this._qryEditId,{method:'DELETE'});
+      this.toast('Deleted','success');
+      this.qryClear();
+      await this.qryLoadList();
+    }catch(e){ this.toast('Delete failed: '+e.message,'error'); }
+  },
+
+  qryClear(){
+    this._qryEditId=null;
+    document.getElementById('qry-form-title').textContent='New Query';
+    ['qry-title','qry-owner','qry-desc','qry-sql'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.value='';
+    });
+    var db=document.getElementById('qry-delete-btn'); if(db) db.style.display='none';
+  },
+
+  async qryRun(){
+    var selId=document.getElementById('qry-select').value;
+    if(!selId){ this.toast('Select a query first','error'); return; }
+    var q=this._qryData.find(function(r){return String(r.id)===String(selId);});
+    if(!q){ this.toast('Query not found','error'); return; }
+    try{ var rows=await supaFetch('saved_queries','?id=eq.'+q.id+'&select=*'); q=rows&&rows[0]||q; }catch(e){}
+    var status=document.getElementById('qry-status');
+    status.style.display='block';
+    status.innerHTML='<span style="color:var(--accent)">Running '+q.title+'...</span>';
+    document.getElementById('qry-results').style.display='none';
+    document.getElementById('qry-analytics').style.display='none';
+    document.getElementById('qry-export-btn').style.display='none';
+    document.getElementById('qry-analyze-btn').style.display='none';
+    try{
+      var res=await this.dbQuery(q.sql);
+      this._qryResults=res;
+      this._qryCurrentTitle=q.title;
+      if(!res.rows.length){ status.innerHTML='<span style="color:var(--amber)">0 rows returned.</span>'; return; }
+      status.innerHTML='<span style="color:var(--green)">'+res.rows.length+' rows returned</span>';
+      document.getElementById('qry-result-title').textContent=q.title;
+      document.getElementById('qry-row-count').textContent=res.rows.length+' rows, '+res.cols.length+' columns';
+      this._qryRenderTable(res.cols,res.rows);
+      document.getElementById('qry-results').style.display='block';
+      document.getElementById('qry-export-btn').style.display='';
+      document.getElementById('qry-analyze-btn').style.display='';
+    }catch(e){ status.innerHTML='<span style="color:var(--red)">Error: '+e.message+'</span>'; }
+  },
+
+  _qryRenderTable(cols,rows){
+    var max=Math.min(rows.length,500);
+    var th=cols.map(function(c,i){
+      return '<th onclick="App.qrySortTable('+i+')" style="background:var(--surface2);padding:7px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--dim);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;position:sticky;top:0;z-index:1">'+c+'</th>';
+    }).join('');
+    var tb=rows.slice(0,max).map(function(row,ri){
+      return '<tr style="background:'+(ri%2===0?'transparent':'rgba(0,0,0,.025)')+'">'+cols.map(function(c){
+        var v=row[c]; if(v===null||v===undefined) v='\u2014';
+        var n=parseFloat(String(v).replace(/,/g,''));
+        if(!isNaN(n)&&String(v).trim()!==''&&typeof v!=='boolean') v=n.toLocaleString('en-US',{maximumFractionDigits:2});
+        return '<td style="padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;white-space:nowrap">'+v+'</td>';
+      }).join('')+'</tr>';
+    }).join('');
+    var extra=rows.length>max?'<div style="padding:8px;text-align:center;font-size:11px;color:var(--dim)">Showing '+max+' of '+rows.length+' rows</div>':'';
+    document.getElementById('qry-table-wrap').innerHTML='<table style="width:100%;border-collapse:collapse"><thead><tr>'+th+'</tr></thead><tbody id="qry-tbody">'+tb+'</tbody></table>'+extra;
+  },
+
+  qrySortTable(col){
+    if(!this._qryResults) return;
+    var cols=this._qryResults.cols, rows=this._qryResults.rows.slice();
+    this._qrySortDir = (this._qrySortCol===col) ? -(this._qrySortDir||1) : 1;
+    this._qrySortCol=col;
+    var dir=this._qrySortDir;
+    rows.sort(function(a,b){
+      var av=a[cols[col]], bv=b[cols[col]];
+      var an=parseFloat(av),bn=parseFloat(bv);
+      if(!isNaN(an)&&!isNaN(bn)) return dir*(an-bn);
+      return dir*String(av||'').localeCompare(String(bv||''));
+    });
+    this._qryRenderTable(cols,rows);
+  },
+
+  qryFilterTable(q){
+    var q2=(q||'').toLowerCase();
+    var cnt=0;
+    document.querySelectorAll('#qry-tbody tr').forEach(function(tr){
+      var ok=!q2||tr.textContent.toLowerCase().indexOf(q2)>=0;
+      tr.style.display=ok?'':'none';
+      if(ok) cnt++;
+    });
+    document.getElementById('qry-row-count').textContent=cnt+' / '+(this._qryResults?this._qryResults.rows.length:0)+' rows';
+  },
+
+  qryExportExcel(){
+    var res=this._qryResults; if(!res||!res.rows.length) return;
+    var tsv=[res.cols.join('\t')];
+    res.rows.forEach(function(row){ tsv.push(res.cols.map(function(c){ var v=row[c]; return v===null||v===undefined?'':String(v).replace(/\t/g,' '); }).join('\t')); });
+    var b=new Blob([tsv.join('\n')],{type:'application/vnd.ms-excel;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(b);
+    a.download=(this._qryCurrentTitle||'query').replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xls';
+    a.click(); this.toast('Excel exported!','success');
+  },
+
+  async qryAnalyze(){
+    var res=this._qryResults; if(!res||!res.rows.length) return;
+    var oaiKey='';
+    try{ var kr=await supaFetch('app_settings','?key=eq.openai_key&select=value'); oaiKey=(kr&&kr[0]&&kr[0].value)||''; }catch(e2){}
+    if(!oaiKey) oaiKey=localStorage.getItem('bizops_openai_key')||'';
+    var analytics=document.getElementById('qry-analytics');
+    analytics.style.display='block';
+    document.getElementById('qry-charts').innerHTML='';
+    document.getElementById('qry-ai-insight').innerHTML='<span style="color:var(--dim)">Generating analysis...</span>';
+    var cols=res.cols, rows=res.rows;
+    var COLORS=['#4f6ef7','#22d37a','#f5a623','#f75c5c','#7c5cf7','#5bc8f5'];
+    var numCols=cols.filter(function(c){ return rows[0]&&!isNaN(parseFloat(rows[0][c])); });
+    var txtCols=cols.filter(function(c){ return numCols.indexOf(c)<0; });
+    var charts='';
+    numCols.slice(0,2).forEach(function(nc,ci){
+      var lbl=txtCols[0]; if(!lbl) return;
+      var agg={};
+      rows.forEach(function(r){ var k=String(r[lbl]||'?'); agg[k]=(agg[k]||0)+(parseFloat(r[nc])||0); });
+      var arr=Object.entries(agg).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
+      var mx=arr[0]?arr[0][1]:1;
+      var bars=arr.map(function(item,i){
+        var pct=Math.round(item[1]/mx*100);
+        var fv=item[1]%1===0?item[1].toLocaleString():item[1].toFixed(2);
+        return '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:65%">'+item[0]+'</span><span style="font-weight:700">'+fv+'</span></div><div style="background:var(--surface2);border-radius:3px;height:7px"><div style="background:'+COLORS[i%COLORS.length]+';width:'+pct+'%;height:7px;border-radius:3px"></div></div></div>';
+      }).join('');
+      charts+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--dim);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">'+nc.replace(/_/g,' ')+' by '+lbl.replace(/_/g,' ')+'</div>'+bars+'</div>';
+    });
+    document.getElementById('qry-charts').innerHTML=charts||'<div style="color:var(--dim);font-size:12px;padding:12px">No numeric columns for charts.</div>';
+    if(!oaiKey){ document.getElementById('qry-ai-insight').innerHTML='<span style="color:var(--dim)">Set OpenAI key in Setup to enable AI analysis.</span>'; return; }
+    try{
+      var rr=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},body:JSON.stringify({model:'gpt-4o-mini',max_tokens:400,temperature:0.4,messages:[{role:'system',content:'Concise business analyst for Philips EI CommOps. 4-5 bullet insights with numbers. End with one recommendation.'},{role:'user',content:'Query: "'+this._qryCurrentTitle+'" Columns: '+cols.join(', ')+' Rows: '+rows.length+' Sample: '+JSON.stringify(rows.slice(0,10))}]})});
+      var dd=await rr.json();
+      var ins=(dd.choices&&dd.choices[0]&&dd.choices[0].message&&dd.choices[0].message.content||'').trim();
+      document.getElementById('qry-ai-insight').innerHTML='<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--dim);margin-bottom:10px">AI Analysis</div><div style="font-size:12px;line-height:1.8;white-space:pre-wrap">'+ins+'</div>';
+    }catch(e){ document.getElementById('qry-ai-insight').innerHTML='<span style="color:var(--red)">AI error: '+e.message+'</span>'; }
+  },
+
+  _schemaCache: null,
+  _schemaBuildAt: 0,
+
+  async _fetchRealSchema(){
+    var now = Date.now();
+    if(this._schemaCache && (now-this._schemaBuildAt)<3600000) return this._schemaCache;
+    var tables = ['commops_ei_general_funnel','commops_orders_sales_view'];
+    var cache = {};
+    for(var i=0;i<tables.length;i++){
+      var t=tables[i];
+      try{
+        var r=await this.dbQuery('DESCRIBE TABLE qa_wb.saasfactory.'+t);
+        cache[t]=r.rows.map(function(row){
+          return row.col_name||row.column_name||row.COLUMN_NAME||(r.cols&&r.cols[0]?row[r.cols[0]]:'')||Object.values(row)[0]||'';
+        }).filter(function(c){ var s=String(c||'').trim(); return s&&s!=='col_name'&&!s.startsWith('#'); });
+        console.log('DESCRIBE '+t+': '+cache[t].length+' cols | first:', JSON.stringify(r.rows[0]||{}));
+      }catch(e){ console.error('DESCRIBE failed:',t,e.message); cache[t]=[]; }
+    }
+    this._schemaCache=cache; this._schemaBuildAt=now; return cache;
+  },
+
+
+  // ── Saved Queries CRUD ────────────────────────────────────────────────────
+  _sqData: [], _sqEditId: null, _sqResults: null, _sqCurrentTitle: '',
+
+
+  // ── Analysis Tab ────────────────────────────────────────────────────────────
+  _anReady: false,
+
+  async anInit(){
+    // Load query list into an-select
+    if(!this._sqData || !this._sqData.length){
+      try{
+        var rows = await supaFetch('saved_queries','?order=title.asc&select=id,title,owner,description');
+        this._sqData = rows||[];
+      }catch(e){ this._sqData=[]; }
+    }
+    var sel = document.getElementById('an-select');
+    if(!sel) return;
+    sel.innerHTML = '<option value="">-- Choose a saved query --</option>'
+      + this._sqData.map(function(q){
+          return '<option value="'+q.id+'">'+q.title+(q.owner?' ('+q.owner+')':'')+'</option>';
+        }).join('');
+    this._anReady = true;
+  },
+
+  anOnSelect(){
+    var sel = document.getElementById('an-select');
+    var btn = document.getElementById('an-run-btn');
+    if(btn) btn.disabled = !sel.value;
+  },
+
+  async anRun(){
+    var selId = document.getElementById('an-select').value;
+    if(!selId){ this.toast('Select a query first','error'); return; }
+    var q = this._sqData.find(function(r){return String(r.id)===String(selId);});
+    if(!q) return;
+
+    // Load full SQL
+    try{ var r2=await supaFetch('saved_queries','?id=eq.'+q.id+'&select=*'); q=r2&&r2[0]||q; }catch(e){}
+
+    var status = document.getElementById('an-status');
+    var runBtn = document.getElementById('an-run-btn');
+    if(status) status.textContent = '\u23f3 Running...';
+    if(runBtn){ runBtn.disabled=true; runBtn.textContent='⏳ Running...'; }
+
+    // Reset UI
+    document.getElementById('an-empty').style.display='none';
+    document.getElementById('an-results').style.display='none';
+    document.getElementById('an-agent-panel').style.display='none';
+    document.getElementById('an-export-btn').style.display='none';
+    document.getElementById('an-chart-btn').style.display='none';
+    document.getElementById('sq-analytics').style.display='none';
+    document.getElementById('an-chat').innerHTML='';
 
     try{
-      // Step 1: Ask GPT to generate SQL
-      var tables2='ei_general_funnel,ei_region_level,ei_business_org,opportunity_order_booking,ei_salesteam_opportunity,ei_new_logo,ei_bg_new_logo,ei_potential_new_logo,opportunity_by_kam,book_and_bill_product,ei_bm_new_logo,cloud_funnel_out_ei,winrate_customer_year,ei_mag_bu_sap_sfdc';
-      var systemPrompt='You are a SQL expert for Databricks. Catalog: '+this.DB_CAT+', Schema: '+this.DB_SCH+'. Available commops_ tables: '+tables2+'. Rules: 1) Full name qa_wb.saasfactory.commops_TABLE 2) Max 50 rows 3) Return ONLY SQL no markdown 4) Non-data questions: reply NOT_SQL: answer';
+      var res = await this.dbQuery(q.sql);
+      this._sqResults = res;
+      this._sqCurrentTitle = q.title;
 
-      var msgs = [
-        {role:'system', content: systemPrompt},
-        {role:'user', content: q}
-      ];
-
-      var gptResp = await fetch('https://api.openai.com/v1/chat/completions',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
-        body: JSON.stringify({model:'gpt-4o-mini', max_tokens:500, temperature:0.1, messages:msgs})
-      });
-      var gptData = await gptResp.json();
-      if(gptData.error) throw new Error(gptData.error.message);
-      var sql = gptData.choices[0].message.content.trim();
-
-      // Not a data question
-      if(sql.startsWith('NOT_SQL:')){
-        this.analyticsUpdateMsg(thinkId, sql.replace('NOT_SQL:','').trim());
+      if(!res.rows.length){
+        if(status) status.textContent = '\u26a0\ufe0f 0 rows returned';
+        if(runBtn){ runBtn.disabled=false; runBtn.textContent='\u25b6 Run Query'; }
         return;
       }
 
-      // Clean SQL
-      sql = sql.replace(/```sql|```/gi,'').trim();
+      if(status) status.textContent = '\u2705 '+res.rows.length+' rows loaded';
+      if(runBtn){ runBtn.disabled=false; runBtn.textContent='\u25b6 Run Query'; }
 
-      // Step 2: Execute SQL on Databricks
-      this.analyticsUpdateMsg(thinkId, '🔍 Running query...');
-      var res = await this.dbQuery(sql);
-      this._lastData = res.rows;
-      this._lastCols = res.cols;
+      // Render table
+      document.getElementById('sq-result-title').textContent = q.title;
+      document.getElementById('sq-row-count').textContent = res.rows.length+' rows, '+res.cols.length+' cols';
+      this._sqRenderTable(res.cols, res.rows);
+      document.getElementById('an-empty').style.display='none';
+      document.getElementById('an-results').style.display='flex';
+      document.getElementById('an-export-btn').style.display='';
+      document.getElementById('an-chart-btn').style.display='';
 
-      // Step 3: Ask GPT to interpret results
-      var dataPreview = JSON.stringify(res.rows.slice(0,10));
-      var interpResp = await fetch('https://api.openai.com/v1/chat/completions',{
+      // Show agent
+      document.getElementById('an-agent-panel').style.display='flex';
+
+      // Scroll to results
+      setTimeout(function(){
+        var el=document.getElementById('an-results');
+        if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+      }, 100);
+
+    }catch(e){
+      if(status) status.textContent = '\u274c '+e.message;
+      if(runBtn){ runBtn.disabled=false; runBtn.textContent='\u25b6 Run Query'; }
+    }
+  },
+
+  async anAsk(){
+    var inp = document.getElementById('an-input');
+    var q   = (inp&&inp.value||'').trim();
+    if(!q) return;
+    inp.value = '';
+
+    var res = this._sqResults;
+    if(!res||!res.rows.length){
+      this.anAddMsg('agent','\u26a0\ufe0f Run a query first to load data.');
+      return;
+    }
+
+    var oaiKey='';
+    try{ var kr=await supaFetch('app_settings','?key=eq.openai_key&select=value'); oaiKey=(kr&&kr[0]&&kr[0].value)||''; }catch(e2){}
+    if(!oaiKey) oaiKey=localStorage.getItem('bizops_openai_key')||'';
+    if(!oaiKey){ this.anAddMsg('agent','\u26a0\ufe0f OpenAI key not set. Go to Setup \u2192 Settings.'); return; }
+
+    this.anAddMsg('user', q);
+    var thinkId = this.anAddMsg('agent','\u23f3 Analyzing...', true);
+
+    // Build data context
+    var cols    = res.cols;
+    var rows    = res.rows;
+    var sample  = JSON.stringify(rows.slice(0,20));
+    var colInfo = cols.join(', ');
+
+    // Detect if user wants a chart
+    var wantsChart = /chart|graph|plot|pie|bar|donut|visual|gr[aá]fico/i.test(q);
+    var COLORS = ['#4f6ef7','#22d37a','#f5a623','#f75c5c','#7c5cf7','#5bc8f5','#f5a67a','#a3f75c'];
+
+    var systemPrompt =
+      'You are a data analyst. The user has a dataset with '+rows.length+' rows.\n'+
+      'Columns: '+colInfo+'\n'+
+      'Sample data (first 20 rows): '+sample+'\n\n'+
+      'RULES:\n'+
+      '- Answer concisely and directly\n'+
+      '- If the user wants a chart/graph, respond with a JSON block like:\n'+
+      '  ```chart\n'+
+      '  {"type":"bar","labelCol":"ColumnName","valueCol":"NumericColumn","topN":10}\n'+
+      '  ```\n'+
+      '  Valid types: bar, donut, horizontal\n'+
+      '- If the user asks for analysis/insight, give bullet points with specific numbers\n'+
+      '- If asked for a table/list, format it as a simple markdown table\n'+
+      '- Always reference specific values from the data';
+
+    try{
+      var resp = await fetch('https://api.openai.com/v1/chat/completions',{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
-        body: JSON.stringify({
-          model:'gpt-4o-mini', max_tokens:400, temperature:0.3,
+        body:JSON.stringify({
+          model:'gpt-4o-mini', max_tokens:600, temperature:0.4,
           messages:[
-            {role:'system', content:'You are a business analyst. Interpret query results concisely in 2-4 sentences. Use numbers and percentages. Be direct.'},
-            {role:'user', content:'Question: '+q+' SQL: '+sql+' Results sample: '+dataPreview+' Total: '+res.rows.length}
+            {role:'system', content: systemPrompt},
+            {role:'user', content: q}
           ]
         })
       });
-      var interpData = await interpResp.json();
-      var insight = interpData.choices[0].message.content.trim();
+      var data = await resp.json();
+      if(data.error) throw new Error(data.error.message);
+      var answer = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content||'').trim();
 
-      // Display
-      var resultHtml = insight + '<br><br>📊 <strong>'+res.rows.length+' rows returned</strong>';
-      this.analyticsUpdateMsg(thinkId, resultHtml);
+      // Check if response contains a chart spec
+      var chartMatch = answer.match(/```chart\s*([\s\S]+?)```/);
+      if(chartMatch){
+        try{
+          var spec = JSON.parse(chartMatch[1].trim());
+          // Aggregate data
+          var agg={};
+          rows.forEach(function(r){
+            var k=String(r[spec.labelCol]||'?');
+            agg[k]=(agg[k]||0)+(parseFloat(r[spec.valueCol])||0);
+          });
+          var arr=Object.entries(agg).sort(function(a,b){return b[1]-a[1];}).slice(0,spec.topN||10);
+          var mx=arr[0]?arr[0][1]:1;
 
-      // Show chart and export if data available
-      if(res.rows.length > 0){
-        this.analyticsRenderChart(res.cols, res.rows, 'bar');
-        var eb = document.getElementById('analytics-export-box');
-        if(eb) eb.style.display = '';
+          var chartHtml='';
+          if(spec.type==='donut'){
+            var tot=arr.reduce(function(s,a){return s+a[1];},0)||1;
+            var off=0,R=50,circ=2*Math.PI*R,sl='';
+            arr.forEach(function(item,i){
+              var p=item[1]/tot,d=p*circ,g=circ-d;
+              sl+='<circle r="'+R+'" cx="65" cy="65" fill="none" stroke="'+COLORS[i%COLORS.length]+'"'+
+                ' stroke-width="22" stroke-dasharray="'+d.toFixed(1)+' '+g.toFixed(1)+'"'+
+                ' stroke-dashoffset="'+(-off*circ).toFixed(1)+'" transform="rotate(-90 65 65)"/>';
+              off+=p;
+            });
+            var leg=arr.map(function(it,i){
+              return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:11px">'+
+                '<span style="width:9px;height:9px;background:'+COLORS[i%COLORS.length]+';border-radius:50%;flex-shrink:0"></span>'+
+                '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+it[0]+'</span>'+
+                '<span style="font-weight:700">'+it[1].toFixed(1)+'</span></div>';
+            }).join('');
+            chartHtml='<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">'+
+              '<svg viewBox="0 0 130 130" style="width:130px;height:130px;flex-shrink:0">'+sl+'</svg>'+
+              '<div style="flex:1;min-width:140px">'+leg+'</div></div>';
+          } else {
+            var isH=spec.type==='horizontal';
+            chartHtml=arr.map(function(item,i){
+              var pct=Math.round(item[1]/mx*100);
+              var fv=item[1]%1===0?item[1].toLocaleString():item[1].toFixed(2);
+              if(isH) return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">'+
+                '<div style="width:140px;text-align:right;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0">'+item[0]+'</div>'+
+                '<div style="flex:1;background:var(--surface2);border-radius:3px;height:18px;position:relative">'+
+                '<div style="background:'+COLORS[i%COLORS.length]+';width:'+pct+'%;height:18px;border-radius:3px"></div>'+
+                '<span style="position:absolute;right:6px;top:2px;font-size:10px;font-weight:700">'+fv+'</span></div></div>';
+              return '<div style="margin-bottom:8px">'+
+                '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">'+
+                '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:65%">'+item[0]+'</span>'+
+                '<span style="font-weight:700">'+fv+'</span></div>'+
+                '<div style="background:var(--surface2);border-radius:3px;height:7px">'+
+                '<div style="background:'+COLORS[i%COLORS.length]+';width:'+pct+'%;height:7px;border-radius:3px"></div>'+
+                '</div></div>';
+            }).join('');
+          }
+
+          var chartTitle = (spec.valueCol||'').replace(/_/g,' ')+' by '+(spec.labelCol||'').replace(/_/g,' ');
+          var chartPanel = '<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-top:8px">'+
+            '<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--dim);margin-bottom:10px">'+chartTitle+'</div>'+
+            chartHtml+'</div>';
+
+          // Remove the chart spec from text
+          var textPart = answer.replace(/```chart[\s\S]+?```/,'').trim();
+          this.anUpdateMsg(thinkId, (textPart?'<div style="margin-bottom:10px">'+textPart+'</div>':'')+chartPanel);
+
+        }catch(pe){
+          this.anUpdateMsg(thinkId, answer);
+        }
+      } else {
+        // Plain text / markdown — render with basic formatting
+        var formatted = answer
+          .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+          .replace(/^[-•]\s+(.+)$/gm,'<div style="margin:3px 0;padding-left:12px">• $1</div>')
+          .replace(/\n\n/g,'<br><br>')
+          .replace(/\n/g,'<br>');
+        this.anUpdateMsg(thinkId, formatted);
       }
 
     }catch(e){
-      this.analyticsUpdateMsg(thinkId, '❌ Error: '+e.message);
+      this.anUpdateMsg(thinkId, '\u274c '+e.message);
     }
   },
+
+  anAddMsg(role, text, returnId){
+    var chat = document.getElementById('an-chat');
+    if(!chat) return null;
+    var id = 'anmsg-'+Date.now();
+    var isUser = role==='user';
+    var div = document.createElement('div');
+    div.id = id;
+    div.style.cssText = 'display:flex;gap:8px;align-items:flex-start;'+(isUser?'flex-direction:row-reverse':'');
+    div.innerHTML =
+      '<div style="width:28px;height:28px;border-radius:50%;background:'+(isUser?'var(--accent)':'var(--surface2)')+
+      ';display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">'+
+      (isUser?'\uD83D\uDC64':'\uD83E\uDD16')+'</div>'+
+      '<div style="max-width:80%;background:'+(isUser?'var(--accent)':'var(--surface)')+
+      ';color:'+(isUser?'#fff':'var(--text)')+
+      ';border:1px solid '+(isUser?'transparent':'var(--border)')+
+      ';border-radius:10px;padding:8px 12px;font-size:12px;line-height:1.6">'+text+'</div>';
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    return returnId ? id : null;
+  },
+
+  anUpdateMsg(id, text){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var bubble = el.querySelector('div:last-child');
+    if(bubble) bubble.innerHTML = text;
+    var chat = document.getElementById('an-chat');
+    if(chat) chat.scrollTop = chat.scrollHeight;
+  },
+
+  sqNew(){
+    this._sqEditId = null;
+    document.getElementById('sq-form-title').textContent = '✏️ New Query';
+    ['sq-title','sq-owner','sq-desc','sq-sql'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.value='';
+    });
+    var db=document.getElementById('sq-delete-btn'); if(db) db.style.display='none';
+    var t=document.getElementById('sq-title'); if(t) t.focus();
+  },
+
+  async sqLoadList(){
+    try{
+      var rows = await supaFetch('saved_queries','?order=title.asc&select=id,title,owner,description');
+      this._sqData = rows||[];
+    }catch(e){
+      this._sqData = [];
+      var el=document.getElementById('sq-list');
+      if(el) el.innerHTML='<div style="padding:12px;font-size:11px;color:var(--red)">Table missing. Run in Supabase:<br>'
+        +'<code style="font-size:10px;background:var(--surface2);display:block;padding:6px;margin-top:4px;border-radius:4px">'
+        +'CREATE TABLE public.saved_queries (id bigint generated always as identity primary key, title text not null, owner text, description text, sql text not null, updated_at timestamptz default now());</code></div>';
+      this._sqRenderSelect(); return;
+    }
+    this._sqRenderList();
+    this._sqRenderSelect();
+  },
+
+  _sqRenderList(){
+    var el=document.getElementById('sq-list'); if(!el) return;
+    if(!this._sqData.length){
+      el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--dim)">No queries yet. Click + New to create one.</div>';
+      return;
+    }
+    el.innerHTML = this._sqData.map(function(q){
+      return '<div onclick="App.sqEdit('+q.id+')" '
+        +'style="padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer"'
+        +' onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'
+        +'<div style="font-size:12px;font-weight:600">'+q.title+'</div>'
+        +(q.owner?'<div style="font-size:10px;color:var(--dim)">\u{1F464} '+q.owner+'</div>':'')
+        +(q.description?'<div style="font-size:10px;color:var(--dim);margin-top:2px">'+q.description+'</div>':'')
+        +'</div>';
+    }).join('');
+  },
+
+  _sqRenderSelect(){
+    var el=document.getElementById('sq-select'); if(!el) return;
+    el.innerHTML='<option value="">-- Select a saved query --</option>'
+      +this._sqData.map(function(q){ return '<option value="'+q.id+'">'+q.title+(q.owner?' ('+q.owner+')':'')+'</option>'; }).join('');
+  },
+
+  async sqEdit(id){
+    try{
+      var rows=await supaFetch('saved_queries','?id=eq.'+id+'&select=*');
+      var q=rows&&rows[0]; if(!q) return;
+      this._sqEditId=id;
+      document.getElementById('sq-form-title').textContent='✏️ Edit: '+q.title;
+      document.getElementById('sq-title').value = q.title||'';
+      document.getElementById('sq-owner').value = q.owner||'';
+      document.getElementById('sq-desc').value  = q.description||'';
+      document.getElementById('sq-sql').value   = q.sql||'';
+      var db=document.getElementById('sq-delete-btn'); if(db) db.style.display='';
+    }catch(e){ this.toast('Error loading query: '+e.message,'error'); }
+  },
+
+  async sqSave(){
+    var title=(document.getElementById('sq-title').value||'').trim();
+    var sql  =(document.getElementById('sq-sql').value||'').trim();
+    if(!title){ this.toast('Title is required','error'); return; }
+    if(!sql)  { this.toast('SQL is required','error'); return; }
+    var payload={
+      title: title,
+      owner: (document.getElementById('sq-owner').value||'').trim(),
+      description: (document.getElementById('sq-desc').value||'').trim(),
+      sql: sql,
+      updated_at: new Date().toISOString()
+    };
+    try{
+      if(this._sqEditId){
+        await supaFetch('saved_queries','?id=eq.'+this._sqEditId,{method:'PATCH',body:payload});
+        this.toast('Query updated!','success');
+      } else {
+        await supaFetch('saved_queries','',{method:'POST',body:payload});
+        this.toast('Query saved!','success');
+      }
+      this._sqData = [];  // force reload
+      this.sqNew();
+      await this.sqLoadList();
+      this._anReady = false;  // force Analysis tab to reload queries too
+    }catch(e){ this.toast('Save failed: '+e.message,'error'); }
+  },
+
+  async sqDelete(){
+    if(!this._sqEditId){
+      this.toast('Select a query to delete first','error');
+      return;
+    }
+    // Show inline confirmation on the button
+    var btn = document.getElementById('sq-delete-btn');
+    if(btn && btn.textContent.indexOf('Sure?') < 0){
+      btn.textContent = '⚠️ Sure? Click again';
+      btn.style.color = 'var(--red)';
+      btn.style.background = 'rgba(247,92,92,.1)';
+      setTimeout(function(){ 
+        if(btn){ btn.innerHTML = '🗑 Delete'; btn.style.background = ''; }
+      }, 3000);
+      return;
+    }
+    // Second click — actually delete
+    if(btn){ btn.textContent = '⏳ Deleting...'; btn.disabled = true; }
+    try{
+      await supaFetch('saved_queries','?id=eq.'+this._sqEditId,{method:'DELETE',prefer:'return=minimal'});
+      this.toast('Query deleted!','success');
+      this._sqEditId = null;
+      this._sqData = [];  // force full reload
+      this.sqNew();
+      await this.sqLoadList();
+      // Also refresh Analysis tab dropdown if it was loaded
+      this._anReady = false;
+    }catch(e){
+      this.toast('Delete failed: '+e.message,'error');
+      if(btn){ btn.innerHTML = '🗑 Delete'; btn.disabled = false; btn.style.background = ''; }
+    }
+  },
+
+  async sqRun(){
+    var selId=document.getElementById('sq-select').value;
+    if(!selId){ this.toast('Select a query first','error'); return; }
+    var q=this._sqData.find(function(r){return String(r.id)===String(selId);});
+    if(!q){ this.toast('Query not found','error'); return; }
+    // Reload full SQL from DB
+    try{ var rows2=await supaFetch('saved_queries','?id=eq.'+q.id+'&select=*'); q=rows2&&rows2[0]||q; }catch(e){}
+
+    var status=document.getElementById('sq-status');
+    status.style.display='block';
+    status.innerHTML='<span style="color:var(--accent)">\u23f3 Running '+q.title+'...</span>';
+    document.getElementById('sq-results').style.display='none';
+    document.getElementById('sq-analytics').style.display='none';
+
+    try{
+      var res=await this.dbQuery(q.sql);
+      this._sqResults=res;
+      this._sqCurrentTitle=q.title;
+      if(!res.rows.length){
+        status.innerHTML='<span style="color:var(--amber)">\u26a0\ufe0f Query returned 0 rows.</span>';
+        return;
+      }
+      status.innerHTML='<span style="color:var(--green)">\u2705 '+res.rows.length+' rows returned</span>';
+      document.getElementById('sq-result-title').textContent=q.title;
+      document.getElementById('sq-row-count').textContent=res.rows.length+' rows, '+res.cols.length+' cols';
+      this._sqRenderTable(res.cols, res.rows);
+      document.getElementById('sq-results').style.display='block';
+      // Scroll results into view
+      setTimeout(function(){
+        var el = document.getElementById('sq-results');
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 100);
+    }catch(e){
+      status.innerHTML='<span style="color:var(--red)">\u274c '+e.message+'</span>';
+    }
+  },
+
+  _sqRenderTable(cols, rows){
+    var max=Math.min(rows.length,500);
+    var th=cols.map(function(c,i){
+      return '<th onclick="App.sqSort('+i+')" style="background:var(--surface2);padding:7px 10px;text-align:left;'
+        +'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--dim);'
+        +'border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;position:sticky;top:0;z-index:1">'+c+'</th>';
+    }).join('');
+    var tb=rows.slice(0,max).map(function(row,ri){
+      return '<tr style="background:'+(ri%2===0?'transparent':'rgba(0,0,0,.025)')+'">'
+        +cols.map(function(c){
+          var v=row[c]; if(v===null||v===undefined) v='\u2014';
+          // Only format as number if value is purely numeric (no letters)
+          var sv=String(v).trim();
+          var n=parseFloat(sv.replace(/,/g,''));
+          if(!isNaN(n)&&sv!==''&&typeof v!=='boolean'&&/^-?[\d,\.]+$/.test(sv)) v=n.toLocaleString('en-US',{maximumFractionDigits:2});
+          return '<td style="padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;white-space:nowrap">'+v+'</td>';
+        }).join('')+'</tr>';
+    }).join('');
+    var extra=rows.length>max?'<div style="padding:8px;text-align:center;font-size:11px;color:var(--dim)">Showing '+max+' of '+rows.length+' rows — export Excel for all</div>':'';
+    document.getElementById('sq-table-wrap').innerHTML=
+      '<table style="width:100%;border-collapse:collapse"><thead><tr>'+th+'</tr></thead>'
+      +'<tbody id="sq-tbody">'+tb+'</tbody></table>'+extra;
+  },
+
+  sqSort(col){
+    if(!this._sqResults) return;
+    var cols=this._sqResults.cols, rows=this._sqResults.rows.slice();
+    this._sqSortDir = (this._sqSortCol===col) ? -(this._sqSortDir||1) : 1;
+    this._sqSortCol=col;
+    var dir=this._sqSortDir;
+    rows.sort(function(a,b){
+      var av=a[cols[col]], bv=b[cols[col]];
+      var an=parseFloat(av), bn=parseFloat(bv);
+      if(!isNaN(an)&&!isNaN(bn)) return dir*(an-bn);
+      return dir*String(av||'').localeCompare(String(bv||''));
+    });
+    this._sqRenderTable(cols, rows);
+  },
+
+  sqFilterTable(q){
+    var q2=(q||'').toLowerCase(), cnt=0;
+    document.querySelectorAll('#sq-tbody tr').forEach(function(tr){
+      var ok=!q2||tr.textContent.toLowerCase().indexOf(q2)>=0;
+      tr.style.display=ok?'':'none';
+      if(ok) cnt++;
+    });
+    document.getElementById('sq-row-count').textContent=cnt+' / '+(this._sqResults?this._sqResults.rows.length:0)+' rows';
+  },
+
+  sqExport(){
+    var res=this._sqResults; if(!res||!res.rows.length) return;
+    var tsv=[res.cols.join('\t')];
+    res.rows.forEach(function(row){
+      tsv.push(res.cols.map(function(c){ var v=row[c]; return v===null||v===undefined?'':String(v).replace(/\t/g,' '); }).join('\t'));
+    });
+    var b=new Blob([tsv.join('\n')],{type:'application/vnd.ms-excel;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(b);
+    a.download=(this._sqCurrentTitle||'query').replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xls';
+    a.click(); this.toast('Excel exported!','success');
+  },
+
+
+  sqAnalyzeModal(){
+    var res = this._sqResults;
+    if(!res||!res.rows.length){ this.toast('Run a query first','error'); return; }
+    var cols = res.cols, rows = res.rows;
+    // Detect text vs numeric cols
+    var numCols = cols.filter(function(c){ var v=rows[0]&&rows[0][c]; return v!==null&&v!==undefined&&!isNaN(parseFloat(v)); });
+    var txtCols = cols.filter(function(c){ return numCols.indexOf(c)<0; });
+    // Populate selects
+    var lbSel = document.getElementById('sq-ax-label');
+    var vlSel = document.getElementById('sq-ax-value');
+    lbSel.innerHTML = txtCols.map(function(c){return '<option>'+c+'</option>';}).join('');
+    vlSel.innerHTML = numCols.map(function(c){return '<option>'+c+'</option>';}).join('');
+    // Show modal
+    var modal = document.getElementById('sq-analyze-modal');
+    modal.style.display = 'flex';
+  },
+
+  sqCloseModal(){
+    document.getElementById('sq-analyze-modal').style.display = 'none';
+  },
+
+  async sqRunAnalytics(){
+    var res = this._sqResults;
+    if(!res||!res.rows.length) return;
+    var labelCol = document.getElementById('sq-ax-label').value;
+    var valueCol = document.getElementById('sq-ax-value').value;
+    var chartType = document.querySelector('input[name="sq-ctype"]:checked').value;
+    var topN = parseInt(document.getElementById('sq-top-n').value)||10;
+    var doAI = document.getElementById('sq-ai-toggle').checked;
+    this.sqCloseModal();
+
+    var panel = document.getElementById('sq-analytics');
+    panel.style.display = 'block';
+    panel.scrollIntoView({behavior:'smooth', block:'start'});
+
+    var cols = res.cols, rows = res.rows;
+    var COLORS = ['#4f6ef7','#22d37a','#f5a623','#f75c5c','#7c5cf7','#5bc8f5','#f5a67a','#a3f75c','#f75ca3','#5cf7d4'];
+
+    // Aggregate
+    var agg = {};
+    rows.forEach(function(r){
+      var k = String(r[labelCol]||'Unknown');
+      agg[k] = (agg[k]||0) + (parseFloat(r[valueCol])||0);
+    });
+    var arr = Object.entries(agg).sort(function(a,b){return b[1]-a[1];}).slice(0,topN);
+    var mx = arr[0]?arr[0][1]:1;
+
+    var chartHtml = '';
+    if(chartType === 'bar' || chartType === 'horizontal'){
+      var isHoriz = chartType === 'horizontal';
+      var bars = arr.map(function(item,i){
+        var pct = Math.round(item[1]/mx*100);
+        var fv  = item[1]%1===0 ? item[1].toLocaleString() : item[1].toFixed(2);
+        if(isHoriz){
+          return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+            +'<div style="width:160px;text-align:right;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0">'+item[0]+'</div>'
+            +'<div style="flex:1;background:var(--surface2);border-radius:3px;height:20px;position:relative">'
+            +'<div style="background:'+COLORS[i%COLORS.length]+';width:'+pct+'%;height:20px;border-radius:3px"></div>'
+            +'<span style="position:absolute;right:6px;top:2px;font-size:11px;font-weight:700">'+fv+'</span>'
+            +'</div></div>';
+        }
+        return '<div style="margin-bottom:9px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">'
+          +'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:65%">'+item[0]+'</span>'
+          +'<span style="font-weight:700">'+fv+'</span></div>'
+          +'<div style="background:var(--surface2);border-radius:3px;height:8px">'
+          +'<div style="background:'+COLORS[i%COLORS.length]+';width:'+pct+'%;height:8px;border-radius:3px"></div>'
+          +'</div></div>';
+      }).join('');
+      chartHtml = '<div style="background:var(--surface2);border-radius:8px;padding:16px">'
+        +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--dim);margin-bottom:12px">'
+        +valueCol.replace(/_/g,' ')+' by '+labelCol.replace(/_/g,' ')
+        +(topN<arr.length+1?' (Top '+topN+')':'')+'</div>'+bars+'</div>';
+
+    } else if(chartType === 'donut'){
+      var total2 = arr.reduce(function(s,a){return s+a[1];},0)||1;
+      var offset = 0, R = 60, circ = 2*Math.PI*R, slices = '';
+      arr.forEach(function(item,i){
+        var pct2=item[1]/total2, dash=pct2*circ, gap=circ-dash;
+        slices += '<circle r="'+R+'" cx="80" cy="80" fill="none" stroke="'+COLORS[i%COLORS.length]+'"'
+          +' stroke-width="24" stroke-dasharray="'+dash.toFixed(1)+' '+gap.toFixed(1)+'"'
+          +' stroke-dashoffset="'+(-offset*circ).toFixed(1)+'" transform="rotate(-90 80 80)"/>';
+        offset += pct2;
+      });
+      var legend2 = arr.map(function(item,i){
+        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+          +'<span style="width:11px;height:11px;background:'+COLORS[i%COLORS.length]+';border-radius:50%;flex-shrink:0"></span>'
+          +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+item[0]+'</span>'
+          +'<span style="font-weight:700;font-size:11px">'+item[1].toFixed(2)+'</span></div>';
+      }).join('');
+      chartHtml = '<div style="background:var(--surface2);border-radius:8px;padding:16px">'
+        +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--dim);margin-bottom:12px">'
+        +valueCol.replace(/_/g,' ')+' by '+labelCol.replace(/_/g,' ')+'</div>'
+        +'<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
+        +'<svg viewBox="0 0 160 160" style="width:140px;height:140px;flex-shrink:0">'+slices+'</svg>'
+        +'<div style="flex:1;min-width:160px">'+legend2+'</div></div></div>';
+    }
+
+    document.getElementById('sq-charts').innerHTML = chartHtml;
+    document.getElementById('sq-ai-insight').innerHTML =
+      doAI ? '<span style="color:var(--dim)">\u23f3 Generating AI insight...</span>'
+           : '<span style="color:var(--dim)">AI insight disabled.</span>';
+
+    if(doAI){
+      var oaiKey='';
+      try{ var kr=await supaFetch('app_settings','?key=eq.openai_key&select=value'); oaiKey=(kr&&kr[0]&&kr[0].value)||''; }catch(e2){}
+      if(!oaiKey) oaiKey=localStorage.getItem('bizops_openai_key')||'';
+      if(!oaiKey){ document.getElementById('sq-ai-insight').innerHTML='<span style="color:var(--dim)">Set OpenAI key in Setup \u2192 Settings to enable AI insight.</span>'; return; }
+      try{
+        var sample = arr.slice(0,15).map(function(a){return labelCol+': '+a[0]+', '+valueCol+': '+a[1].toFixed(2);}).join('\n');
+        var rr = await fetch('https://api.openai.com/v1/chat/completions',{
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+          body:JSON.stringify({model:'gpt-4o-mini',max_tokens:350,temperature:0.4,messages:[
+            {role:'system',content:'Concise business analyst for Philips EI CommOps. 4-5 bullet insights with numbers. End with one actionable recommendation.'},
+            {role:'user',content:'Chart: '+valueCol+' by '+labelCol+'\nQuery: '+this._sqCurrentTitle+'\nData (top '+topN+'):\n'+sample+'\nTotal rows: '+rows.length}
+          ]})
+        });
+        var rd = await rr.json();
+        var insight = (rd.choices&&rd.choices[0]&&rd.choices[0].message&&rd.choices[0].message.content||'').trim();
+        document.getElementById('sq-ai-insight').innerHTML =
+          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--dim);margin-bottom:8px">\ud83e\udde0 AI Insight</div>'
+          +'<div style="white-space:pre-wrap;font-size:12px;line-height:1.7">'+insight+'</div>';
+      }catch(e){
+        document.getElementById('sq-ai-insight').innerHTML='<span style="color:var(--red)">AI error: '+e.message+'</span>';
+      }
+    }
+  },
+
+  async analyticsDiscoverSchema(){
+    var id=this.analyticsAddMsg('agent','Discovering schema...', true);
+    try{
+      this._schemaCache=null;
+      var sc=await this._fetchRealSchema();
+      var lines=[];
+      Object.keys(sc).forEach(function(t){
+        var cols=sc[t];
+        lines.push('<strong>'+t+'</strong> &mdash; '+cols.length+' columns');
+        if(cols.length) lines.push('<code style="font-size:10px;background:rgba(0,0,0,.06);padding:4px 8px;border-radius:3px;display:block;margin:2px 0;line-height:1.7">'+cols.join(', ')+'</code>');
+        else lines.push('<span style="color:orange">&#9888; 0 columns &mdash; check browser console (F12) for details</span>');
+      });
+      this.analyticsUpdateMsg(id, '<strong>&#10003; Schema loaded!</strong><br><br>'+lines.join('<br>')+'<br><br><small style="color:var(--dim)">GPT will use these real column names.</small>');
+    }catch(e){ this.analyticsUpdateMsg(id,'&#10007; Error: '+e.message); }
+  },
+
+  // ── Dashboard open in new tab ──────────────────────────────────────────────
+  analyticsOpenDashboardTab(content, title){
+    var ts = new Date().toLocaleString();
+    var fullHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+title+'</title><style>'
+      +'*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}'
+      +'body{background:#f0f4f8;padding:24px;color:#1a202c}'
+      +'h1{font-size:20px;font-weight:800;color:#0050a0;margin-bottom:4px}'
+      +'.sub{font-size:11px;color:#888;margin-bottom:20px}'
+      +'.kpi-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}'
+      +'.kpi-box{flex:1;min-width:120px;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px 12px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07)}'
+      +'.kpi-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;line-height:1.4}'
+      +'.kpi-value{font-size:28px;font-weight:800;color:#1a202c}'
+      +'.kpi-value.blank{color:#bbb;font-size:18px;font-weight:400}'
+      +'table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07)}'
+      +'thead tr{background:#0050a0}'
+      +'th{padding:9px 12px;text-align:right;font-size:10px;font-weight:600;color:#fff;letter-spacing:.4px;white-space:nowrap}'
+      +'th:first-child{text-align:left}'
+      +'td{padding:7px 12px;text-align:right;font-size:11px;border-bottom:1px solid #f0f4f8;white-space:nowrap}'
+      +'td:first-child{text-align:left;font-weight:500;color:#0050a0}'
+      +'tr:last-child td{border-bottom:none}'
+      +'tr:hover td{background:#f8faff}'
+      +'.total-row td{background:#dbeafe!important;font-weight:700;border-top:2px solid #0050a0;color:#1a202c!important}'
+      +'.pos{color:#16a34a;font-weight:700}'
+      +'.neg{color:#dc2626;font-weight:700}'
+      +'footer{margin-top:16px;font-size:10px;color:#aaa;text-align:right}'
+      +'</style></head><body>'
+      +'<h1>'+title+'</h1><p class="sub">Philips EI CommOps &mdash; '+ts+'</p>'
+      +content
+      +'<footer>BizOps EI &mdash; Databricks + GPT</footer>'+'</body></html>'
+    var blob=new Blob([fullHtml],{type:'text/html'});
+    window.open(URL.createObjectURL(blob),'_blank');
+  },
+
+  // ── Dashboard builder ──────────────────────────────────────────────────────
+
+  // ── Sales Team Dashboard ─────────────────────────────────────────────────
+  SALES_TEAM_SQL: "SELECT a.Opportunity_Link, a.Golden_Opportunity_ID AS Golden_Number, a.Stage, a.Forecast_Category, a.Region_Level_2 AS Region_Level, a.Country_Name, a.Market_Name_Normalized, a.Business_Category_Description AS Business_Category, a.Business_Model_Description AS Business_Model, a.Opportunity_Owner AS Primary_Owner, owner_user.Email AS Primary_Owner_Email, d.Name AS Secondary_Owner, d.Email AS Secondary_Owner_Email, b.UserId AS Sales_Team_Id, b.Name AS Sales_Team_Name, b.Email AS Sales_Team_Email, SUM(a.Total_Price_Converted)/1000 AS Value_M FROM qa_wb.saasfactory.commops_ei_general_funnel a JOIN prod_l1.sfdcccrm.opportunity c ON a.Opportunity_Link = c.Id LEFT JOIN qa_wb.saasfactory.commops_ei_salesteam_opportunity b ON a.Opportunity_Link = b.OpportunityID LEFT JOIN prod_l1.sfdcccrm.user d ON c.Secondary_Opportunity_Owner__c = d.id LEFT JOIN prod_l1.sfdcccrm.user owner_user ON owner_user.Id = c.OwnerId WHERE a.Year = '2026' GROUP BY a.Opportunity_Link, a.Golden_Opportunity_ID, a.Stage, a.Forecast_Category, a.Region_Level_2, a.Country_Name, a.Market_Name_Normalized, a.Business_Category_Description, a.Business_Model_Description, a.Opportunity_Owner, owner_user.Email, d.Name, d.Email, b.UserId, b.Name, b.Email",
+
+  async analyticsSalesTeamDashboard(){
+    var oaiKey='';
+    try{ var kr=await supaFetch('app_settings','?key=eq.openai_key&select=value'); oaiKey=(kr&&kr[0]&&kr[0].value)||''; }catch(e2){}
+    if(!oaiKey) oaiKey=localStorage.getItem('bizops_openai_key')||'';
+    var thinkId = this.analyticsAddMsg('agent','\u23f3 Running Sales Team query on Databricks...', true);
+    try{
+      var res = await this.dbQuery(this.SALES_TEAM_SQL);
+      if(!res.rows||!res.rows.length){ this.analyticsUpdateMsg(thinkId,'\u26a0\ufe0f No data returned.'); return; }
+      this.analyticsUpdateMsg(thinkId,'\u2705 <strong>'+res.rows.length+' records</strong> \u2014 Building dashboard...');
+      this._buildSalesTeamPage(res.rows);
+    }catch(e){ this.analyticsUpdateMsg(thinkId,'\u274c '+e.message); }
+  },
+
+  _buildSalesTeamPage(rows){
+    // Aggregate for charts
+    var byOwner={}, byRegion={}, byFC={}, byBU={};
+    rows.forEach(function(r){
+      var v=parseFloat(r.Value_M||0)||0;
+      var o=r.Primary_Owner||'Unknown', rg=r.Region_Level||'Unknown';
+      var f=r.Forecast_Category||'Unknown', b=r.Business_Category||'Unknown';
+      byOwner[o]=(byOwner[o]||0)+v; byRegion[rg]=(byRegion[rg]||0)+v;
+      byFC[f]=(byFC[f]||0)+v; byBU[b]=(byBU[b]||0)+v;
+    });
+    var sortD=function(obj){ return Object.entries(obj).sort(function(a,b){return b[1]-a[1];}); };
+    var ownerArr=sortD(byOwner).slice(0,12), regionArr=sortD(byRegion);
+    var fcArr=sortD(byFC), buArr=sortD(byBU);
+    var total=rows.reduce(function(s,r){return s+(parseFloat(r.Value_M)||0);},0);
+    var uniqOpps=new Set(rows.map(function(r){return r.Opportunity_Link;})).size;
+    var uniqOwners=new Set(rows.map(function(r){return r.Primary_Owner;})).size;
+    var COLS=['#2563eb','#16a34a','#dc2626','#d97706','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#6366f1'];
+
+    // Build chart HTML (bar)
+    function barChart(arr, title){
+      if(!arr.length) return '';
+      var max=arr[0][1]||1;
+      var bars=arr.slice(0,12).map(function(item,i){
+        var pct=Math.round(item[1]/max*100);
+        return '<div style="margin-bottom:9px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">'
+          +'<span style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:65%">'+item[0]+'</span>'
+          +'<span style="color:#555;font-weight:600">'+item[1].toFixed(1)+'M</span></div>'
+          +'<div style="background:#f1f5f9;border-radius:4px;height:8px">'
+          +'<div style="background:'+COLS[i%COLS.length]+';width:'+pct+'%;height:8px;border-radius:4px"></div>'
+          +'</div></div>';
+      }).join('');
+      return '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)">'
+        +'<div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#475569;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #f1f5f9">'+title+'</div>'
+        +bars+'</div>';
+    }
+
+    // Build donut chart HTML
+    function donutChart(arr, title){
+      if(!arr.length) return '';
+      var tot=arr.reduce(function(s,a){return s+a[1];},0)||1;
+      var offset=0, R=40, circ=2*Math.PI*R, slices='';
+      arr.slice(0,6).forEach(function(item,i){
+        var pct=item[1]/tot, dash=pct*circ, gap=circ-dash;
+        slices+='<circle r="'+R+'" cx="50" cy="50" fill="none" stroke="'+COLS[i%COLS.length]+'"'
+          +' stroke-width="18" stroke-dasharray="'+dash.toFixed(1)+' '+gap.toFixed(1)+'"'
+          +' stroke-dashoffset="'+(-(offset)*circ).toFixed(1)+'" transform="rotate(-90 50 50)"/>';
+        offset+=pct;
+      });
+      var legend=arr.slice(0,6).map(function(item,i){
+        return '<div style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:5px">'
+          +'<span style="width:10px;height:10px;background:'+COLS[i%COLS.length]+';border-radius:50%;flex-shrink:0"></span>'
+          +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+item[0]+'</span>'
+          +'<span style="font-weight:700">'+item[1].toFixed(1)+'M</span></div>';
+      }).join('');
+      return '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)">'
+        +'<div style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#475569;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #f1f5f9">'+title+'</div>'
+        +'<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+        +'<svg viewBox="0 0 100 100" style="width:90px;height:90px;flex-shrink:0">'+slices+'</svg>'
+        +'<div style="flex:1;min-width:120px">'+legend+'</div></div></div>';
+    }
+
+    // Build filter selects
+    var stages=[...new Set(rows.map(function(r){return r.Stage||'';}))].filter(Boolean).sort();
+    var regions=[...new Set(rows.map(function(r){return r.Region_Level||'';}))].filter(Boolean).sort();
+    var fcs=[...new Set(rows.map(function(r){return r.Forecast_Category||'';}))].filter(Boolean).sort();
+    var owners=[...new Set(rows.map(function(r){return r.Primary_Owner||'';}))].filter(Boolean).sort();
+    var mkOpts=function(arr){ return arr.map(function(v){return '<option>'+v+'</option>';}).join(''); };
+
+    // Build table rows
+    var tblRows=rows.map(function(r){
+      var fc=r.Forecast_Category||'';
+      var fcColor=fc==='Commit'?'#dcfce7;color:#166534':fc==='Best Case'?'#fef3c7;color:#92400e':'#dbeafe;color:#1e40af';
+      return '<tr data-stage="'+(r.Stage||'')+'" data-region="'+(r.Region_Level||'')+'"'
+        +' data-fc="'+fc+'" data-owner="'+(r.Primary_Owner||'')+'">'
+        +'<td>'+(r.Golden_Number||'\u2014')+'</td>'
+        +'<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(r.Market_Name_Normalized||'')+'">'+(r.Market_Name_Normalized||'\u2014')+'</td>'
+        +'<td><span style="background:#e0e7ff;color:#3730a3;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600">'+(r.Stage||'\u2014')+'</span></td>'
+        +'<td><span style="background:'+fcColor+';border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600">'+fc+'</span></td>'
+        +'<td>'+(r.Region_Level||'\u2014')+'</td>'
+        +'<td>'+(r.Country_Name||'\u2014')+'</td>'
+        +'<td>'+(r.Business_Category||'\u2014')+'</td>'
+        +'<td>'+(r.Primary_Owner||'\u2014')+'</td>'
+        +'<td>'+(r.Sales_Team_Name||'\u2014')+'</td>'
+        +'<td style="text-align:right;font-weight:700">'+(parseFloat(r.Value_M||0).toFixed(2))+'</td>'
+        +'</tr>';
+    }).join('');
+
+    // Inline JS (no backticks)
+    var inlineJS = [
+      'var allData='+JSON.stringify(rows)+';',
+      'var sortCol=-1, sortDir=1;',
+      'function applyFilters(){',
+      '  var st=document.getElementById("f-stage").value;',
+      '  var fc=document.getElementById("f-fc").value;',
+      '  var rg=document.getElementById("f-region").value;',
+      '  var ow=document.getElementById("f-owner").value;',
+      '  var sr=document.getElementById("f-search").value.toLowerCase();',
+      '  var rows=document.querySelectorAll("#tbody tr"), vis=[];',
+      '  rows.forEach(function(tr){',
+      '    var ok=(!st||tr.dataset.stage===st)&&(!fc||tr.dataset.fc===fc)',
+      '      &&(!rg||tr.dataset.region===rg)&&(!ow||tr.dataset.owner===ow)',
+      '      &&(!sr||tr.textContent.toLowerCase().indexOf(sr)>=0);',
+      '    tr.style.display=ok?"":"none"; if(ok) vis.push(tr);',
+      '  });',
+      '  document.getElementById("rowCount").textContent=vis.length+" of "+allData.length+" rows";',
+      '}',
+      'function resetF(){ ["f-stage","f-fc","f-region","f-owner"].forEach(function(id){document.getElementById(id).value="";}); document.getElementById("f-search").value=""; applyFilters(); }',
+      'function sortTable(col){',
+      '  if(sortCol===col) sortDir=-sortDir; else{sortCol=col;sortDir=1;}',
+      '  var tb=document.getElementById("tbody");',
+      '  var rows=Array.from(tb.querySelectorAll("tr"));',
+      '  rows.sort(function(a,b){ var av=a.cells[col]?a.cells[col].textContent.trim():""; var bv=b.cells[col]?b.cells[col].textContent.trim():""; var an=parseFloat(av),bn=parseFloat(bv); if(!isNaN(an)&&!isNaN(bn)) return sortDir*(an-bn); return sortDir*av.localeCompare(bv); });',
+      '  rows.forEach(function(r){tb.appendChild(r);});',
+      '}',
+      'function exportXLS(){',
+      '  var cols=["Golden_Number","Market_Name_Normalized","Stage","Forecast_Category","Region_Level","Country_Name","Business_Category","Business_Model","Primary_Owner","Primary_Owner_Email","Secondary_Owner","Secondary_Owner_Email","Sales_Team_Name","Sales_Team_Email","Value_M"];',
+      '  var tsv=[cols.join("\t")];',
+      '  allData.forEach(function(r){ tsv.push(cols.map(function(c){ var v=r[c]; return v===null||v===undefined?"":String(v).replace(/\t/g," "); }).join("\t")); });',
+      '  var b=new Blob([tsv.join("\n")],{type:"application/vnd.ms-excel;charset=utf-8"});',
+      '  var a=document.createElement("a"); a.href=URL.createObjectURL(b);',
+      '  a.download="EI_SalesTeam_2026_"+new Date().toISOString().slice(0,10)+".xls"; a.click();',
+      '}',
+      'document.getElementById("rowCount").textContent=allData.length+" rows";',
+    ].join('\n');
+
+    // Build the full HTML using string concatenation ONLY (no backticks)
+    var now = new Date().toLocaleString();
+    var page =
+      '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+      +'<meta name="viewport" content="width=device-width,initial-scale=1">'
+      +'<title>EI Sales Team Dashboard 2026</title>'
+      +'<style>'
+      +'*{box-sizing:border-box;margin:0;padding:0}'
+      +'body{font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1e293b;font-size:13px}'
+      +'header{background:linear-gradient(135deg,#1d4ed8,#1e40af);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}'
+      +'h1{font-size:17px;font-weight:700}'
+      +'.kpis{display:flex;gap:10px;padding:16px 24px;flex-wrap:wrap}'
+      +'.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;flex:1;min-width:130px}'
+      +'.kpi-l{font-size:10px;font-weight:700;text-transform:uppercase;color:#64748b;margin-bottom:5px}'
+      +'.kpi-v{font-size:24px;font-weight:800}'
+      +'.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:0 24px 16px}'
+      +'.fbar{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 20px;margin:0 24px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}'
+      +'.fbar label{font-size:11px;font-weight:600;color:#475569}'
+      +'.fbar select,.fbar input{font-size:12px;border:1px solid #e2e8f0;border-radius:6px;padding:4px 8px;background:#f8fafc;color:#1e293b}'
+      +'.twrap{margin:0 24px 24px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}'
+      +'.thead{padding:10px 16px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}'
+      +'table{width:100%;border-collapse:collapse;font-size:11px}'
+      +'th{background:#f8fafc;padding:7px 9px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;white-space:nowrap;cursor:pointer}'
+      +'th:hover{background:#f1f5f9} th:last-child,td:last-child{text-align:right}'
+      +'td{padding:6px 9px;border-bottom:1px solid #f1f5f9} tr:hover td{background:#f8fafc}'
+      +'.btn{border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer}'
+      +'</style></head><body>'
+      +'<header><div><h1>&#128202; EI Sales Team Dashboard</h1>'
+      +'<small style="opacity:.75;font-size:11px">Opportunities x Sales Team &nbsp;&middot;&nbsp; FY 2026 &nbsp;&middot;&nbsp; '+now+'</small></div>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button class="btn" style="background:#16a34a;color:#fff" onclick="exportXLS()">&#11015; Export Excel</button>'
+      +'<button class="btn" style="background:rgba(255,255,255,.2);color:#fff" onclick="window.print()">&#128438; Print</button>'
+      +'</div></header>'
+
+      +'<div class="kpis">'
+      +'<div class="kpi"><div class="kpi-l">Total Pipeline</div><div class="kpi-v">'+total.toFixed(1)+'M</div></div>'
+      +'<div class="kpi"><div class="kpi-l">Opportunities</div><div class="kpi-v">'+uniqOpps+'</div></div>'
+      +'<div class="kpi"><div class="kpi-l">Primary Owners</div><div class="kpi-v">'+uniqOwners+'</div></div>'
+      +'<div class="kpi"><div class="kpi-l">Regions</div><div class="kpi-v">'+regionArr.length+'</div></div>'
+      +'<div class="kpi"><div class="kpi-l">Records</div><div class="kpi-v">'+rows.length+'</div></div>'
+      +'</div>'
+
+      +'<div class="charts">'
+      +barChart(ownerArr,'Pipeline by Primary Owner (Top 12)')
+      +donutChart(fcArr,'By Forecast Category')
+      +barChart(regionArr,'Pipeline by Region')
+      +donutChart(buArr,'By Business Unit')
+      +'</div>'
+
+      +'<div class="fbar">'
+      +'<label>Stage</label><select id="f-stage" onchange="applyFilters()"><option value="">All</option>'+mkOpts(stages)+'</select>'
+      +'<label>Forecast</label><select id="f-fc" onchange="applyFilters()"><option value="">All</option>'+mkOpts(fcs)+'</select>'
+      +'<label>Region</label><select id="f-region" onchange="applyFilters()"><option value="">All</option>'+mkOpts(regions)+'</select>'
+      +'<label>Owner</label><select id="f-owner" onchange="applyFilters()"><option value="">All</option>'+mkOpts(owners)+'</select>'
+      +'<input id="f-search" placeholder="&#128269; Search..." oninput="applyFilters()" style="min-width:160px">'
+      +'<button class="btn" style="background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;margin-left:auto" onclick="resetF()">&#10005; Clear</button>'
+      +'</div>'
+
+      +'<div class="twrap"><div class="thead"><strong>Opportunities Detail</strong>'
+      +'<span id="rowCount" style="font-size:11px;color:#64748b"></span></div>'
+      +'<div style="overflow-x:auto;max-height:480px;overflow-y:auto">'
+      +'<table><thead><tr>'
+      +'<th onclick="sortTable(0)">Golden #</th>'
+      +'<th onclick="sortTable(1)">Market / Opportunity</th>'
+      +'<th onclick="sortTable(2)">Stage</th>'
+      +'<th onclick="sortTable(3)">Forecast</th>'
+      +'<th onclick="sortTable(4)">Region</th>'
+      +'<th onclick="sortTable(5)">Country</th>'
+      +'<th onclick="sortTable(6)">BU</th>'
+      +'<th onclick="sortTable(7)">Primary Owner</th>'
+      +'<th onclick="sortTable(8)">Sales Team</th>'
+      +'<th onclick="sortTable(9)">Value M</th>'
+      +'</tr></thead>'
+      +'<tbody id="tbody">'+tblRows+'</tbody></table></div></div>'
+      +'<script>'+inlineJS+'<\/script>'
+      +'</body></html>';
+
+    var blob = new Blob([page],{type:'text/html'});
+    window.open(URL.createObjectURL(blob),'_blank');
+    this.analyticsUpdateMsg(thinkId,
+      '\u2705 <strong>Sales Team Dashboard</strong> opened in new tab! '
+      +'<small style="color:var(--dim)">'+rows.length+' rows &middot; filters &middot; charts &middot; Excel export</small>');
+  },
+
+  analyticsExportHTML(){
+    var content = this._lastDashHtml || '<p>No dashboard to export</p>';
+    var fullHtml = '<!DOCTYPE html><html><head><meta charset="utf-8">'
+      +'<title>EI CommOps — Funnel Dashboard</title>'
+      +'<style>body{font-family:system-ui,sans-serif;margin:20px;color:#1a1a2e;background:#f8f9fa}'
+      +'.kpi-box{display:inline-block;border:1.5px solid #ddd;border-radius:10px;padding:14px 18px;text-align:center;background:#fff;margin:4px;min-width:120px}'
+      +'.kpi-label{font-size:11px;color:#666;margin-bottom:6px}'
+      +'.kpi-value{font-size:24px;font-weight:700}'
+      +'table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}'
+      +'th{background:#f0f4ff;padding:7px 10px;text-align:right;border-bottom:2px solid #c8d4f0;font-size:10px;text-transform:uppercase;letter-spacing:.3px}'
+      +'th:first-child{text-align:left}'
+      +'td{padding:5px 10px;border-bottom:1px solid #eee;text-align:right}'
+      +'td:first-child{text-align:left;font-weight:500}'
+      +'tr:last-child td{font-weight:700;background:#f0f4ff}'
+      +'h1{font-size:16px;color:#1a1a2e;margin-bottom:16px;border-bottom:2px solid #1a1a2e;padding-bottom:8px}'
+      +'</style></head><body>'
+      +'<h1>&#128202; EI CommOps — Funnel Dashboard</h1>'
+      +'<p style="font-size:11px;color:#888;margin-bottom:16px">Generated: '+new Date().toLocaleString()+'</p>'
+      + content.replace(/var\(--[^)]+\)/g,'inherit').replace(/var\(--accent[^)]*\)/g,'#2563eb')
+      +'</body></html>';
+    var blob = new Blob([fullHtml], {type:'text/html'});
+    var url = URL.createObjectURL(blob);
+    window.open(url,'_blank');
+  },
+
+  analyticsBuildDashboard(results){
+    var kpis=results.kpis||{};
+    var rows=results.rows||[];
+    var fmt=function(v){
+      if(v===null||v===undefined||v==='') return '&mdash;';
+      var n=parseFloat(v); return isNaN(n)?v:n.toLocaleString('en-US',{minimumFractionDigits:1,maximumFractionDigits:1});
+    };
+    var dot=function(val){
+      if(val===null||val===undefined||val==='') return '';
+      var n=parseFloat(val); if(isNaN(n)) return val;
+      var cls=n>=0?'pos':'neg'; var sign=n>=0?'+':'';
+      return '<span class="'+cls+'">&#9679; '+sign+parseFloat(n.toFixed(1)).toLocaleString('en-US')+'</span>';
+    };
+
+    var kpiDefs=[
+      {label:'AOP',key:'AOP'},{label:'Actuals',key:'Actuals'},
+      {label:'Analytics',key:'Analytics'},
+      {label:'Actuals + BC Flag + Commit',key:'ActualsBCFlagCommit'},
+      {label:'Total Funnel',key:'TotalFunnel'},
+      {label:'Funnel Size',key:'FunnelSize'},
+    ];
+    var boxHtml='<div class="kpi-row">';
+    kpiDefs.forEach(function(k){
+      var v=kpis[k.key]; var isBlank=v===null||v===undefined||v==='';
+      var display=isBlank?'(Blank)':fmt(v);
+      boxHtml+='<div class="kpi-box"><div class="kpi-label">'+k.label+'</div>'
+        +'<div class="kpi-value'+(isBlank?' blank':'')+'">' +display+'</div></div>';
+    });
+    boxHtml+='</div>';
+
+    if(!rows.length) return boxHtml+'<p style="color:#888;font-size:12px">No detail data.</p>';
+
+    var cols=Object.keys(rows[0]);
+    var deltaCols=cols.filter(function(c){
+      var cl=c.toLowerCase();
+      return cl.startsWith('delta')||cl.indexOf('_vs')>=0||cl.indexOf('vsaop')>=0||cl.indexOf('attain')>=0;
+    });
+
+    var tbl='<table><thead><tr>';
+    cols.forEach(function(c,i){
+      tbl+='<th style="'+(i===0?'text-align:left':'')+'">'+c.replace(/_/g,' ')+'</th>';
+    });
+    tbl+='</tr></thead><tbody>';
+    rows.forEach(function(row){
+      var isTotal=String(row[cols[0]]||'').toLowerCase()==='total';
+      tbl+='<tr'+(isTotal?' class="total-row"':'')+'>';
+      cols.forEach(function(c,ci){
+        var v=row[c];
+        var isDelta=deltaCols.indexOf(c)>=0;
+        tbl+='<td>'+(isDelta?dot(v):fmt(v))+'</td>';
+      });
+      tbl+='</tr>';
+    });
+    tbl+='</tbody></table>';
+    return boxHtml+tbl;
+  },
+
+  // ── Intelligent deal analysis — multi-query AI analysis ─────────────────────
+  async analyticsDealAnalysis(accountName, oaiKey, thinkId){
+    var self = this;
+    // Step A: Fetch full opportunity data for this account
+    var oppSql = "SELECT f.Golden_Number, f.Opp_Name, f.Account_Name, f.Stage, " +
+      "f.Forecast_Category, f.FC_Flag__c, f.Total_Price_Converted/1000 AS Value_M, " +
+      "f.Close_Date, f.Region_Level_1, f.Business_Unit, f.MAG, f.Next_Step, " +
+      "f.Last_Activity_Date, f.Age, f.Quarter, f.Year " +
+      "FROM qa_wb.saasfactory.commops_ei_general_funnel AS f " +
+      "WHERE UPPER(f.Account_Name) LIKE UPPER('%" + accountName + "%') " +
+      "ORDER BY f.Total_Price_Converted DESC LIMIT 20";
+
+    var oppRes = {rows:[], cols:[]};
+    try{ oppRes = await this.dbQuery(oppSql); }catch(e2){}
+
+    if(!oppRes.rows.length){
+      return {error: 'No opportunities found for "'+accountName+'"'};
+    }
+
+    // Step B: Get historical win rate for similar deals (same region/BU)
+    var firstOpp = oppRes.rows[0];
+    var region = firstOpp.Region_Level_1 || firstOpp.region_level_1 || '';
+    var bu = firstOpp.Business_Unit || firstOpp.business_unit || '';
+    var histSql = "SELECT f.Forecast_Category, f.Stage, COUNT(*) AS Count, " +
+      "AVG(f.Total_Price_Converted)/1000 AS Avg_Value_M " +
+      "FROM qa_wb.saasfactory.commops_ei_general_funnel AS f " +
+      "WHERE f.Region_Level_1 = '" + region + "' " +
+      "AND f.Business_Unit = '" + bu + "' " +
+      "GROUP BY f.Forecast_Category, f.Stage ORDER BY Count DESC LIMIT 20";
+
+    var histRes = {rows:[], cols:[]};
+    try{ histRes = await this.dbQuery(histSql); }catch(e3){}
+
+    return {opps: oppRes.rows, history: histRes.rows, account: accountName};
+  },
+
+  async analyticsAsk(){
+    var inp=document.getElementById('analytics-input');
+    var q=(inp&&inp.value||'').trim();
+    if(!q) return;
+    if(inp) inp.value='';
+
+    var oaiKey='';
+    try{ var kr=await supaFetch('app_settings','?key=eq.openai_key&select=value'); oaiKey=(kr&&kr[0]&&kr[0].value)||''; }catch(e2){}
+    if(!oaiKey) oaiKey=localStorage.getItem('bizops_openai_key')||'';
+    if(!oaiKey){ this.analyticsAddMsg('agent','&#9888; OpenAI key not configured. Go to Setup &rarr; Settings.'); return; }
+
+    this.analyticsAddMsg('user', q);
+    var thinkId=this.analyticsAddMsg('agent','Loading schema...', true);
+
+    try{
+      var schema={};
+      try{ schema=await this._fetchRealSchema(); }catch(se){}
+
+      var fCols=(schema['commops_ei_general_funnel']||[]);
+      var oCols=(schema['commops_orders_sales_view']||[]);
+      var fStr=fCols.length?fCols.join(', '):'[run Discover Schema to load real columns]';
+      var oStr=oCols.length?oCols.join(', '):'[run Discover Schema to load real columns]';
+
+      var isDash=this._isDashboardRequest(q);
+      this.analyticsUpdateMsg(thinkId, 'Generating SQL...');
+
+      var SYSTEM=
+        'You are a Databricks SQL expert for Philips EI CommOps. '
+        +'SQL RULES: '
+        +'1) Use aliases: commops_ei_general_funnel AS f, commops_orders_sales_view AS o. '
+        +'2) Prefix all columns with alias: f.ColumnName or o.ColumnName. '
+        +'3) Use ONLY columns listed — NEVER invent names. '
+        +'4) Full table path required: qa_wb.saasfactory.TABLE AS alias. '
+        +'5) Return ONLY raw SQL, no markdown, no backticks. '
+        +'6) LIMIT 50 (LIMIT 10 for top-N). '
+        +'7) Divide monetary values by 1000 to show millions. '
+        +'TABLE f = qa_wb.saasfactory.commops_ei_general_funnel — EI opportunities (one row per product per opportunity). '
+        +'TABLE f REAL COLUMNS: '+fStr+'. '
+        +'TABLE o = qa_wb.saasfactory.commops_orders_sales_view — AOP targets and Actual OIT aggregated by region/business. '
+        +'TABLE o REAL COLUMNS: '+oStr+'. '
+        +'METRICS (from PowerBI DAX): '
+        +'AOP=SUM(o.AOP_OIT)/1000. '
+        +'Actuals=SUM(o.Actual_OIT)/1000. '
+        +'Pipeline=SUM(f.Total_Price_Converted)/1000 WHERE f.Forecast_Category=\'Pipeline\'. '
+        +'Commit=SUM(f.Total_Price_Converted)/1000 WHERE f.Forecast_Category=\'Commit\'. '
+        +'BestCase(flagged)=SUM(f.Total_Price_Converted)/1000 WHERE f.Forecast_Category=\'Best Case\' AND f.FC_Flag__c=true. '
+        +'Analytics=Actuals+BestCase_flagged+Commit+Pipeline. '
+        +'ActualsBCFlagCommit=Actuals+BestCase_flagged+Commit. '
+        +'TotalFunnel=SUM(f.Total_Price_Converted)/1000 (all categories). '
+        +'FunnelSize=TotalFunnel/AOP. '
+        +'DeltaAOP=Actuals-AOP. '
+        +'Attainment%=Actuals/AOP*100. '
+        +'Region_Level_1 values: NAR, LATAM, Europe, GRC, APAC/JPN/ISC, META/RCA. '
++(isDash
+          ? 'DASHBOARD MODE: Return TWO SQL queries separated by ---DASHBOARD---. Query1 (single row KPIs): AOP, Actuals, Analytics, ActualsBCFlagCommit, TotalFunnel, FunnelSize. Query2 (detail): Business_Unit, AOP, Actuals, Delta_AOP, Analytics, Analytics_VsAOP, ActualsBCFlagCommit, Total_Funnel, Funnel_Size. Join both tables on matching dimensions. Add UNION totals row labeled Total.'
+          : '')
+
+      var msgs=[
+        {role:'system',content:SYSTEM},
+        ...(this._chatHistory||[]).slice(-4),
+        {role:'user',content:q}
+      ];
+
+      var gptResp=await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+        body:JSON.stringify({model:'gpt-4o-mini',max_tokens:800,temperature:0.05,messages:msgs})
+      });
+      var gd=await gptResp.json();
+      if(gd.error) throw new Error('GPT: '+gd.error.message);
+      var sql=(gd.choices[0].message.content||'').trim()
+        .replace(/^```sql\s*/i,'').replace(/^```\s*/,'').replace(/```$/,'').trim();
+      if(sql.length<10) sql="SELECT f.Golden_Number, f.Account_Name, SUM(f.Total_Price_Converted)/1000 AS Value_M FROM qa_wb.saasfactory.commops_ei_general_funnel AS f GROUP BY f.Golden_Number, f.Account_Name ORDER BY Value_M DESC LIMIT 10";
+
+      var sqlBox='<details style="margin-top:8px"><summary style="cursor:pointer;font-size:11px;color:var(--dim)">View SQL &#9658;</summary><code style="font-size:10px;white-space:pre-wrap;display:block;background:rgba(0,0,0,.08);padding:8px;border-radius:4px;margin-top:4px;line-height:1.5">'+sql+'</code></details>';
+      this.analyticsUpdateMsg(thinkId,'Running query...'+sqlBox);
+
+      // Execute
+      var res;
+      try{
+        if(sql.indexOf('---DEAL_ANALYSIS---')>=0){
+        // Extract account name and run multi-query intelligent analysis
+        var accLine = sql.split('\n')[0];
+        var accName = accLine.replace('---DEAL_ANALYSIS---','').trim();
+        if(!accName) accName = q.replace(/.*?(analis[ea]|probabilid|fechar|deal).{0,20}/i,'').split(/\s+/).slice(0,4).join(' ');
+        this.analyticsUpdateMsg(thinkId, '\ud83d\udd0d Buscando dados de "'+accName+'"...');
+        var dealData = await this.analyticsDealAnalysis(accName, oaiKey, thinkId);
+        if(dealData.error){ this.analyticsUpdateMsg(thinkId, '\u26a0\ufe0f '+dealData.error); return; }
+
+        // Ask GPT to do the full intelligent analysis
+        this.analyticsUpdateMsg(thinkId, '\ud83e\udde0 Analisando probabilidade de fechamento...');
+        var analysisResp = await fetch('https://api.openai.com/v1/chat/completions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+          body:JSON.stringify({
+            model:'gpt-4o-mini', max_tokens:800, temperature:0.4,
+            messages:[
+              {role:'system', content:'You are a senior sales analyst for Philips EI CommOps. Analyze the deal data and provide a structured probability assessment. Be specific with numbers. Use the opportunity fields (Stage, Forecast_Category, FC_Flag__c, Next_Step, Age, Value, Close_Date) to assess deal health. Compare with historical patterns.'},
+              {role:'user', content:'Account: '+dealData.account+'\nOpportunity data:\n'+JSON.stringify(dealData.opps.slice(0,5))+'\n\nHistorical patterns in same region/BU:\n'+JSON.stringify(dealData.history)+'\n\nProvide:\n1. Win probability estimate (%) with reasoning\n2. Key positive signals\n3. Key risk factors\n4. Recommended next steps\n5. Overall deal health score (1-10)'}
+            ]
+          })
+        });
+        var ad = await analysisResp.json();
+        var analysisText = (ad.choices&&ad.choices[0]&&ad.choices[0].message&&ad.choices[0].message.content||'').trim();
+        // Format the analysis nicely
+        var analysisHtml = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:8px">'
+          +'<div style="font-weight:700;font-size:13px;margin-bottom:12px">\ud83d\udcca Deal Analysis: '+dealData.account+'</div>'
+          +'<div style="font-size:12px;line-height:1.8;white-space:pre-wrap">'+analysisText+'</div>';
+        // Also show opportunity table
+        if(dealData.opps.length){
+          analysisHtml += '<div style="margin-top:16px;font-weight:600;font-size:11px;color:var(--dim);margin-bottom:6px">OPPORTUNITIES FOUND</div>';
+          analysisHtml += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:10px">';
+          var dCols = Object.keys(dealData.opps[0]);
+          analysisHtml += '<thead><tr>'+dCols.map(function(c){return '<th style="background:var(--surface2);padding:4px 6px;text-align:left;border:1px solid var(--border);white-space:nowrap">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
+          dealData.opps.slice(0,10).forEach(function(row,ri){
+            analysisHtml += '<tr style="background:'+(ri%2===0?'transparent':'rgba(0,0,0,.02)')+'">'
+              +dCols.map(function(c){ var v=row[c]; return '<td style="padding:3px 6px;border:1px solid var(--border)">'+(v===null||v===undefined?'\u2014':v)+'</td>'; }).join('')+'</tr>';
+          });
+          analysisHtml += '</tbody></table></div>';
+        }
+        analysisHtml += '</div>';
+        this.analyticsUpdateMsg(thinkId, analysisHtml);
+        return;
+
+      } else if(sql.indexOf('---DASHBOARD---')>=0){
+          // Dashboard: run both queries
+          var parts=sql.split('---DASHBOARD---');
+          var kpiRes={cols:[],rows:[]}, detRes={cols:[],rows:[]};
+          try{ kpiRes=await this.dbQuery(parts[0].trim()); }catch(e2){ console.warn('KPI query failed:',e2.message); }
+          try{ detRes=await this.dbQuery(parts[1].trim()); }catch(e3){ console.warn('Detail query failed:',e3.message); }
+          var kRow=kpiRes.rows[0]||{};
+          var kpis={
+            AOP:kRow.AOP||kRow.AOP_M||null, Actuals:kRow.Actuals||kRow.Actuals_M||null,
+            Analytics:kRow.Analytics||null, ActualsBCFlagCommit:kRow.ActualsBCFlagCommit||null,
+            TotalFunnel:kRow.TotalFunnel||kRow.Total_Funnel||null, FunnelSize:kRow.FunnelSize||kRow.Funnel_Size||null
+          };
+                    var dashHtml=this.analyticsBuildDashboard({kpis:kpis,rows:detRes.rows});
+          this._lastDashHtml=dashHtml;
+          var openBtn='<button onclick="App.analyticsOpenDashboardTab(App._lastDashHtml,\'EI Funnel Dashboard\')" '
+            +'style="margin-top:10px;padding:6px 14px;background:#0050a0;color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600">&#128196; Open in new tab</button>';
+          this.analyticsUpdateMsg(thinkId, dashHtml+openBtn+sqlBox);
+          if(detRes.rows.length) this.analyticsRenderChart(detRes.cols,detRes.rows,'bar');
+          var eb=document.getElementById('analytics-export-box'); if(eb){this._lastData=detRes.rows;this._lastCols=detRes.cols;eb.style.display='';}
+          if(!this._chatHistory) this._chatHistory=[];
+          this._chatHistory.push({role:'user',content:q});
+          this._chatHistory.push({role:'assistant',content:'Dashboard rendered. KPIs: '+JSON.stringify(kpis)+'. Detail rows: '+detRes.rows.length});
+          return;
+        }
+        res=await this.dbQuery(sql);
+      }catch(sqlErr){
+        if(sqlErr.message.indexOf('UNRESOLVED_COLUMN')>=0||sqlErr.message.indexOf('cannot be resolved')>=0){
+          this._schemaCache=null;
+          try{ schema=await this._fetchRealSchema(); fCols=schema['commops_ei_general_funnel']||[]; oCols=schema['commops_orders_sales_view']||[]; fStr=fCols.join(', '); oStr=oCols.join(', '); }catch(e2){}
+        }
+        this.analyticsUpdateMsg(thinkId,'&#9888; SQL error &mdash; auto-fixing...<br><small style="color:var(--dim)">'+sqlErr.message.substring(0,200)+'</small>');
+        var fixResp=await fetch('https://api.openai.com/v1/chat/completions',{
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+          body:JSON.stringify({model:'gpt-4o-mini',max_tokens:600,temperature:0.05,messages:[
+            {role:'system',content:'Fix this Databricks SQL. Return ONLY raw corrected SQL. Always use aliases: commops_ei_general_funnel AS f, commops_orders_sales_view AS o. Prefix all columns with alias. Table f columns: '+fStr+'. Table o columns: '+oStr},
+            {role:'user',content:'Question: '+q+'. Failed SQL: '+sql+'. Error: '+sqlErr.message}
+          ]})
+        });
+        var fd=await fixResp.json();
+        var fixedSql=((fd.choices&&fd.choices[0]&&fd.choices[0].message&&fd.choices[0].message.content)||'')
+          .trim().replace(/^```sql\s*/i,'').replace(/^```\s*/,'').replace(/```$/,'').trim();
+        this.analyticsUpdateMsg(thinkId,'Retrying with fixed SQL...<br><details style="margin-top:6px"><summary style="cursor:pointer;font-size:11px;color:var(--dim)">Fixed SQL &#9658;</summary><code style="font-size:10px;white-space:pre-wrap;display:block;background:rgba(0,0,0,.08);padding:8px;border-radius:4px;margin-top:4px">'+fixedSql+'</code></details>');
+        res=await this.dbQuery(fixedSql);
+        sql=fixedSql;
+      }
+
+      if(!this._chatHistory) this._chatHistory=[];
+      this._chatHistory.push({role:'user',content:q});
+      this._chatHistory.push({role:'assistant',content:'Columns: '+res.cols.join(', ')+'. Rows: '+res.rows.length});
+
+      if(res.rows.length===0){
+        var diagHtml='';
+        try{
+          var diagSql=sql.indexOf('commops_orders_sales_view')>=0
+            ? 'SELECT DISTINCT o.Quarter, o.Year FROM qa_wb.saasfactory.commops_orders_sales_view AS o ORDER BY o.Year DESC, o.Quarter LIMIT 20'
+            : 'SELECT DISTINCT f.Quarter, f.Year FROM qa_wb.saasfactory.commops_ei_general_funnel AS f ORDER BY f.Year DESC, f.Quarter LIMIT 20';
+          var diagRes=await this.dbQuery(diagSql);
+          if(diagRes.rows&&diagRes.rows.length){
+            var vals=diagRes.rows.map(function(r){
+              var qk=Object.keys(r).find(function(k){return k.toLowerCase()==='quarter';})||'Quarter';
+              var yk=Object.keys(r).find(function(k){return k.toLowerCase()==='year';})||'Year';
+              return (r[yk]||'?')+'/'+(r[qk]||'?');
+            }).join('  |  ');
+            diagHtml='<br><br><strong>&#128270; Real Year/Quarter values in table:</strong><br>'
+              +'<code style="font-size:11px;background:rgba(0,0,0,.07);padding:5px 8px;border-radius:3px;display:block;margin-top:4px;line-height:1.8">'+vals+'</code>'
+              +'<br><small style="color:var(--dim)">Use these exact values in your next question.</small>';
+          }
+        }catch(de){}
+        this.analyticsUpdateMsg(thinkId,'&#9888; No results.'+diagHtml+sqlBox);
+        return;
+      }
+
+      this._lastData=res.rows; this._lastCols=res.cols;
+
+      // Interpret
+      var interp=await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+oaiKey},
+        body:JSON.stringify({model:'gpt-4o-mini',max_tokens:200,temperature:0.3,messages:[
+          {role:'system',content:'Concise Philips EI CommOps business analyst. 2-3 sentences. Highlight key numbers. Values are in millions (M).'},
+          {role:'user',content:'Q: '+q+' | '+res.rows.length+' rows | Sample: '+JSON.stringify(res.rows.slice(0,8))}
+        ]})
+      });
+      var id2=await interp.json();
+      var insight=(id2.choices&&id2.choices[0]&&id2.choices[0].message&&id2.choices[0].message.content||'').trim();
+      var insightBox=insight?'<div style="margin-bottom:12px;padding:10px;background:var(--accentlight);border-radius:var(--radius-sm);font-size:12px;line-height:1.6">'+insight+'</div>':'';
+
+      // Render as dashboard or table
+      if(isDash){
+        var totalRow2=res.rows.find(function(r){return String(r[res.cols[0]]||'').toLowerCase()==='total';})||res.rows[res.rows.length-1]||{};
+        var kpisAuto={};
+        ['AOP','Actuals','Analytics','ActualsBCFlagCommit','Total_Funnel','Funnel_Size','TotalFunnel','FunnelSize','AOP_M','Actuals_M'].forEach(function(k){
+          if(totalRow2[k]!==undefined) kpisAuto[k.replace('_M','').replace('_','')]=totalRow2[k];
+        });
+                var dh=this.analyticsBuildDashboard({kpis:kpisAuto,rows:res.rows});
+        this._lastDashHtml=dh;
+        var openBtn2='<button onclick="App.analyticsOpenDashboardTab(App._lastDashHtml,\'EI Funnel Dashboard\')" '
+          +'style="margin-top:10px;padding:6px 14px;background:#0050a0;color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600">&#128196; Open in new tab</button>';
+        this.analyticsUpdateMsg(thinkId,insightBox+dh+openBtn2+sqlBox);
+      } else {
+        var maxRows=Math.min(res.rows.length,25);
+        var tbl='<div style="overflow-x:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:11px">'
+          +'<thead><tr>'+res.cols.map(function(c){return '<th style="background:var(--surface2);padding:5px 8px;text-align:left;border:1px solid var(--border);white-space:nowrap;font-weight:600">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
+        for(var ri=0;ri<maxRows;ri++){
+          var row=res.rows[ri];
+          tbl+='<tr style="background:'+(ri%2===0?'transparent':'rgba(0,0,0,.025)')+'">'
+            +res.cols.map(function(c){
+              var v=row[c]; if(v===null||v===undefined) v='&mdash;';
+              var num=parseFloat(String(v).replace(/,/g,''));
+              if(!isNaN(num)&&String(v).trim()!==''&&typeof v!=='boolean') v=num.toLocaleString('en-US',{maximumFractionDigits:2});
+              return '<td style="padding:4px 8px;border:1px solid var(--border)">'+v+'</td>';
+            }).join('')+'</tr>';
+        }
+        tbl+='</tbody></table>';
+        if(res.rows.length>25) tbl+='<div style="font-size:10px;color:var(--dim);padding:4px 0">Showing 25 of '+res.rows.length+' &mdash; export Excel for all</div>';
+        tbl+='</div>';
+        this.analyticsUpdateMsg(thinkId,insightBox+'<strong style="font-size:12px">&#128202; '+res.rows.length+' rows</strong>'+tbl+sqlBox);
+      }
+
+      if(res.rows.length>0){ this.analyticsRenderChart(res.cols,res.rows,'bar'); var eb2=document.getElementById('analytics-export-box'); if(eb2) eb2.style.display=''; }
+
+    }catch(e){ this.analyticsUpdateMsg(thinkId,'&#10007; <strong>'+e.message+'</strong>'); }
+  },
+
+  _isDashboardRequest(q){
+    var l=q.toLowerCase();
+    return l.indexOf('dashboard')>=0||l.indexOf('full funnel')>=0||l.indexOf('complete funnel')>=0||
+           l.indexOf('overview')>=0||l.indexOf('summary')>=0||l.indexOf('painel')>=0||l.indexOf('funil completo')>=0;
+  },
+
 
   analyticsAddMsg(role, text, returnId){
     var chat = document.getElementById('analytics-chat');
@@ -4328,5 +6080,45 @@ function supaFetch(table, queryOrOpts, opts){
 
 App.init();
 </script>
+
+<!-- ── Analytics Configure Modal ── -->
+<div id="sq-analyze-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:min(600px,95vw);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:14px;font-weight:700">&#128202; Configure Analytics</div>
+      <button onclick="App.sqCloseModal()" style="background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1">&#215;</button>
+    </div>
+    <div style="padding:20px">
+      <div style="margin-bottom:16px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);display:block;margin-bottom:6px">Group By (X Axis)</label>
+        <select id="sq-ax-label" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:var(--font);outline:none"></select>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);display:block;margin-bottom:6px">Value (Y Axis)</label>
+        <select id="sq-ax-value" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:var(--font);outline:none"></select>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);display:block;margin-bottom:8px">Chart Type</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label style="cursor:pointer;display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px"><input type="radio" name="sq-ctype" value="bar" checked> &#128202; Bar</label>
+          <label style="cursor:pointer;display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px"><input type="radio" name="sq-ctype" value="donut"> &#127849; Donut</label>
+          <label style="cursor:pointer;display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px"><input type="radio" name="sq-ctype" value="horizontal"> &#128200; Horizontal</label>
+        </div>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);display:block;margin-bottom:6px">Top N items</label>
+        <input id="sq-top-n" type="number" value="10" min="3" max="50" style="width:90px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--text);outline:none">
+      </div>
+      <div style="margin-bottom:20px;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="sq-ai-toggle" checked style="width:15px;height:15px;cursor:pointer">
+        <label for="sq-ai-toggle" style="font-size:12px;cursor:pointer">Generate AI insight</label>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="App.sqRunAnalytics()" class="btn btn-primary" style="flex:1">&#128202; Generate</button>
+        <button onclick="App.sqCloseModal()" class="btn btn-ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
