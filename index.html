@@ -278,6 +278,94 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .dev-card-email{font-size:12px;color:var(--dim);margin-bottom:10px}
 .dev-card-meta{display:flex;align-items:center;gap:8px}
 .dev-card-actions{position:absolute;top:14px;right:14px;display:flex;gap:4px}
+/* ══════════ SPRINTS TAB ══════════ */
+.spr-subbar{padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.spr-seg{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:2px}
+.spr-seg button{background:none;border:none;padding:6px 16px;font-size:12px;font-weight:600;color:var(--dim);cursor:pointer;border-radius:6px;font-family:var(--font)}
+.spr-seg button.on{background:var(--accent);color:#fff}
+.spr-view{display:none}
+.spr-view.on{display:flex;flex-direction:column;flex:1;min-height:0}
+.spr-board{flex:1;display:flex;gap:14px;padding:14px 20px;overflow:hidden;min-height:0}
+.spr-sprints{flex:1;display:flex;gap:12px;overflow-x:auto;min-width:0}
+.spr-sprint{flex:1;min-width:270px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .15s}
+.spr-sprint.cur{border-color:var(--accent);box-shadow:0 0 0 2px var(--accentlight)}
+.spr-sprint.dragover{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+.spr-sp-head{padding:12px 14px;border-bottom:1px solid var(--border)}
+.spr-sp-head.cur{background:var(--accentlight)}
+.spr-sp-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.spr-sp-name{font-size:14px;font-weight:800}
+.spr-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.spr-b-cur{background:var(--accent);color:#fff}
+.spr-b-next{background:var(--surface3);color:var(--purple)}
+.spr-b-fut{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
+.spr-sp-dates{font-size:10px;color:var(--dim);margin-top:3px;font-variant-numeric:tabular-nums}
+.spr-sp-cap{margin-top:9px}
+.spr-cap-row{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-bottom:3px}
+.spr-cap-track{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.spr-cap-fill{height:100%;border-radius:4px;transition:width .3s}
+.spr-sp-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;min-height:0}
+.spr-empty{border:2px dashed var(--border);border-radius:8px;padding:22px 10px;text-align:center;color:var(--dim);font-size:11px;line-height:1.6}
+.spr-sp-foot{padding:8px 14px;border-top:1px solid var(--border);background:var(--surface2);display:flex;justify-content:space-between;font-size:10px;color:var(--dim);font-weight:600}
+.spr-req{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:7px;padding:8px 10px;cursor:grab;transition:all .12s}
+.spr-req:hover{box-shadow:0 3px 10px rgba(0,0,0,.2);transform:translateY(-1px)}
+.spr-req:active{cursor:grabbing}
+.spr-req.dragging{opacity:.4;transform:rotate(1.5deg)}
+.spr-req.def{border-left-color:var(--red)}
+.spr-req.prio{border-left-color:var(--yellow)}
+.spr-req-top{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.spr-req-id{font-size:10px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.spr-req-dev-link{font-size:11px;line-height:1;cursor:pointer;opacity:.6;transition:opacity .12s;padding:1px}
+.spr-req-dev-link:hover{opacity:1}
+.spr-req-title{font-size:11px;font-weight:600;line-height:1.35;margin-bottom:5px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.spr-req-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.spr-chip{font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700;white-space:nowrap}
+.spr-c-eff{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
+.spr-c-req{background:var(--accentlight);color:var(--accent)}
+.spr-c-dev{background:var(--surface3);color:var(--purple)}
+.spr-c-h{background:rgba(239,68,68,.15);color:var(--red)}
+.spr-c-m{background:rgba(245,158,11,.15);color:var(--yellow)}
+.spr-c-l{background:var(--surface2);color:var(--dim)}
+.spr-backlog{width:290px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden}
+.spr-bl-head{padding:11px 14px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.spr-bl-title{font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:space-between;color:var(--text)}
+.spr-bl-count{font-size:10px;color:var(--dim);font-weight:600}
+.spr-bl-search{width:100%;margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11px;font-family:var(--font);outline:none;color:var(--text)}
+.spr-bl-search:focus{border-color:var(--accent)}
+.spr-bl-filters{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.spr-fchip{font-size:9px;padding:3px 8px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--dim);cursor:pointer;font-weight:700}
+.spr-fchip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.spr-bl-body{flex:1;overflow-y:auto;padding:9px;display:flex;flex-direction:column;gap:7px}
+.spr-bl-body.dragover{background:rgba(34,197,94,.08)}
+.spr-report{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.spr-rep-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 20px 10px;flex-shrink:0}
+.spr-rcol{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;max-height:210px}
+.spr-rcol-h{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.spr-rcol-t{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px}
+.spr-rcol-n{font-size:16px;font-weight:800}
+.spr-rcol-b{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px}
+.spr-h-done{color:var(--green)}.spr-h-dev{color:var(--yellow)}.spr-h-plan{color:var(--purple)}.spr-h-back{color:var(--dim)}
+.spr-mini{font-size:10px;padding:5px 8px;background:var(--surface2);border-radius:5px;border-left:2px solid var(--border);line-height:1.4;color:var(--text)}
+.spr-mini b{color:var(--accent);font-variant-numeric:tabular-nums}
+.spr-rep-body{flex:1;overflow-y:auto;padding:0 20px 20px}
+.spr-ai-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.spr-ai-txt{font-size:12px;color:var(--dim)}
+.spr-ai-txt b{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
+.spr-sh-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.spr-sh-head{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;background:var(--surface2);flex-wrap:wrap}
+.spr-sh-left{display:flex;align-items:center;gap:10px}
+.spr-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.spr-sh-name{font-size:13px;font-weight:700;color:var(--text)}
+.spr-sh-sub{font-size:10px;color:var(--dim);margin-top:1px}
+.spr-sh-stats{display:flex;gap:5px;flex-wrap:wrap}
+.spr-sstat{font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px}
+.spr-sh-body{padding:14px 16px;border-top:1px solid var(--border);display:none}
+.spr-sh-body.open{display:block}
+.spr-email-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:12px;line-height:1.75;white-space:pre-wrap;font-family:var(--font);max-height:400px;overflow-y:auto;color:var(--text)}
+.spr-email-sub{font-size:11px;color:var(--dim);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.spr-email-sub b{color:var(--text)}
+.spr-sh-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.spr-typing{display:inline-block;width:7px;height:13px;background:var(--purple);animation:sprblink .8s infinite;vertical-align:text-bottom;margin-left:1px}
+@keyframes sprblink{0%,49%{opacity:1}50%,100%{opacity:0}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -312,6 +400,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   <button class="ntab" id="tab-stakeholder" onclick="App.tab('stakeholder')">👥 Stakeholder</button>
   <button class="ntab" id="tab-analytics" onclick="App.tab('analytics')">🤖 Analytics</button>
   <button class="ntab" id="tab-analysis"  onclick="App.tab('analysis')">📊 Analysis</button>
+  <button class="ntab" id="tab-sprints"   onclick="App.tab('sprints')">🏃 Sprints</button>
   <div class="nav-dropdown" id="nav-dropdown-cadastros">
     <button class="nav-dropdown-btn" id="tab-cadastros" onclick="App.toggleSetupMenu()">
       ⚙️ Setup <span class="arrow">▼</span>
@@ -1164,6 +1253,109 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   </div>
 </div>
 
+<!-- ══════════════ SPRINTS PAGE ══════════════ -->
+<div class="page" id="page-sprints" style="flex-direction:column;margin:-16px -20px -20px;height:calc(100vh - 98px);gap:0;padding:0;overflow:hidden">
+  <div class="spr-subbar">
+    <div class="spr-seg">
+      <button class="on" id="spr-seg-board" onclick="App.sprSetView('board',this)">🗂️ Sprint Board</button>
+      <button id="spr-seg-report" onclick="App.sprSetView('report',this)">📧 Status Report</button>
+    </div>
+    <div style="flex:1"></div>
+    <span id="spr-info" style="font-size:11px;color:var(--dim)"></span>
+    <button class="btn btn-ghost btn-sm" id="spr-new-btn" onclick="App.sprOpenModal()" style="display:none">＋ New Sprint</button>
+  </div>
+
+  <div class="spr-view on" id="spr-view-board">
+    <div class="spr-board">
+      <div class="spr-sprints" id="spr-sprints"></div>
+      <div class="spr-backlog">
+        <div class="spr-bl-head">
+          <div class="spr-bl-title"><span>📥 Open Backlog</span><span class="spr-bl-count" id="spr-bl-count"></span></div>
+          <input class="spr-bl-search" id="spr-bl-search" placeholder="🔍 Search requirement, requester..." oninput="App.sprRenderBacklog()">
+          <div class="spr-bl-filters">
+            <span class="spr-fchip on" data-f="all" onclick="App.sprSetFilter(this)">All</span>
+            <span class="spr-fchip" data-f="prio" onclick="App.sprSetFilter(this)">🚩 Priority</span>
+            <span class="spr-fchip" data-f="def" onclick="App.sprSetFilter(this)">🚨 Defects</span>
+            <span class="spr-fchip" data-f="high" onclick="App.sprSetFilter(this)">High</span>
+          </div>
+        </div>
+        <div class="spr-bl-body" id="spr-bl-body"
+             ondragover="App.sprAllowDrop(event,this)" ondragleave="App.sprLeaveDrop(this)" ondrop="App.sprDropTo(event,null,this)"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spr-view" id="spr-view-report">
+    <div class="spr-report">
+      <div class="spr-rep-cols">
+        <div class="spr-rcol">
+          <div class="spr-rcol-h"><span class="spr-rcol-t spr-h-done">✅ Delivered — Last Sprint</span><span class="spr-rcol-n" id="spr-n-done">0</span></div>
+          <div class="spr-rcol-b" id="spr-c-done"></div>
+        </div>
+        <div class="spr-rcol">
+          <div class="spr-rcol-h"><span class="spr-rcol-t spr-h-dev">🔨 In Development — Current</span><span class="spr-rcol-n" id="spr-n-dev">0</span></div>
+          <div class="spr-rcol-b" id="spr-c-dev"></div>
+        </div>
+        <div class="spr-rcol">
+          <div class="spr-rcol-h"><span class="spr-rcol-t spr-h-plan">📅 Planned — Next Sprints</span><span class="spr-rcol-n" id="spr-n-plan">0</span></div>
+          <div class="spr-rcol-b" id="spr-c-plan"></div>
+        </div>
+        <div class="spr-rcol">
+          <div class="spr-rcol-h"><span class="spr-rcol-t spr-h-back">📋 Remaining Backlog</span><span class="spr-rcol-n" id="spr-n-back">0</span></div>
+          <div class="spr-rcol-b" id="spr-c-back"></div>
+        </div>
+      </div>
+      <div class="spr-rep-body">
+        <div class="spr-ai-bar">
+          <div class="spr-ai-txt"><b>🤖 AI Status Report Generator</b>Writes a personalised update per stakeholder — only their requirements, in their context, ready to send.</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <select id="spr-tone" class="fctrl" style="width:auto">
+              <option value="exec">Tone: Executive — short &amp; direct</option>
+              <option value="friendly">Tone: Friendly — conversational</option>
+              <option value="detail">Tone: Detailed — full context</option>
+            </select>
+            <button class="ai-btn" id="spr-gen-btn" onclick="App.sprGenerateAll()">✨ Generate Reports</button>
+          </div>
+        </div>
+        <div id="spr-sh-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Sprint modal -->
+<div class="overlay" id="sprModalOverlay">
+  <div class="modal" style="max-width:430px">
+    <div class="mhead">
+      <span class="mtitle">＋ New Sprint</span>
+      <button class="mclose" onclick="App.sprCloseModal()">×</button>
+    </div>
+    <div class="mbody">
+      <div class="fg" style="margin-bottom:13px">
+        <label class="flbl">Sprint name</label>
+        <input class="fctrl" id="spr-m-name">
+      </div>
+      <div class="fg" style="margin-bottom:13px">
+        <label class="flbl">Start date — must be a Tuesday</label>
+        <input class="fctrl" id="spr-m-start" type="date" onchange="App.sprCalcEnd()">
+      </div>
+      <div class="fg" style="margin-bottom:13px">
+        <label class="flbl">End date — auto-calculated (2nd Friday)</label>
+        <input class="fctrl" id="spr-m-end" type="date" disabled style="opacity:.65">
+      </div>
+      <div class="fg" style="margin-bottom:13px">
+        <label class="flbl">Team capacity (hours)</label>
+        <input class="fctrl" id="spr-m-cap" type="number" value="320">
+      </div>
+      <div style="font-size:10px;color:var(--dim);margin-top:5px;background:var(--accentlight);padding:7px 10px;border-radius:6px;line-height:1.5">📅 <b>Cadence rule:</b> sprints start on a Tuesday and end on the second Friday after — an 11-day sprint on a 14-day cycle.</div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="App.sprCloseModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="App.sprSaveSprint()">💾 Create Sprint</button>
+    </div>
+  </div>
+</div>
+
 <div class="notif" id="notif"></div>
 
 <script>
@@ -1377,7 +1569,16 @@ var App = {
   async load(){
     // loader managed by caller (init or explicit refresh)
     try{
-      this.data = await supaFetch('roadmap','?select=id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,dashboard_id,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id,priority_requested,priority_requested_at&order=id.asc&limit=2000');
+      var baseCols='id,priority,business_partner,request_date,requirement,impacts,requester,business_case,cost_reduction,margin_increasing,area,dashboard,dashboard_id,bizops_lead,requester_priority,expected_date,business_owner,status,percent_completed,closed_date,developer,complexity,size,id2,percent_allocation,effort,start_date,expected_end_date,comments,comments_nay,related_requirement_id,priority_requested,priority_requested_at';
+      try{
+        this.data = await supaFetch('roadmap','?select='+baseCols+',sprint_id&order=id.asc&limit=2000');
+        this.sprSchemaReady = true;
+      }catch(eSprint){
+        // sprint_id column not deployed yet — degrade gracefully, keep app working
+        console.warn('sprint_id column unavailable, loading without it:',eSprint.message);
+        this.sprSchemaReady = false;
+        this.data = await supaFetch('roadmap','?select='+baseCols+'&order=id.asc&limit=2000');
+      }
       this.setSp(true,'Supabase · '+this.data.length+' requirements');
       this.populateMS();
       await this.loadDevEffortMap();
@@ -1526,6 +1727,7 @@ var App = {
       if(tlPage){ tlPage.style.display='flex'; tlPage.style.flexDirection='column'; tlPage.style.height='calc(100vh - 95px)'; }
       this.renderTimelinePage();
     }
+    if(name==='sprints') App.sprInit();
   },
 
   toggleSetupMenu(){
@@ -6059,6 +6261,371 @@ var App = {
     setTimeout(function(){el.classList.remove('show');},4000);
   }
 };
+
+// ── SPRINTS MODULE ──────────────────────────────────────────────────────────
+Object.assign(App, {
+  sprSprints: [],
+  sprOpenDevMap: {},
+  sprAssignFilter: 'all',
+  sprDragId: null,
+  sprCurIdx: 0,
+  _sprReportSets: null,
+
+  async sprInit(){
+    var btn=document.getElementById('spr-new-btn');
+    if(btn) btn.style.display = this.isBizOps() ? 'inline-flex' : 'none';
+    var box=document.getElementById('spr-sprints');
+    if(this.sprSchemaReady===false){
+      if(btn) btn.style.display='none';
+      if(box) box.innerHTML='<div class="spr-empty" style="flex:1">\u26a0\ufe0f <b>Sprint database not deployed yet.</b><br><span style="font-size:10px">The <code>sprints</code> table and <code>roadmap.sprint_id</code> column still need to be created in Supabase.</span></div>';
+      return;
+    }
+    if(box) box.innerHTML = '<div class="spr-empty" style="flex:1">Loading sprints\u2026</div>';
+    try{
+      await this.sprLoadSprints();
+      await this.sprLoadOpenDevMap();
+    }catch(e){
+      if(box) box.innerHTML = '<div class="spr-empty" style="flex:1">⚠️ Could not load sprints.<br><span style="font-size:10px">'+App.esc(e.message)+'</span></div>';
+      return;
+    }
+    this.sprRenderSprints();
+    this.sprRenderBacklog();
+  },
+
+  async sprLoadSprints(){
+    var rows = await supaFetch('sprints','?select=*&order=start_date.asc');
+    this.sprSprints = rows||[];
+    var today = new Date(); today.setHours(0,0,0,0);
+    var idx = 0;
+    for(var i=0;i<this.sprSprints.length;i++){
+      var sd = new Date(this.sprSprints[i].start_date+'T00:00:00');
+      if(sd<=today) idx=i; else break;
+    }
+    this.sprCurIdx = idx;
+  },
+
+  async sprLoadOpenDevMap(){
+    this.sprOpenDevMap = {};
+    try{
+      var rows = await supaFetch('dev_tasks','?status=neq.Close&select=roadmap_id,developers(name)');
+      var self=this;
+      (rows||[]).forEach(function(r){
+        if(!r.roadmap_id || !r.developers || !r.developers.name) return;
+        if(!self.sprOpenDevMap[r.roadmap_id]) self.sprOpenDevMap[r.roadmap_id]=[];
+        if(self.sprOpenDevMap[r.roadmap_id].indexOf(r.developers.name)<0) self.sprOpenDevMap[r.roadmap_id].push(r.developers.name);
+      });
+    }catch(e){ console.warn('sprLoadOpenDevMap:',e.message); }
+  },
+
+  sprVisibleSprints(){
+    return this.sprSprints.slice(this.sprCurIdx, this.sprCurIdx+3);
+  },
+
+  sprReqCard(r, inSprint){
+    var cls = r.status==='Defect' ? 'def' : (r.priority_requested ? 'prio' : '');
+    var p = r.requester_priority||'';
+    var pc = p==='High'?'spr-c-h':p==='Medium'?'spr-c-m':'spr-c-l';
+    var openDevs = this.sprOpenDevMap[r.id]||[];
+    var title = (r.requirement||'').split('\n')[0];
+    return '<div class="spr-req '+cls+'" draggable="true" data-id="'+r.id+'" '+
+      'ondragstart="App.sprDragStart(event,this)" ondragend="this.classList.remove(\'dragging\')">'+
+      '<div class="spr-req-top">'+
+        '<span class="spr-req-id">#'+r.id+'</span>'+
+        '<span class="spr-req-dev-link" title="Open in Development" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();App.goToDev('+r.id+')">⚡</span>'+
+        (r.status==='Defect'?'<span style="font-size:10px">🚨</span>':'')+
+        (r.priority_requested?'<span style="font-size:10px" title="Priority requested">🚩</span>':'')+
+        '<span style="flex:1"></span>'+
+        (p?'<span class="spr-chip '+pc+'">'+p+'</span>':'')+
+      '</div>'+
+      '<div class="spr-req-title">'+App.esc(title)+'</div>'+
+      '<div class="spr-req-meta">'+
+        '<span class="spr-chip spr-c-req">👤 '+App.esc(r.requester||'—')+'</span>'+
+        '<span class="spr-chip spr-c-eff">⏱ '+(r.effort||0)+'h</span>'+
+        (openDevs.length?'<span class="spr-chip spr-c-dev">🛠 '+App.esc(openDevs.join(', '))+'</span>':'')+
+      '</div>'+
+    '</div>';
+  },
+
+  sprRenderSprints(){
+    var vis = this.sprVisibleSprints();
+    var infoEl = document.getElementById('spr-info');
+    var box = document.getElementById('spr-sprints');
+    if(!vis.length){
+      if(infoEl) infoEl.textContent = 'No sprints yet.';
+      if(box) box.innerHTML =
+        '<div class="spr-empty" style="flex:1">🏃 No sprints created yet.<br>'+(this.isBizOps()?'Click <b>+ New Sprint</b> to start.':'Ask BizOps to create the first sprint.')+'</div>';
+      return;
+    }
+    if(infoEl) infoEl.textContent = vis[0].name+' is active ('+App.fd(vis[0].start_date)+' \u2192 '+App.fd(vis[0].end_date)+')';
+    var self=this;
+    if(box) box.innerHTML = vis.map(function(s,i){
+      var items = self.data.filter(function(r){return r.sprint_id===s.id;});
+      var load = items.reduce(function(a,b){return a+(b.effort||0);},0);
+      var cap = s.capacity_hours||320;
+      var pct = Math.min(100, Math.round(load/cap*100));
+      var col = pct>95?'var(--red)':pct>75?'var(--yellow)':'var(--green)';
+      var badge = i===0?'<span class="spr-badge spr-b-cur">Active</span>'
+                : i===1?'<span class="spr-badge spr-b-next">Next</span>'
+                :'<span class="spr-badge spr-b-fut">Planned</span>';
+      return '<div class="spr-sprint '+(i===0?'cur':'')+'" data-sp="'+s.id+'" '+
+        'ondragover="App.sprAllowDrop(event,this)" ondragleave="App.sprLeaveDrop(this)" ondrop="App.sprDropTo(event,'+s.id+',this)">'+
+        '<div class="spr-sp-head '+(i===0?'cur':'')+'">'+
+          '<div class="spr-sp-row"><span class="spr-sp-name">'+App.esc(s.name)+'</span>'+badge+'</div>'+
+          '<div class="spr-sp-dates">\uD83D\uDCC5 '+App.fd(s.start_date)+' \u2192 '+App.fd(s.end_date)+'</div>'+
+          '<div class="spr-sp-cap">'+
+            '<div class="spr-cap-row"><span>Capacity</span><span><b style="color:'+col+'">'+load+'h</b> / '+cap+'h \u00b7 '+pct+'%</span></div>'+
+            '<div class="spr-cap-track"><div class="spr-cap-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="spr-sp-body">'+
+          (items.length ? items.map(function(r){return self.sprReqCard(r,true);}).join('')
+            : '<div class="spr-empty">\u2b07\ufe0f Drag requirements here<br><span style="font-size:10px;opacity:.75">from the backlog on the right</span></div>')+
+        '</div>'+
+        '<div class="spr-sp-foot"><span>'+items.length+' items</span><span>'+load+'h committed</span></div>'+
+      '</div>';
+    }).join('');
+  },
+
+  sprRenderBacklog(){
+    var qEl=document.getElementById('spr-bl-search');
+    var q = (qEl&&qEl.value||'').toLowerCase();
+    var list = this.data.filter(function(r){return r.sprint_id==null && r.status!=='Close' && r.status!=='Removed';});
+    if(this.sprAssignFilter==='prio') list = list.filter(function(r){return r.priority_requested;});
+    if(this.sprAssignFilter==='def')  list = list.filter(function(r){return r.status==='Defect';});
+    if(this.sprAssignFilter==='high') list = list.filter(function(r){return r.requester_priority==='High';});
+    if(q) list = list.filter(function(r){return ((r.requirement||'')+(r.requester||'')+r.id).toLowerCase().indexOf(q)>=0;});
+    var cEl=document.getElementById('spr-bl-count');
+    if(cEl) cEl.textContent = list.length+' open \u00b7 '+list.reduce(function(a,b){return a+(b.effort||0);},0)+'h';
+    var self=this;
+    var body=document.getElementById('spr-bl-body');
+    if(body) body.innerHTML = list.length
+      ? list.map(function(r){return self.sprReqCard(r,false);}).join('')
+      : '<div class="spr-empty">Nothing matches this filter</div>';
+  },
+
+  sprSetFilter(el){
+    document.querySelectorAll('.spr-fchip').forEach(function(c){c.classList.remove('on');});
+    el.classList.add('on'); this.sprAssignFilter=el.dataset.f; this.sprRenderBacklog();
+  },
+
+  sprDragStart(e,el){ this.sprDragId=+el.dataset.id; el.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; },
+  sprAllowDrop(e,el){ e.preventDefault(); el.classList.add('dragover'); },
+  sprLeaveDrop(el){ el.classList.remove('dragover'); },
+
+  async sprDropTo(e, sprintId, el){
+    e.preventDefault(); el.classList.remove('dragover');
+    if(this.sprDragId===null || this.sprDragId===undefined) return;
+    var id=this.sprDragId; this.sprDragId=null;
+    var r=this.data.find(function(x){return x.id===id;});
+    if(!r) return;
+    var prevSprintId = r.sprint_id;
+    r.sprint_id = sprintId||null;
+    this.sprRenderSprints(); this.sprRenderBacklog();
+    var self=this;
+    try{
+      await supaFetch('roadmap','?id=eq.'+id,{method:'PATCH',body:{sprint_id:r.sprint_id},prefer:'return=minimal'});
+      this.notify(sprintId?('#'+id+' moved to sprint'):('#'+id+' moved back to backlog'),'ok');
+    }catch(err){
+      r.sprint_id = prevSprintId;
+      self.sprRenderSprints(); self.sprRenderBacklog();
+      self.notify('Could not move requirement: '+err.message,'err');
+    }
+  },
+
+  sprSetView(v,btn){
+    document.querySelectorAll('.spr-seg button').forEach(function(b){b.classList.remove('on');}); btn.classList.add('on');
+    document.querySelectorAll('.spr-view').forEach(function(x){x.classList.remove('on');});
+    document.getElementById('spr-view-'+v).classList.add('on');
+    if(v==='report'){ this.sprRenderReportCols(); this.sprRenderStakeholders(null); }
+  },
+
+  sprMini(r,extra){ return '<div class="spr-mini"><b>#'+r.id+'</b> '+App.esc((r.requirement||'').split('\n')[0])+'<br><span style="color:var(--dim)">\uD83D\uDC64 '+App.esc(r.requester||'\u2014')+(extra||'')+'</span></div>'; },
+
+  sprRenderReportCols(){
+    var vis = this.sprVisibleSprints();
+    var cur = vis[0], nexts = vis.slice(1);
+    var prevSprint = this.sprCurIdx>0 ? this.sprSprints[this.sprCurIdx-1] : null;
+    var self=this;
+    var done = prevSprint ? this.data.filter(function(r){return r.sprint_id===prevSprint.id && r.status==='Close';}) : [];
+    var dev  = cur ? this.data.filter(function(r){return r.sprint_id===cur.id;}) : [];
+    var nextIds = nexts.map(function(s){return s.id;});
+    var plan = this.data.filter(function(r){return nextIds.indexOf(r.sprint_id)>=0;});
+    var back = this.data.filter(function(r){return r.sprint_id==null && r.status!=='Close' && r.status!=='Removed';});
+    var set=function(n,c,arr,ex){
+      var nEl=document.getElementById(n), cEl=document.getElementById(c);
+      if(nEl) nEl.textContent=arr.length;
+      if(cEl) cEl.innerHTML = arr.length? arr.map(function(r){return self.sprMini(r, ex?ex(r):'');}).join('') : '<div style="font-size:10px;color:var(--dim);padding:8px;text-align:center">\u2014</div>';
+    };
+    set('spr-n-done','spr-c-done',done, function(r){var d=self.sprOpenDevMap[r.id]; return ' \u00b7 \uD83D\uDEE0 '+(d&&d.length?d.join(', '):'\u2014');});
+    set('spr-n-dev','spr-c-dev',dev,   function(r){var d=self.sprOpenDevMap[r.id]; return ' \u00b7 \uD83D\uDEE0 '+(d&&d.length?d.join(', '):'\u2014');});
+    set('spr-n-plan','spr-c-plan',plan, function(r){var s=self.sprSprints.find(function(x){return x.id===r.sprint_id;}); return s?(' \u00b7 '+s.name):'';});
+    set('spr-n-back','spr-c-back',back, function(r){return ' \u00b7 '+(r.effort||0)+'h';});
+    this._sprReportSets = {done:done,dev:dev,plan:plan,back:back,cur:cur,nexts:nexts,prevSprint:prevSprint};
+  },
+
+  sprStakeholders(){
+    var sets = this._sprReportSets || {done:[],dev:[],plan:[],back:[]};
+    var names = {};
+    ['done','dev','plan','back'].forEach(function(k){ sets[k].forEach(function(r){ if(r.requester) names[r.requester]=1; }); });
+    return Object.keys(names).sort().map(function(name){
+      return {
+        name:name,
+        done: sets.done.filter(function(r){return r.requester===name;}),
+        dev:  sets.dev.filter(function(r){return r.requester===name;}),
+        plan: sets.plan.filter(function(r){return r.requester===name;}),
+        back: sets.back.filter(function(r){return r.requester===name;})
+      };
+    });
+  },
+
+  sprBuildEmail(s,tone){
+    var self=this;
+    var sets=this._sprReportSets||{};
+    var first=(s.name||'').split(' ')[0];
+    var cur=sets.cur, nexts=sets.nexts||[];
+    var hrs=function(arr){return arr.reduce(function(a,r){return a+(r.effort||0);},0);};
+    var L=function(arr,fn){return arr.map(fn).join('\n');};
+    var devOf=function(r){var d=self.sprOpenDevMap[r.id];return d&&d.length?d.join(', '):'\u2014';};
+    var titleOf=function(r){return (r.requirement||'').split('\n')[0];};
+
+    if(tone==='exec'){
+      var lines=[];
+      if(s.done.length) lines.push('\u2705 Delivered: '+s.done.length+' item(s), '+hrs(s.done)+'h \u2014 '+s.done.map(function(r){return '#'+r.id;}).join(', '));
+      if(s.dev.length)  lines.push('\uD83D\uDD28 In development now: '+s.dev.length+' item(s) \u2014 '+s.dev.map(function(r){return '#'+r.id;}).join(', '));
+      if(s.plan.length) lines.push('\uD83D\uDCC5 Planned next: '+s.plan.length+' item(s)');
+      if(s.back.length) lines.push('\uD83D\uDCCB Still in backlog: '+s.back.length+' item(s), '+hrs(s.back)+'h estimated');
+      return 'Hi '+first+',\n\nQuick status on your requirements:\n\n'+lines.join('\n')+'\n\nLet us know if priorities have changed.\n\nBizOps EI Commercial Operations';
+    }
+    if(tone==='friendly'){
+      return 'Hi '+first+',\n\nHope you are doing well! Here is where things stand on your requirements with BizOps:\n\n'+
+        (s.done.length?'We wrapped up '+s.done.length+' item(s) last sprint ('+hrs(s.done)+'h) \u2014 nice progress!\n':'')+
+        (s.dev.length?'Right now the team is actively working on '+s.dev.length+' item(s).\n':'')+
+        (s.plan.length?s.plan.length+' more are already scheduled for upcoming sprints.\n':'')+
+        (s.back.length?'The remaining '+s.back.length+' item(s) are still in the backlog queue \u2014 flag us if any became urgent.\n':'')+
+        '\nHappy to jump on a call if useful.\n\nBizOps EI Commercial Operations';
+    }
+    var out='Dear '+first+',\n\nPlease find below the consolidated status of the requirements you submitted to BizOps EI Commercial Operations.\n\n';
+    if(sets.prevSprint) out+='Previous sprint: '+sets.prevSprint.name+' ('+App.fd(sets.prevSprint.start_date)+' \u2013 '+App.fd(sets.prevSprint.end_date)+')\n';
+    if(cur) out+='Current sprint: '+cur.name+' ('+App.fd(cur.start_date)+' \u2013 '+App.fd(cur.end_date)+')\n\n';
+    if(s.done.length) out+='1. COMPLETED IN THE PREVIOUS SPRINT ('+s.done.length+' item(s), '+hrs(s.done)+'h)\n'+L(s.done,function(r){return '   #'+r.id+' \u2014 '+titleOf(r)+'\n        Developer(s): '+devOf(r)+' \u00b7 Effort: '+(r.effort||0)+'h';})+'\n\n';
+    if(s.dev.length) out+='2. CURRENTLY IN DEVELOPMENT ('+s.dev.length+' item(s), '+hrs(s.dev)+'h)\n'+L(s.dev,function(r){return '   #'+r.id+' \u2014 '+titleOf(r)+'\n        Developer(s): '+devOf(r)+' \u00b7 Effort: '+(r.effort||0)+'h';})+'\n\n';
+    if(s.plan.length) out+='3. COMMITTED TO UPCOMING SPRINTS ('+s.plan.length+' item(s))\n'+L(s.plan,function(r){var sp=self.sprSprints.find(function(x){return x.id===r.sprint_id;});return '   #'+r.id+' \u2014 '+titleOf(r)+'\n        Scheduled for: '+(sp?sp.name:'\u2014')+' \u00b7 Est. '+(r.effort||0)+'h';})+'\n\n';
+    if(s.back.length) out+='4. REMAINING IN BACKLOG ('+s.back.length+' item(s), '+hrs(s.back)+'h estimated)\n'+L(s.back,function(r){return '   #'+r.id+' \u2014 '+titleOf(r)+'\n        Priority: '+(r.requester_priority||'\u2014')+' \u00b7 Estimated effort: '+(r.effort||0)+'h';})+'\n\nShould any of these become business-critical, you can raise a priority request in the portal (Stakeholder tab \u2192 \uD83D\uDEA9 Request Priority).\n\n';
+    out+='We remain available for any clarification.\n\nKind regards,\nBizOps EI Commercial Operations Team';
+    return out;
+  },
+
+  sprRenderStakeholders(txts){
+    var list = this.sprStakeholders();
+    var listEl=document.getElementById('spr-sh-list');
+    if(!listEl) return;
+    if(!list.length){ listEl.innerHTML='<div class="spr-empty">No sprint activity yet to report on.</div>'; return; }
+    listEl.innerHTML = list.map(function(s,i){
+      var ini = s.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+      var hue = (s.name.charCodeAt(0)*37)%360;
+      return '<div class="spr-sh-card">'+
+        '<div class="spr-sh-head" onclick="this.nextElementSibling.classList.toggle(\'open\')">'+
+          '<div class="spr-sh-left">'+
+            '<div class="spr-avatar" style="background:hsl('+hue+',62%,48%)">'+ini+'</div>'+
+            '<div><div class="spr-sh-name">'+App.esc(s.name)+'</div><div class="spr-sh-sub">'+(s.done.length+s.dev.length+s.plan.length+s.back.length)+' requirements \u00b7 click to expand</div></div>'+
+          '</div>'+
+          '<div class="spr-sh-stats">'+
+            (s.done.length?'<span class="spr-sstat" style="background:rgba(34,197,94,.15);color:var(--green)">\u2705 '+s.done.length+' delivered</span>':'')+
+            (s.dev.length?'<span class="spr-sstat" style="background:rgba(245,158,11,.15);color:var(--yellow)">\uD83D\uDD28 '+s.dev.length+' in dev</span>':'')+
+            (s.plan.length?'<span class="spr-sstat" style="background:var(--surface3);color:var(--purple)">\uD83D\uDCC5 '+s.plan.length+' planned</span>':'')+
+            (s.back.length?'<span class="spr-sstat" style="background:var(--surface2);color:var(--dim);border:1px solid var(--border)">\uD83D\uDCCB '+s.back.length+' backlog</span>':'')+
+          '</div>'+
+        '</div>'+
+        '<div class="spr-sh-body '+(i===0?'open':'')+'">'+
+          '<div class="spr-email-box">'+
+            '<div class="spr-email-sub">\uD83D\uDCE7 <b>To:</b> '+App.esc(s.name)+' &nbsp;\u00b7&nbsp; <b>Subject:</b> BizOps EI \u2014 Requirement status update</div>'+
+            '<div id="spr-mail-'+i+'">'+(txts ? App.esc(txts[i]) : '<span style="color:var(--dim)">Click \u2728 Generate Reports to have the AI write a personalised update for this stakeholder\u2026</span>')+'</div>'+
+          '</div>'+
+          '<div class="spr-sh-actions">'+
+            '<button class="btn btn-primary btn-sm" onclick="App.sprCopyEmail('+i+')">\uD83D\uDCCB Copy text</button>'+
+            '<button class="btn btn-ghost btn-sm" onclick="App.sprRegenerate('+i+')">\uD83D\uDD04 Regenerate</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  },
+
+  async sprGenerateAll(){
+    var toneEl=document.getElementById('spr-tone');
+    var tone = toneEl?toneEl.value:'exec';
+    var list = this.sprStakeholders();
+    if(!list.length){ this.notify('No sprint activity to report on yet.','warn'); return; }
+    var btn=document.getElementById('spr-gen-btn');
+    if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Generating\u2026'; }
+    var self=this;
+    try{
+      var txts = list.map(function(s){ return self.sprBuildEmail(s,tone); });
+      this.sprRenderStakeholders(txts);
+      this._sprLastTone = tone;
+      this.notify('\u2728 '+list.length+' personalised report(s) generated','ok');
+    }catch(e){
+      this.notify('Error generating reports: '+e.message,'err');
+    }finally{
+      if(btn){ btn.disabled=false; btn.innerHTML='\u2728 Generate Reports'; }
+    }
+  },
+
+  sprRegenerate(i){
+    var list=this.sprStakeholders();
+    var tone=this._sprLastTone||'exec';
+    var el=document.getElementById('spr-mail-'+i);
+    if(el&&list[i]) el.textContent=this.sprBuildEmail(list[i],tone);
+  },
+
+  sprCopyEmail(i){
+    var el=document.getElementById('spr-mail-'+i);
+    if(!el) return;
+    var txt=el.textContent||'';
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ App.notify('Copied to clipboard','ok'); }).catch(function(){ App.notify('Could not copy automatically \u2014 select and copy manually.','warn'); });
+    } else {
+      App.notify('Clipboard not available \u2014 select and copy manually.','warn');
+    }
+  },
+
+  sprNextTuesday(){ var d=new Date(); d.setDate(d.getDate()+((2-d.getDay()+7)%7||7)); return d; },
+
+  sprOpenModal(){
+    var last = this.sprSprints[this.sprSprints.length-1];
+    var start = last ? new Date(new Date(last.end_date+'T00:00:00').getTime()+3*86400000) : this.sprNextTuesday();
+    var nameEl=document.getElementById('spr-m-name');
+    if(nameEl) nameEl.value = 'Sprint '+(this.sprSprints.length+1);
+    var startEl=document.getElementById('spr-m-start');
+    if(startEl) startEl.value = start.toISOString().slice(0,10);
+    this.sprCalcEnd();
+    var ov=document.getElementById('sprModalOverlay');
+    if(ov) ov.classList.add('open');
+  },
+  sprCloseModal(){ var ov=document.getElementById('sprModalOverlay'); if(ov) ov.classList.remove('open'); },
+  sprCalcEnd(){
+    var startEl=document.getElementById('spr-m-start'); if(!startEl||!startEl.value) return;
+    var d = new Date(startEl.value+'T12:00:00');
+    if(d.getDay()!==2){ this.notify('\u26a0\ufe0f Start must be a Tuesday \u2014 adjusted automatically','warn'); d.setDate(d.getDate()+((2-d.getDay()+7)%7)); startEl.value=d.toISOString().slice(0,10); }
+    var end=new Date(d); end.setDate(end.getDate()+10);
+    var endEl=document.getElementById('spr-m-end'); if(endEl) endEl.value=end.toISOString().slice(0,10);
+  },
+  async sprSaveSprint(){
+    var name=(document.getElementById('spr-m-name').value||'').trim();
+    var start=document.getElementById('spr-m-start').value;
+    var end=document.getElementById('spr-m-end').value;
+    var cap=parseFloat(document.getElementById('spr-m-cap').value)||320;
+    if(!name||!start||!end){ this.notify('Please fill name and dates.','err'); return; }
+    try{
+      await supaFetch('sprints','',{method:'POST',body:{name:name,start_date:start,end_date:end,capacity_hours:cap},prefer:'return=minimal'});
+      this.sprCloseModal();
+      this.notify('\u2705 Sprint created','ok');
+      await this.sprLoadSprints();
+      this.sprRenderSprints(); this.sprRenderBacklog();
+    }catch(e){
+      this.notify('Error creating sprint: '+e.message,'err');
+    }
+  }
+});
 
 // Fix supaFetch to accept (table, queryOrOpts, opts) or (table, query)
 function supaFetch(table, queryOrOpts, opts){
