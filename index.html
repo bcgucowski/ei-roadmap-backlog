@@ -2261,6 +2261,7 @@ var App = {
     var rec={
       roadmap_id:this.currentReqId,
       developer_id:parseInt(devId),
+      sprint_id:(this.data.find(function(r){return r.id===App.currentReqId;})||{}).sprint_id||null,
       status:status,
       percent_completed:document.getElementById('dt-percent_completed').value?parseFloat(document.getElementById('dt-percent_completed').value):null,
       closed_date:closedDate,
@@ -2376,6 +2377,7 @@ var App = {
       var rec = {
         roadmap_id:         reqId,
         developer_id:       po.id,
+        sprint_id:          (this.data.find(function(r){return r.id===reqId;})||{}).sprint_id||null,
         status:             'Validation',
         percent_completed:  0,
         percent_allocation: 100,
@@ -6420,14 +6422,64 @@ Object.assign(App, {
     var r=this.data.find(function(x){return x.id===id;});
     if(!r) return;
     var prevSprintId = r.sprint_id;
-    r.sprint_id = sprintId||null;
-    this.sprRenderSprints(); this.sprRenderBacklog();
+    var targetSprintId = sprintId||null;
+    if(prevSprintId===targetSprintId) return;
+    var mode='simple', setDevBacklog=false;
+    var prevSprint=this.sprSprints.find(function(s){return s.id===prevSprintId;});
+    var nextSprint=this.sprSprints.find(function(s){return s.id===targetSprintId;});
+
+    if(prevSprintId && targetSprintId){
+      var transfer=confirm(
+        'Will this requirement leave '+(prevSprint?prevSprint.name:'the previous sprint')+
+        ' and enter '+(nextSprint?nextSprint.name:'the new sprint')+'?\n\n'+
+        'OK = Yes: remove the open activities from the previous sprint and recreate them in the new sprint.\n\n'+
+        'Cancel = No: keep the history, close the current activities, and create continuation activities in the new sprint.'
+      );
+      if(transfer){
+        mode='transfer';
+      }else{
+        var rollover=confirm(
+          'Keep the previous sprint history and continue development in the new sprint?\n\n'+
+          'The current activities will be closed today and new open activities will be created for the new sprint.'
+        );
+        if(!rollover) return;
+        mode='rollover';
+      }
+    }else if(prevSprintId && !targetSprintId){
+      var openTasks=await supaFetch('dev_tasks','?roadmap_id=eq.'+id+'&status=neq.Close&select=id');
+      var openCount=openTasks?openTasks.length:0;
+      var moveBack=confirm(
+        'Move this requirement back to the backlog?\n\n'+
+        (openCount
+          ? openCount+' open activit'+(openCount===1?'y will':'ies will')+
+            ' be closed today with the reason "Requirement returned to backlog queue."'
+          : 'No open activities were found.')
+      );
+      if(!moveBack) return;
+      setDevBacklog=confirm('Would you also like to change the requirement status to "Dev Backlog"?');
+      mode='backlog';
+    }
+
     var self=this;
     try{
-      await supaFetch('roadmap','?id=eq.'+id,{method:'PATCH',body:{sprint_id:r.sprint_id},prefer:'return=minimal'});
-      this.notify(sprintId?('#'+id+' moved to sprint'):('#'+id+' moved back to backlog'),'ok');
+      var result=await supaFetch('rpc/move_requirement_sprint','',{
+        method:'POST',
+        body:{
+          p_roadmap_id:id,
+          p_target_sprint_id:targetSprintId,
+          p_mode:mode,
+          p_set_dev_backlog:setDevBacklog
+        }
+      });
+      r.sprint_id=targetSprintId;
+      if(setDevBacklog) r.status='Dev Backlog';
+      await this.sprLoadOpenDevMap();
+      this.sprRenderSprints(); this.sprRenderBacklog();
+      var changed=(result&&result.activities_recreated)||(result&&result.activities_closed)||0;
+      this.notify(targetSprintId
+        ?('#'+id+' moved to '+(nextSprint?nextSprint.name:'sprint')+(changed?' · '+changed+' activities updated':''))
+        :('#'+id+' moved back to backlog'+(changed?' · '+changed+' activities closed':'')),'ok');
     }catch(err){
-      r.sprint_id = prevSprintId;
       self.sprRenderSprints(); self.sprRenderBacklog();
       self.notify('Could not move requirement: '+err.message,'err');
     }
