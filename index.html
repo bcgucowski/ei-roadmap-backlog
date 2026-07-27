@@ -62,7 +62,7 @@ body.philips .nav{background:#fff;border-bottom:2px solid #0073e6}
 .ntab{background:none;border:none;color:var(--dim);font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
 .ntab:hover{color:var(--text)}.ntab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .app{flex:1;overflow-y:auto;overflow-x:hidden;padding:0}
-.page{display:none}.page.active{display:block;padding:16px 20px 20px}#page-analysis.active{display:flex;padding:0}#page-analysis.active{display:flex}
+.page{display:none}.page.active{display:block;padding:16px 20px 20px}#page-analysis.active{display:flex;padding:0}#page-sprints.active{display:flex;padding:0}
 .btn{border:none;font-family:var(--font);font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--radius-sm);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover:not(:disabled){opacity:.88}
@@ -279,7 +279,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .dev-card-meta{display:flex;align-items:center;gap:8px}
 .dev-card-actions{position:absolute;top:14px;right:14px;display:flex;gap:4px}
 /* ══════════ SPRINTS TAB ══════════ */
-.spr-subbar{padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.spr-subbar{padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);flex-shrink:0}
 .spr-seg{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:2px}
 .spr-seg button{background:none;border:none;padding:6px 16px;font-size:12px;font-weight:600;color:var(--dim);cursor:pointer;border-radius:6px;font-family:var(--font)}
 .spr-seg button.on{background:var(--accent);color:#fff}
