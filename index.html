@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-22 00:34 -->
+<!-- v2026-07-27 12:00 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1347,7 +1347,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
         <label class="flbl">Team capacity (hours)</label>
         <input class="fctrl" id="spr-m-cap" type="number" value="320">
       </div>
-      <div style="font-size:10px;color:var(--dim);margin-top:5px;background:var(--accentlight);padding:7px 10px;border-radius:6px;line-height:1.5">📅 <b>Cadence rule:</b> sprints start on a Tuesday and end on the second Friday after — an 11-day sprint on a 14-day cycle.</div>
+      <div style="font-size:10px;color:var(--dim);margin-top:5px;background:var(--accentlight);padding:7px 10px;border-radius:6px;line-height:1.5">📅 <b>Cadence rule:</b> sprints start on Tuesday and end on Friday of the following week. The next sprint starts on the next Tuesday, on a 14-day cycle anchored at 28 Jul 2026.</div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost" onclick="App.sprCloseModal()">Cancel</button>
@@ -6269,6 +6269,7 @@ Object.assign(App, {
   sprAssignFilter: 'all',
   sprDragId: null,
   sprCurIdx: 0,
+  sprAnchorStart: '2026-07-28',
   _sprReportSets: null,
 
   async sprInit(){
@@ -6592,7 +6593,7 @@ Object.assign(App, {
 
   sprOpenModal(){
     var last = this.sprSprints[this.sprSprints.length-1];
-    var start = last ? new Date(new Date(last.end_date+'T00:00:00').getTime()+3*86400000) : this.sprNextTuesday();
+    var start = last ? new Date(new Date(last.end_date+'T00:00:00').getTime()+3*86400000) : new Date(this.sprAnchorStart+'T00:00:00');
     var nameEl=document.getElementById('spr-m-name');
     if(nameEl) nameEl.value = 'Sprint '+(this.sprSprints.length+1);
     var startEl=document.getElementById('spr-m-start');
