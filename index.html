@@ -1323,6 +1323,24 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
   </div>
 </div>
 
+<!-- Sprint move decision modal -->
+<div class="overlay" id="sprActionOverlay">
+  <div class="modal" style="max-width:560px">
+    <div class="mhead">
+      <span class="mtitle" id="spr-action-title">Move requirement</span>
+      <button class="mclose" onclick="App.sprResolveAction(null)">✕</button>
+    </div>
+    <div class="mbody">
+      <div id="spr-action-message" style="font-size:13px;line-height:1.65;white-space:pre-line;color:var(--text)"></div>
+    </div>
+    <div class="mfoot" style="flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="App.sprResolveAction(null)">Cancel move</button>
+      <button class="btn btn-warn" id="spr-action-secondary" onclick="App.sprResolveAction(this.dataset.value)"></button>
+      <button class="btn btn-primary" id="spr-action-primary" onclick="App.sprResolveAction(this.dataset.value)"></button>
+    </div>
+  </div>
+</div>
+
 <!-- New Sprint modal -->
 <div class="overlay" id="sprModalOverlay">
   <div class="modal" style="max-width:430px">
@@ -6411,6 +6429,24 @@ Object.assign(App, {
     el.classList.add('on'); this.sprAssignFilter=el.dataset.f; this.sprRenderBacklog();
   },
 
+  sprActionResolver: null,
+  sprAskAction(title,message,primaryLabel,primaryValue,secondaryLabel,secondaryValue){
+    document.getElementById('spr-action-title').textContent=title;
+    document.getElementById('spr-action-message').textContent=message;
+    var primary=document.getElementById('spr-action-primary');
+    primary.textContent=primaryLabel; primary.dataset.value=primaryValue;
+    var secondary=document.getElementById('spr-action-secondary');
+    secondary.textContent=secondaryLabel; secondary.dataset.value=secondaryValue;
+    document.getElementById('sprActionOverlay').classList.add('open');
+    var self=this;
+    return new Promise(function(resolve){ self.sprActionResolver=resolve; });
+  },
+  sprResolveAction(value){
+    document.getElementById('sprActionOverlay').classList.remove('open');
+    var resolve=this.sprActionResolver; this.sprActionResolver=null;
+    if(resolve) resolve(value||null);
+  },
+
   sprDragStart(e,el){ this.sprDragId=+el.dataset.id; el.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; },
   sprAllowDrop(e,el){ e.preventDefault(); el.classList.add('dragover'); },
   sprLeaveDrop(el){ el.classList.remove('dragover'); },
@@ -6429,34 +6465,39 @@ Object.assign(App, {
     var nextSprint=this.sprSprints.find(function(s){return s.id===targetSprintId;});
 
     if(prevSprintId && targetSprintId){
-      var transfer=confirm(
-        'Will this requirement leave '+(prevSprint?prevSprint.name:'the previous sprint')+
-        ' and enter '+(nextSprint?nextSprint.name:'the new sprint')+'?\n\n'+
-        'OK = Yes: remove the open activities from the previous sprint and recreate them in the new sprint.\n\n'+
-        'Cancel = No: keep the history, close the current activities, and create continuation activities in the new sprint.'
+      var sprintAction=await this.sprAskAction(
+        'Move requirement to another sprint?',
+        'The requirement will leave '+(prevSprint?prevSprint.name:'the previous sprint')+
+        ' and enter '+(nextSprint?nextSprint.name:'the new sprint')+'.\n\n'+
+        'Transfer activities: remove open activities from the previous sprint and recreate them in the new sprint.\n\n'+
+        'Close & continue: close current activities today, preserve their history, and create continuation activities in the new sprint.',
+        'Transfer activities','transfer',
+        'Close & continue','rollover'
       );
-      if(transfer){
-        mode='transfer';
-      }else{
-        var rollover=confirm(
-          'Keep the previous sprint history and continue development in the new sprint?\n\n'+
-          'The current activities will be closed today and new open activities will be created for the new sprint.'
-        );
-        if(!rollover) return;
-        mode='rollover';
-      }
+      if(!sprintAction) return;
+      mode=sprintAction;
     }else if(prevSprintId && !targetSprintId){
-      var openTasks=await supaFetch('dev_tasks','?roadmap_id=eq.'+id+'&status=neq.Close&select=id');
+      var openTasks=[];
+      try{
+        openTasks=await supaFetch('dev_tasks','?roadmap_id=eq.'+id+'&status=neq.Close&select=id');
+      }catch(loadErr){
+        this.notify('Could not verify open activities: '+loadErr.message,'err');
+        return;
+      }
       var openCount=openTasks?openTasks.length:0;
-      var moveBack=confirm(
-        'Move this requirement back to the backlog?\n\n'+
+      var backlogAction=await this.sprAskAction(
+        'Return requirement to backlog?',
+        'The requirement will leave '+(prevSprint?prevSprint.name:'the current sprint')+' and return to the backlog.\n\n'+
         (openCount
           ? openCount+' open activit'+(openCount===1?'y will':'ies will')+
             ' be closed today with the reason "Requirement returned to backlog queue."'
-          : 'No open activities were found.')
+          : 'No open activities were found.')+
+        '\n\nChoose whether the requirement status should also return to Dev Backlog.',
+        'Move + Dev Backlog','backlog_dev',
+        'Move / keep status','backlog_keep'
       );
-      if(!moveBack) return;
-      setDevBacklog=confirm('Would you also like to change the requirement status to "Dev Backlog"?');
+      if(!backlogAction) return;
+      setDevBacklog=backlogAction==='backlog_dev';
       mode='backlog';
     }
 
