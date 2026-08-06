@@ -299,6 +299,9 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .spr-b-next{background:var(--surface3);color:var(--purple)}
 .spr-b-fut{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
 .spr-sp-dates{font-size:10px;color:var(--dim);margin-top:3px;font-variant-numeric:tabular-nums}
+.spr-dev-filter{width:100%;margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:10px;font-family:var(--font);color:var(--text);outline:none;cursor:pointer}
+.spr-dev-filter:focus{border-color:var(--accent)}
+.spr-dev-filter:disabled{opacity:.55;cursor:not-allowed}
 .spr-sp-cap{margin-top:9px}
 .spr-cap-row{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-bottom:3px}
 .spr-cap-track{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
@@ -6286,6 +6289,8 @@ var App = {
 Object.assign(App, {
   sprSprints: [],
   sprOpenDevMap: {},
+  sprDeveloperMap: {},
+  sprDevFilters: {},
   sprAssignFilter: 'all',
   sprDragId: null,
   sprCurIdx: 0,
@@ -6327,13 +6332,18 @@ Object.assign(App, {
 
   async sprLoadOpenDevMap(){
     this.sprOpenDevMap = {};
+    this.sprDeveloperMap = {};
     try{
-      var rows = await supaFetch('dev_tasks','?status=neq.Close&select=roadmap_id,developers(name)');
+      var rows = await supaFetch('dev_tasks','?status=neq.Close&select=roadmap_id,developers(name,role)');
       var self=this;
       (rows||[]).forEach(function(r){
         if(!r.roadmap_id || !r.developers || !r.developers.name) return;
         if(!self.sprOpenDevMap[r.roadmap_id]) self.sprOpenDevMap[r.roadmap_id]=[];
         if(self.sprOpenDevMap[r.roadmap_id].indexOf(r.developers.name)<0) self.sprOpenDevMap[r.roadmap_id].push(r.developers.name);
+        if(r.developers.role!=='Product Owner'){
+          if(!self.sprDeveloperMap[r.roadmap_id]) self.sprDeveloperMap[r.roadmap_id]=[];
+          if(self.sprDeveloperMap[r.roadmap_id].indexOf(r.developers.name)<0) self.sprDeveloperMap[r.roadmap_id].push(r.developers.name);
+        }
       });
     }catch(e){ console.warn('sprLoadOpenDevMap:',e.message); }
   },
@@ -6380,8 +6390,20 @@ Object.assign(App, {
     if(infoEl) infoEl.textContent = vis[0].name+' is active ('+App.fd(vis[0].start_date)+' \u2192 '+App.fd(vis[0].end_date)+')';
     var self=this;
     if(box) box.innerHTML = vis.map(function(s,i){
-      var items = self.data.filter(function(r){return r.sprint_id===s.id;});
-      var load = items.reduce(function(a,b){return a+(b.effort||0);},0);
+      var allItems = self.data.filter(function(r){return r.sprint_id===s.id;});
+      var developerNames=[];
+      allItems.forEach(function(r){
+        (self.sprDeveloperMap[r.id]||[]).forEach(function(name){
+          if(developerNames.indexOf(name)<0) developerNames.push(name);
+        });
+      });
+      developerNames.sort();
+      var selectedDev=self.sprDevFilters[s.id]||'';
+      if(selectedDev&&developerNames.indexOf(selectedDev)<0){selectedDev='';self.sprDevFilters[s.id]='';}
+      var items=selectedDev
+        ? allItems.filter(function(r){return (self.sprDeveloperMap[r.id]||[]).indexOf(selectedDev)>=0;})
+        : allItems;
+      var load = allItems.reduce(function(a,b){return a+(b.effort||0);},0);
       var cap = s.capacity_hours||320;
       var pct = Math.min(100, Math.round(load/cap*100));
       var col = pct>95?'var(--red)':pct>75?'var(--yellow)':'var(--green)';
@@ -6393,6 +6415,10 @@ Object.assign(App, {
         '<div class="spr-sp-head '+(i===0?'cur':'')+'">'+
           '<div class="spr-sp-row"><span class="spr-sp-name">'+App.esc(s.name)+'</span>'+badge+'</div>'+
           '<div class="spr-sp-dates">\uD83D\uDCC5 '+App.fd(s.start_date)+' \u2192 '+App.fd(s.end_date)+'</div>'+
+          '<select class="spr-dev-filter" '+(developerNames.length?'':'disabled')+' onchange="App.sprSetDevFilter('+s.id+',this.value)">'+
+            '<option value="">'+(developerNames.length?'All developers':'No developers assigned')+'</option>'+
+            developerNames.map(function(name){return '<option value="'+App.esc(name)+'" '+(name===selectedDev?'selected':'')+'>'+App.esc(name)+'</option>';}).join('')+
+          '</select>'+
           '<div class="spr-sp-cap">'+
             '<div class="spr-cap-row"><span>Capacity</span><span><b style="color:'+col+'">'+load+'h</b> / '+cap+'h \u00b7 '+pct+'%</span></div>'+
             '<div class="spr-cap-track"><div class="spr-cap-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
@@ -6402,9 +6428,14 @@ Object.assign(App, {
           (items.length ? items.map(function(r){return self.sprReqCard(r,true);}).join('')
             : '<div class="spr-empty">\u2b07\ufe0f Drag requirements here<br><span style="font-size:10px;opacity:.75">from the backlog on the right</span></div>')+
         '</div>'+
-        '<div class="spr-sp-foot"><span>'+items.length+' items</span><span>'+load+'h committed</span></div>'+
+        '<div class="spr-sp-foot"><span>'+(selectedDev?(items.length+' of '+allItems.length):allItems.length)+' items</span><span>'+load+'h committed</span></div>'+
       '</div>';
     }).join('');
+  },
+
+  sprSetDevFilter(sprintId,developer){
+    this.sprDevFilters[sprintId]=developer||'';
+    this.sprRenderSprints();
   },
 
   sprRenderBacklog(){
