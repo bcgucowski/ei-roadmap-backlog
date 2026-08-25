@@ -295,6 +295,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:var(--accentlight)}tr
 .spr-sp-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .spr-sp-name{font-size:14px;font-weight:800}
 .spr-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.spr-b-prev{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
 .spr-b-cur{background:var(--accent);color:#fff}
 .spr-b-next{background:var(--surface3);color:var(--purple)}
 .spr-b-fut{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
@@ -6309,6 +6310,7 @@ Object.assign(App, {
     if(box) box.innerHTML = '<div class="spr-empty" style="flex:1">Loading sprints\u2026</div>';
     try{
       await this.sprLoadSprints();
+      await this.sprEnsurePlanningWindow();
       await this.sprLoadOpenDevMap();
     }catch(e){
       if(box) box.innerHTML = '<div class="spr-empty" style="flex:1">⚠️ Could not load sprints.<br><span style="font-size:10px">'+App.esc(e.message)+'</span></div>';
@@ -6330,6 +6332,22 @@ Object.assign(App, {
     this.sprCurIdx = idx;
   },
 
+  async sprEnsurePlanningWindow(){
+    if(!this.sprSprints.length) return;
+    var missing=Math.max(0,(this.sprCurIdx+3)-this.sprSprints.length);
+    for(var i=0;i<missing;i++){
+      var last=this.sprSprints[this.sprSprints.length-1];
+      var start=new Date(last.start_date+'T12:00:00'); start.setDate(start.getDate()+14);
+      var end=new Date(last.end_date+'T12:00:00'); end.setDate(end.getDate()+14);
+      var nums=this.sprSprints.map(function(s){var m=String(s.name||'').match(/(\d+)$/);return m?parseInt(m[1]):0;});
+      var nextNum=Math.max.apply(null,nums)+1;
+      try{
+        await supaFetch('sprints','',{method:'POST',body:{name:'Sprint '+nextNum,start_date:toISO(start),end_date:toISO(end),capacity_hours:last.capacity_hours||320},prefer:'resolution=ignore-duplicates,return=minimal'});
+      }catch(e){ console.warn('sprEnsurePlanningWindow:',e.message); break; }
+      await this.sprLoadSprints();
+    }
+  },
+
   async sprLoadOpenDevMap(){
     this.sprOpenDevMap = {};
     this.sprDeveloperMap = {};
@@ -6349,7 +6367,7 @@ Object.assign(App, {
   },
 
   sprVisibleSprints(){
-    return this.sprSprints.slice(this.sprCurIdx, this.sprCurIdx+3);
+    return this.sprSprints.slice(Math.max(0,this.sprCurIdx-1), this.sprCurIdx+3);
   },
 
   sprReqCard(r, inSprint){
@@ -6387,9 +6405,12 @@ Object.assign(App, {
         '<div class="spr-empty" style="flex:1">🏃 No sprints created yet.<br>'+(this.isBizOps()?'Click <b>+ New Sprint</b> to start.':'Ask BizOps to create the first sprint.')+'</div>';
       return;
     }
-    if(infoEl) infoEl.textContent = vis[0].name+' is active ('+App.fd(vis[0].start_date)+' \u2192 '+App.fd(vis[0].end_date)+')';
+    var activeSprint=this.sprSprints[this.sprCurIdx];
+    if(infoEl&&activeSprint) infoEl.textContent = activeSprint.name+' is active ('+App.fd(activeSprint.start_date)+' \u2192 '+App.fd(activeSprint.end_date)+')';
     var self=this;
     if(box) box.innerHTML = vis.map(function(s,i){
+      var absoluteIdx=self.sprSprints.indexOf(s);
+      var role=absoluteIdx<self.sprCurIdx?'previous':absoluteIdx===self.sprCurIdx?'active':absoluteIdx===self.sprCurIdx+1?'next':'planned';
       var allItems = self.data.filter(function(r){return r.sprint_id===s.id;});
       var developerNames=[];
       allItems.forEach(function(r){
@@ -6407,12 +6428,13 @@ Object.assign(App, {
       var cap = s.capacity_hours||320;
       var pct = Math.min(100, Math.round(load/cap*100));
       var col = pct>95?'var(--red)':pct>75?'var(--yellow)':'var(--green)';
-      var badge = i===0?'<span class="spr-badge spr-b-cur">Active</span>'
-                : i===1?'<span class="spr-badge spr-b-next">Next</span>'
+      var badge = role==='previous'?'<span class="spr-badge spr-b-prev">Previous</span>'
+                : role==='active'?'<span class="spr-badge spr-b-cur">Active</span>'
+                : role==='next'?'<span class="spr-badge spr-b-next">Next</span>'
                 :'<span class="spr-badge spr-b-fut">Planned</span>';
-      return '<div class="spr-sprint '+(i===0?'cur':'')+'" data-sp="'+s.id+'" '+
+      return '<div class="spr-sprint '+(role==='active'?'cur':'')+'" data-sp="'+s.id+'" '+
         'ondragover="App.sprAllowDrop(event,this)" ondragleave="App.sprLeaveDrop(this)" ondrop="App.sprDropTo(event,'+s.id+',this)">'+
-        '<div class="spr-sp-head '+(i===0?'cur':'')+'">'+
+        '<div class="spr-sp-head '+(role==='active'?'cur':'')+'">'+
           '<div class="spr-sp-row"><span class="spr-sp-name">'+App.esc(s.name)+'</span>'+badge+'</div>'+
           '<div class="spr-sp-dates">\uD83D\uDCC5 '+App.fd(s.start_date)+' \u2192 '+App.fd(s.end_date)+'</div>'+
           '<select class="spr-dev-filter" '+(developerNames.length?'':'disabled')+' onchange="App.sprSetDevFilter('+s.id+',this.value)">'+
@@ -6567,8 +6589,8 @@ Object.assign(App, {
   sprMini(r,extra){ return '<div class="spr-mini"><b>#'+r.id+'</b> '+App.esc((r.requirement||'').split('\n')[0])+'<br><span style="color:var(--dim)">\uD83D\uDC64 '+App.esc(r.requester||'\u2014')+(extra||'')+'</span></div>'; },
 
   sprRenderReportCols(){
-    var vis = this.sprVisibleSprints();
-    var cur = vis[0], nexts = vis.slice(1);
+    var cur = this.sprSprints[this.sprCurIdx]||null;
+    var nexts = this.sprSprints.slice(this.sprCurIdx+1,this.sprCurIdx+3);
     var prevSprint = this.sprCurIdx>0 ? this.sprSprints[this.sprCurIdx-1] : null;
     var self=this;
     var done = prevSprint ? this.data.filter(function(r){return r.sprint_id===prevSprint.id && r.status==='Close';}) : [];
